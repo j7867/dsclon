@@ -12,12 +12,11 @@ const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
 
-// Объект зон для смены цветов и наведения
-const zones = {
+cconst zones = {
     'Central Chat': document.getElementById('messagesContainer'),
     'Channels Sidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar'),
-    'Left Guilds Sidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
-    'Right Settings Sidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
+    'guildsSidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
+    'settingsSidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
 };
 
 // Функция удаления подсветки со всех зон
