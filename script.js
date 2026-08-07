@@ -1,7 +1,7 @@
 ```javascript
 let myName = localStorage.getItem('chat_nickname');
 if (!myName) {
-    myName = prompt("Введите ваш никнейм для чата:") || "Пользователь";
+    myName = prompt("Enter your nickname:") || "User";
     localStorage.setItem('chat_nickname', myName);
 }
 
@@ -13,7 +13,6 @@ const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
 
-// Зоны для покраски
 const zones = {
     chatArea: document.getElementById('chatArea'),
     channelsSidebar: document.getElementById('channelsSidebar'),
@@ -21,7 +20,6 @@ const zones = {
     settingsSidebar: document.getElementById('settingsSidebar')
 };
 
-// 1. Загрузка ранее сохраненных цветов для всех зон отдельно
 Object.keys(zones).forEach(zoneKey => {
     const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
     if (savedColor && zones[zoneKey]) {
@@ -29,13 +27,10 @@ Object.keys(zones).forEach(zoneKey => {
     }
 });
 
-// Синхронизация круга-превью при выборе зоны в списке
 if (zoneSelect && customColorInput && colorPreviewCircle) {
     zoneSelect.addEventListener('change', () => {
         const currentZone = zoneSelect.value;
         const currentZoneBg = window.getComputedStyle(zones[currentZone]).backgroundColor;
-        
-        // Переводим rgb цвет в HEX для инпута
         const hexColor = rgbToHex(currentZoneBg);
         customColorInput.value = hexColor;
         colorPreviewCircle.style.backgroundColor = hexColor;
@@ -46,12 +41,10 @@ if (zoneSelect && customColorInput && colorPreviewCircle) {
     });
 }
 
-// Покраска при клике на кнопку "Применить"
 if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
         const selectedZone = zoneSelect.value;
         const selectedColor = customColorInput.value;
-        
         if (zones[selectedZone]) {
             zones[selectedZone].style.backgroundColor = selectedColor;
             localStorage.setItem('chat_bg_' + selectedZone, selectedColor);
@@ -59,7 +52,6 @@ if (applyColorBtn) {
     });
 }
 
-// Вспомогательная функция конвертации цвета для палитры
 function rgbToHex(rgb) {
     if (rgb.startsWith('#')) return rgb;
     const rgbValues = rgb.match(/\d+/g);
@@ -70,7 +62,6 @@ function rgbToHex(rgb) {
     return `#${r}${g}${b}`;
 }
 
-// 2. Логика сообщений
 function renderMessages() {
     messagesContainer.innerHTML = '';
     const messages = JSON.parse(localStorage.getItem('local_messages') || '[]');
@@ -78,7 +69,6 @@ function renderMessages() {
     messages.forEach((msg) => {
         const msgElement = document.createElement('div');
         msgElement.className = 'message';
-        
         const firstLetter = msg.author.charAt(0).toUpperCase();
         const avatarColor = msg.author === myName ? '#5865f2' : '#747f8d';
 
@@ -86,8 +76,8 @@ function renderMessages() {
         if (msg.author === myName) {
             actionsHtml = `
                 <div class="message-actions">
-                    <button class="action-btn" onclick="editMessage('${msg.id}')" title="Изменить">✏️</button>
-                    <button class="action-btn delete" onclick="deleteMessage('${msg.id}')" title="Удалить">🗑️</button>
+                    <button class="action-btn" onclick="editMessage('${msg.id}')">✏️</button>
+                    <button class="action-btn delete" onclick="deleteMessage('${msg.id}')">🗑️</button>
                 </div>
             `;
         }
@@ -125,11 +115,9 @@ function sendMessage() {
 window.editMessage = function(msgId) {
     const messages = JSON.parse(localStorage.getItem('local_messages') || '[]');
     const msgIndex = messages.findIndex(m => m.id === msgId);
-    
     if (msgIndex !== -1 && messages[msgIndex].author === myName) {
         const oldText = messages[msgIndex].text;
-        const newText = prompt("Редактировать сообщение:", oldText);
-        
+        const newText = prompt("Edit message:", oldText);
         if (newText !== null && newText.trim() !== '') {
             messages[msgIndex].text = newText.trim();
             localStorage.setItem('local_messages', JSON.stringify(messages));
@@ -139,7 +127,7 @@ window.editMessage = function(msgId) {
 }
 
 window.deleteMessage = function(msgId) {
-    if (confirm("Вы уверены, что хотите удалить это сообщение?")) {
+    if (confirm("Delete this message?")) {
         let messages = JSON.parse(localStorage.getItem('local_messages') || '[]');
         messages = messages.filter(m => m.id !== msgId || m.author !== myName);
         localStorage.setItem('local_messages', JSON.stringify(messages));
