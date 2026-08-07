@@ -386,13 +386,12 @@
             const container = document.querySelector('.custom-select-container');
             const options = document.querySelectorAll('.custom-option');
 
-            // Карта элементов на странице для подсветки
-            const zoneElements = {
-                'chatArea': document.getElementById('chatArea'),
-                'channelsSidebar': document.getElementById('channelsSidebar'),
-                'guildsSidebar': document.getElementById('guildsSidebar'),
-                'settingsSidebar': document.getElementById('settingsSidebar')
-            };
+                   const zoneElements = {
+            'chatArea': document.getElementById('chatArea') || document.querySelector('.chat-area') || document.querySelector('.chat-container'),
+            'channelsSidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar') || document.querySelector('.sidebar'),
+            'guildsSidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
+            'settingsSidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
+        };
 
             // Функция для удаления подсветки со всех зон
             function clearAllHighlights() {
