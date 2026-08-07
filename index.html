@@ -359,68 +359,12 @@
         </div>
         <button class="apply-btn" id="applyColorBtn">APPLY</button>
     </div>
+         <button class="apply-btn" id="applyColorBtn">APPLY</button>
+     </div>
+     <style>
+         /* Единый класс подсветки, неоновой рамки и тумана-градиента */
+         .zone-highlight {
 
-    <!-- Новые стили для тумана, белой рамки и кастомного списка -->
-    <style>
-        /* Стили для эффекта черного тумана и белой рамки */
-        .zone-highlight {
-            position: relative;
-            outline: 2px solid #ffffff !important; /* Белая рамка */
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-        
-        /* Создаем черный полупрозрачный туман внутри зоны */
-        .zone-highlight::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Черный туман (0.6 - густота) */
-            z-index: 9999;
-            pointer-events: none; /* Чтобы туман не мешал кликать */
-        }
-
-        /* Оформление кастомного выпадающего списка */
-        .custom-select-container {
-            position: relative;
-            width: 90%;
-            margin: 10px auto;
-            font-family: sans-serif;
-            background: #1e1f22;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .custom-select-trigger {
-            padding: 10px;
-            color: #dbdee1;
-            border: 1px solid #4e5058;
-            border-radius: 4px;
-        }
-        .custom-select-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #1e1f22;
-            border: 1px solid #4e5058;
-            border-top: none;
-            z-index: 1000;
-            border-radius: 0 0 4px 4px;
-        }
-        .custom-select-container.open .custom-select-options {
-            display: block;
-        }
-        .custom-option {
-            padding: 10px;
-            color: #dbdee1;
-            transition: background 0.2s;
-        }
-        .custom-option:hover {
-            background: #35373c; /* Подсветка самого пункта в списке при наведении */
-        }
     </style>
 
     <script src="script.js"></script>
