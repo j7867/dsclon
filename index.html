@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Discord Clone</title>
-    <!-- Вшиваем чистую и рабочую мини-библиотеку Firebase -->
-    <script>!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).firebase={})}(this,(function(e){"use strict";var t=function(e,t){return(t=window.firebase||(window.firebase={}))[e]||(t[e]=t=function(e,r){return t[e]||(t[e]={})}(e))};e.initializeApp=function(e,t){var r=t||"[DEFAULT]",n=window.firebase||(window.firebase={});return n.app||(n.app={}),n.app[r]={options:e,name:r},n.app[r]},e.firestore=function(){return{collection:function(e){return{orderBy:function(e,t){return{onSnapshot:function(e){}}},add:function(e){return Promise.resolve(e)}}}}},Object.defineProperty(e,"__esModule",{value:!0})}));</script>
     <style>
         :root {
             --bg-main: #313338;
@@ -254,13 +252,17 @@
     <div class="settings-sidebar">
         <div class="settings-title">Цвет фона</div>
         <div class="color-options">
-            <button class="color-btn" style="background-color: #313338;" onclick="changeBg('#313338')">дефолт</button>
-            <button class="color-btn" style="background-color: #1a1b1e;" onclick="changeBg('#1a1b1e')">миднайт</button>
-            <button class="color-btn" style="background-color: #2c3e50;" onclick="changeBg('#2c3e50')">синий</button>
-            <button class="color-btn" style="background-color: #1e3d2f;" onclick="changeBg('#1e3d2f')">темно зеленый</button>
-            <button class="color-btn" style="background-color: #4a2840;" onclick="changeBg('#4a2840')">бордовый</button>
+            <button class="color-btn" style="background-color: #313338;" onclick="changeBg('#313338')">Стандартный</button>
+            <button class="color-btn" style="background-color: #1a1b1e;" onclick="changeBg('#1a1b1e')">Полночь</button>
+            <button class="color-btn" style="background-color: #2c3e50;" onclick="changeBg('#2c3e50')">Синий океан</button>
+            <button class="color-btn" style="background-color: #1e3d2f;" onclick="changeBg('#1e3d2f')">Темный лес</button>
+            <button class="color-btn" style="background-color: #4a2840;" onclick="changeBg('#4a2840')">Бордо</button>
         </div>
     </div>
+
+    <!-- Надежное подключение официальных скриптов без блокировок -->
+    <script src="https://unpkg.com"></script>
+    <script src="https://unpkg.com"></script>
     <script src="script.js"></script>
 </body>
 </html>
