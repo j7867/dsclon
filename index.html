@@ -359,26 +359,16 @@
         </div>
                 <button class="apply-btn" id="applyColorBtn">APPLY</button>
     </div>
-
-    <style>
-        /* Класс подсветки: неоновая рамка снаружи + глубокий туман изнутри */
-        .zone-highlight {
-            outline: 3px solid #ffffff !important; /* Яркая белая рамка */
-            
-            /* Объединенный неон снаружи и радиальный туман изнутри блока */
-            box-shadow: 
-                0 0 15px #ffffff,                             /* Внешнее неоновое свечение */
-                0 0 30px rgba(255, 255, 255, 0.4),            /* Второе внешнее размытие */
-                inset 0 0 100px 30px rgba(0, 0, 0, 0.95),     /* Центр: глубокий черный туман */
-                inset 0 0 40px rgba(255, 255, 255, 0.6) !important; /* У краев: светлеющий туман */
-                
-            transition: all 0.15s ease;
-            z-index: 9999 !important;
-        }
-             transition: all 0.15s ease;
-            z-index: 9999 !important;
-         }
-        transition: all 0.15s ease;
+<style>
+  /* Класс подсветки: неоновая рамка снаружи + глубокий туман изнутри */
+  .zone-highlight {
+    outline: 3px solid #ffffff !important; /* Яркая белая рамка */
+    box-shadow: 
+      0 0 15px #ffffff,                          /* Внешнее неоновое свечение */
+      0 0 30px rgba(255, 255, 255, 0.4),          /* Второе внешнее размытие */
+      inset 0 0 100px 30px rgba(0, 0, 0, 0.95),   /* Центр: глубокий черный туман */
+      inset 0 0 40px rgba(255, 255, 255, 0.6) !important; /* У краев: светлеющий туман */
+    transition: all 0.15s ease;
     z-index: 9999 !important;
   }
 </style>
@@ -387,5 +377,3 @@
 
 </body>
 </html>
-
-                
