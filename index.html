@@ -353,39 +353,4 @@
         </div>
         <button class="apply-btn" id="applyColorBtn">APPLY</button>
     </div>
-    <script src="script.js"></script>
-</body>
-    </div>
-    <script>
-        // Код для подсветки выбранной зоны при клике на APPLY
-        document.addEventListener('DOMContentLoaded', () => {
-            const zoneSelect = document.querySelector('select');
-            const applyBtn = document.querySelector('.apply-btn');
-
-            const zoneElements = {
-                'Central Chat': document.getElementById('chatArea'),
-                'Channels Sidebar': document.getElementById('channelsSidebar')
-            };
-
-            if (zoneSelect && applyBtn) {
-                applyBtn.addEventListener('click', () => {
-                    Object.values(zoneElements).forEach(el => {
-                        if (el) el.classList.remove('zone-highlight');
-                    });
-
-                    const selectedValue = zoneSelect.value;
-                    const targetElement = zoneElements[selectedValue];
-
-                    if (targetElement) {
-                        targetElement.classList.add('zone-highlight');
-                        setTimeout(() => {
-                            targetElement.classList.remove('zone-highlight');
-                        }, 2500);
-                    }
-                });
-            }
-        });
-    </script>
-    <script src="script.js"></script>
-</body>
-</html>
+   
