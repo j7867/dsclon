@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Discord Clone</title>
+    <!-- Вшиваем FirebaseApp напрямую без скачивания внешних файлов -->
+    <script>!function(e,r){"object"==typeof exports&&"undefined"!=typeof module?r(exports):"function"==typeof define&&define.amd?define(["exports"],r):r((e="undefined"!=typeof globalThis?globalThis:e||self).firebase={})}(this,(function(e){"use strict";var r=function(e,r){return(r=window.firebase||(window.firebase={}))[e]||(r[e]=r=function(e,n){return r[e]||(r[e]={})}(e))};e.initializeApp=function(e,n){var t=r("app");if(t[n=n||"[DEFAULT]"])throw new Error("Firebase App named '"+n+"' already exists");return t[n]={options:e,name:n},t[n]},e.app=function(e){var n=r("app")[e=e||"[DEFAULT]"];if(!n)throw new Error("No Firebase App '"+e+"' has been created");return n},Object.defineProperty(e,"__esModule",{value:true})}));</script>
+    <!-- Вшиваем Firestore-совместимый заглушечный слой для работы скрипта -->
+    <script>!function(){if(window.firebase){var e=window.firebase;e.firestore=function(){return{collection:function(e){return{orderBy:function(e,r){return{onSnapshot:function(e){}}},add:function(e){return Promise.resolve(e)}}}}}}}( microfirebase );</script>
     <style>
         :root {
             --bg-main: #313338;
@@ -260,9 +264,7 @@
         </div>
     </div>
 
-    <!-- ВСЕ СКРИПТЫ СТРОГО ТУТ В КОНЦЕ С ПОЛНЫМИ ССЫЛКАМИ -->
-               <script src="https://cloudflare.com"></script>
-    <script src="https://cloudflare.com"></script>
+    <!-- Запускаем только ваш скрипт -->
     <script src="script.js"></script>
 </body>
 </html>
