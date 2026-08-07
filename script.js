@@ -162,8 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetElement.style.backgroundColor = selectedColor;
             } else {
                 alert('Пожалуйста, выберите зону в списке перед нажатием APPLY!');
-            }
-        });
-    }
-
-                          
+  function rgbToHex(rgb) {
+    if (rgb.startsWith('#')) return rgb;
+    const rgbValues = rgb.match(/\d+/g);
+    if (!rgbValues) return '#313338';
+    const r = parseInt(rgbValues[0]).toString(16).padStart(2, '0');
+    const g = parseInt(rgbValues[1]).toString(16).padStart(2, '0');
+    const b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
+    return `#${r}${g}${b}`;
+} // <-- ПРОВЕРЬТЕ, ЧТОБЫ ЭТА СКОБКА СТОЯЛА ТУТ
