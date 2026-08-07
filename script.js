@@ -9,7 +9,7 @@ document.head.appendChild(scriptDb);
 scriptDb.onload = function() {
     const firebaseConfig = {
         apiKey: "AIzaSyAY20LAIcpbkR6r4HUjCVctcWYfnDC4svw",
-        authDomain: "ds-chat78.firebaseapp.com",
+        authDomain: "://firebaseapp.com",
         projectId: "ds-chat78",
         storageBucket: "ds-chat78.firebasestorage.app",
         messagingSenderId: "1084561649631",
@@ -21,7 +21,7 @@ scriptDb.onload = function() {
 
     let myName = localStorage.getItem('chat_nickname');
     if (!myName) {
-        myName = prompt("Enter your nickname:") || "User";
+        myName = prompt("Enter nickname:") || "User";
         localStorage.setItem('chat_nickname', myName);
     }
 
