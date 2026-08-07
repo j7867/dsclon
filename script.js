@@ -3,7 +3,7 @@ import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "ht
 
 const firebaseConfig = {
     apiKey: "AIzaSyAY20LAIcpbkR6r4HUjCVctcWYfnDC4svw",
-    authDomain: "://firebaseapp.com",
+    authDomain: "ds-chat78.firebaseapp.com",
     projectId: "ds-chat78",
     storageBucket: "ds-chat78.firebasestorage.app",
     messagingSenderId: "1084561649631",
@@ -15,7 +15,7 @@ const db = getFirestore(app);
 
 let myName = localStorage.getItem('chat_nickname');
 if (!myName) {
-    myName = prompt("Введите ваш никнейм для чата:") || "Пользователь";
+    myName = prompt("Enter your nickname:") || "User";
     localStorage.setItem('chat_nickname', myName);
 }
 
@@ -64,7 +64,7 @@ async function sendMessage() {
             time: Date.now()
         });
     } catch (e) {
-        console.error("Ошибка отправки: ", e);
+        console.error(e);
     }
 }
 
