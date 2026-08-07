@@ -1,35 +1,30 @@
-const firebaseConfig = {
-    apiKey: "AIzaSyAY20LAIcpbkR6r4HUjCVctcWYfnDC4svw",
-    authDomain: "://firebaseapp.com",
-    projectId: "ds-chat78",
-    storageBucket: "ds-chat78.firebasestorage.app",
-    messagingSenderId: "1084561649631",
-    appId: "1:1084561649631:web:5361cf4ae5540104e09e6a"
-};
-
-// Инициализируем базу, которая уже загружена через HTML
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 let myName = localStorage.getItem('chat_nickname');
 if (!myName) {
-    myName = prompt("Enter your nickname:") || "User";
+    myName = prompt("Введите ваш никнейм для чата:") || "Пользователь";
     localStorage.setItem('chat_nickname', myName);
 }
 
+const chatArea = document.getElementById('chatArea');
 const messagesContainer = document.getElementById('messagesContainer');
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
-const chatArea = document.getElementById('chatArea');
+
+// Загрузка сохраненного цвета
+const savedBg = localStorage.getItem('chat_bg_color');
+if (savedBg) {
+    chatArea.style.backgroundColor = savedBg;
+}
 
 window.changeBg = function(color) {
     chatArea.style.backgroundColor = color;
+    localStorage.setItem('chat_bg_color', color);
 }
 
-db.collection("messages").orderBy("time", "asc").onSnapshot((snapshot) => {
+function renderMessages() {
     messagesContainer.innerHTML = '';
-    snapshot.forEach((doc) => {
-        const msg = doc.data();
+    const messages = JSON.parse(localStorage.getItem('local_messages') || '[]');
+    
+    messages.forEach((msg) => {
         const msgElement = document.createElement('div');
         msgElement.className = 'message';
         
@@ -46,26 +41,28 @@ db.collection("messages").orderBy("time", "asc").onSnapshot((snapshot) => {
         messagesContainer.appendChild(msgElement);
     });
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-});
+}
 
-async function sendMessage() {
+function sendMessage() {
     const text = messageInput.value.trim();
     if (!text) return;
 
-    messageInput.value = '';
+    const messages = JSON.parse(localStorage.getItem('local_messages') || '[]');
+    messages.push({
+        author: myName,
+        text: text,
+        time: Date.now()
+    });
 
-    try {
-        await db.collection("messages").add({
-            author: myName,
-            text: text,
-            time: Date.now()
-        });
-    } catch (e) {
-        console.error(e);
-    }
+    localStorage.setItem('local_messages', JSON.stringify(messages));
+    messageInput.value = '';
+    renderMessages();
 }
 
 sendBtn.onclick = sendMessage;
 messageInput.onkeydown = function(e) {
     if (e.key === 'Enter') sendMessage();
 };
+
+// Запуск отображения при старте
+renderMessages();
