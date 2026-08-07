@@ -432,45 +432,9 @@
 </body>
 </html>
 
-       <script src="script.js"></script>
-    <script>
-        // Код для подсветки выбранной зоны при клике на APPLY
-        document.addEventListener('DOMContentLoaded', () => {
-            const zoneSelect = document.getElementById('zoneSelect') || document.querySelector('select');
-            const applyBtn = document.getElementById('applyColorBtn');
-
-            // Карта элементов: теперь свойства слева строго совпадают с value из ваших тегов <option>
-            const zoneElements = {
-                'chatArea': document.getElementById('chatArea'),
-                'channelsSidebar': document.getElementById('channelsSidebar'),
-                'guildsSidebar': document.getElementById('guildsSidebar'),
-                'settingsSidebar': document.getElementById('settingsSidebar')
-            };
-
-            if (zoneSelect && applyBtn) {
-                applyBtn.addEventListener('click', () => {
-                    // Сбрасываем прошлую подсветку со всех панелей
-                    Object.values(zoneElements).forEach(el => {
-                        if (el) el.classList.remove('zone-highlight');
-                    });
-
-                    // Получаем техническое value (например, channelsSidebar)
-                    const selectedValue = zoneSelect.value;
-                    const targetElement = zoneElements[selectedValue];
-
-                    // Добавляем зелёную рамку
-                    if (targetElement) {
-                        targetElement.classList.add('zone-highlight');
-                        
-                        // Автоматически гасим подсветку через 2.5 секунды
-                        setTimeout(() => {
-                            targetElement.classList.remove('zone-highlight');
-                        }, 2500);
-                    }
-                });
-            }
-        });
-    </script>
-</body>
-</html>
-
+       429          });
+430      });
+431  </script>
+432  <script src="script.js"></script>
+433 </body>
+434 </html>
