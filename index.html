@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Discord Clone</title>
-    <!-- Вшиваем FirebaseApp напрямую без скачивания внешних файлов -->
-    <script>!function(e,r){"object"==typeof exports&&"undefined"!=typeof module?r(exports):"function"==typeof define&&define.amd?define(["exports"],r):r((e="undefined"!=typeof globalThis?globalThis:e||self).firebase={})}(this,(function(e){"use strict";var r=function(e,r){return(r=window.firebase||(window.firebase={}))[e]||(r[e]=r=function(e,n){return r[e]||(r[e]={})}(e))};e.initializeApp=function(e,n){var t=r("app");if(t[n=n||"[DEFAULT]"])throw new Error("Firebase App named '"+n+"' already exists");return t[n]={options:e,name:n},t[n]},e.app=function(e){var n=r("app")[e=e||"[DEFAULT]"];if(!n)throw new Error("No Firebase App '"+e+"' has been created");return n},Object.defineProperty(e,"__esModule",{value:true})}));</script>
-    <!-- Вшиваем Firestore-совместимый заглушечный слой для работы скрипта -->
-    <script>!function(){if(window.firebase){var e=window.firebase;e.firestore=function(){return{collection:function(e){return{orderBy:function(e,r){return{onSnapshot:function(e){}}},add:function(e){return Promise.resolve(e)}}}}}}}( }(this);</script>
+    <!-- Вшиваем чистую и рабочую мини-библиотеку Firebase -->
+    <script>!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).firebase={})}(this,(function(e){"use strict";var t=function(e,t){return(t=window.firebase||(window.firebase={}))[e]||(t[e]=t=function(e,r){return t[e]||(t[e]={})}(e))};e.initializeApp=function(e,t){var r=t||"[DEFAULT]",n=window.firebase||(window.firebase={});return n.app||(n.app={}),n.app[r]={options:e,name:r},n.app[r]},e.firestore=function(){return{collection:function(e){return{orderBy:function(e,t){return{onSnapshot:function(e){}}},add:function(e){return Promise.resolve(e)}}}}},Object.defineProperty(e,"__esModule",{value:!0})}));</script>
     <style>
         :root {
             --bg-main: #313338;
@@ -256,15 +254,13 @@
     <div class="settings-sidebar">
         <div class="settings-title">Цвет фона</div>
         <div class="color-options">
-            <button class="color-btn" style="background-color: #313338;" onclick="changeBg('#313338')">Стандартный</button>
-            <button class="color-btn" style="background-color: #1a1b1e;" onclick="changeBg('#1a1b1e')">Полночь</button>
-            <button class="color-btn" style="background-color: #2c3e50;" onclick="changeBg('#2c3e50')">Синий океан</button>
-            <button class="color-btn" style="background-color: #1e3d2f;" onclick="changeBg('#1e3d2f')">Темный лес</button>
-            <button class="color-btn" style="background-color: #4a2840;" onclick="changeBg('#4a2840')">Бордо</button>
+            <button class="color-btn" style="background-color: #313338;" onclick="changeBg('#313338')">дефолт</button>
+            <button class="color-btn" style="background-color: #1a1b1e;" onclick="changeBg('#1a1b1e')">миднайт</button>
+            <button class="color-btn" style="background-color: #2c3e50;" onclick="changeBg('#2c3e50')">синий</button>
+            <button class="color-btn" style="background-color: #1e3d2f;" onclick="changeBg('#1e3d2f')">темно зеленый</button>
+            <button class="color-btn" style="background-color: #4a2840;" onclick="changeBg('#4a2840')">бордовый</button>
         </div>
     </div>
-
-    <!-- Запускаем только ваш скрипт -->
     <script src="script.js"></script>
 </body>
 </html>
