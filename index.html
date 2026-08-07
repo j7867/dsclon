@@ -13,6 +13,7 @@
             --text-color: #f2f3f5;
             --text-muted: #949ba4;
             --accent-color: #5865f2;
+            --border-color: #1f2023; /* Цвет разделительных полос */
         }
         * {
             box-sizing: border-box;
@@ -28,6 +29,7 @@
             color: var(--text-color);
             overflow: hidden;
         }
+        /* Левая панель серверов */
         .guilds-sidebar {
             width: 72px;
             background-color: var(--bg-channels);
@@ -36,6 +38,7 @@
             align-items: center;
             padding-top: 12px;
             gap: 8px;
+            border-right: 1px solid var(--border-color); /* Полоска-граница */
         }
         .guild-icon {
             width: 48px;
@@ -54,6 +57,7 @@
             border-radius: 16px;
             background-color: var(--accent-color);
         }
+        /* Панель каналов */
         .channels-sidebar {
             width: 240px;
             background-color: var(--bg-sidebar);
@@ -61,6 +65,7 @@
             flex-direction: column;
             padding: 12px;
             gap: 2px;
+            border-right: 1px solid var(--border-color); /* Полоска-граница */
         }
         .sidebar-header {
             font-size: 12px;
@@ -94,6 +99,7 @@
             font-size: 14px;
             font-weight: bold;
         }
+        /* Центральный чат */
         .chat-area {
             flex: 1;
             display: flex;
@@ -103,7 +109,7 @@
         }
         .chat-header {
             height: 48px;
-            border-bottom: 1px solid rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color); /* Полоска-граница */
             display: flex;
             align-items: center;
             padding: 0 16px;
@@ -149,14 +155,13 @@
             word-break: break-word;
             user-select: text;
         }
-        /* Панель действий над сообщением */
         .message-actions {
             display: none;
             position: absolute;
             right: 16px;
             top: -12px;
             background-color: var(--bg-sidebar);
-            border: 1px solid rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
             border-radius: 4px;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -223,29 +228,39 @@
             height: 24px;
             fill: currentColor;
         }
+        /* Правая панель настроек */
         .settings-sidebar {
-            width: 200px;
+            width: 220px;
             background-color: var(--bg-sidebar);
-            border-left: 1px solid rgba(0,0,0,0.2);
+            border-left: 1px solid var(--border-color); /* Полоска-граница */
             padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
         }
         .settings-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-align: center;
         }
-        /* Стилизация круглого выбора цвета */
+        .zone-select {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--bg-input);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
         .color-picker-wrapper {
             position: relative;
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             cursor: pointer;
         }
         .color-picker-input {
@@ -260,21 +275,32 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 4px solid #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 3px solid #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             background: linear-gradient(45deg, red, orange, yellow, green, blue, purple);
-            transition: transform 0.2s;
         }
-        .color-picker-wrapper:hover .color-picker-circle {
-            transform: scale(1.08);
+        .apply-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .apply-btn:hover {
+            background-color: #4752c4;
         }
     </style>
 </head>
 <body>
-    <div class="guilds-sidebar">
+    <div class="guilds-sidebar" id="guildsSidebar">
         <div class="guild-icon active">DM</div>
     </div>
-    <div class="channels-sidebar">
+    <div class="channels-sidebar" id="channelsSidebar">
         <div class="sidebar-header">Каналы</div>
         <div class="user-item active">
             <div class="user-avatar" style="background-color: #5865f2;">#</div>
@@ -297,15 +323,4 @@
             </div>
         </div>
     </div>
-    <div class="settings-sidebar">
-        <div class="settings-title">Выбрать свой цвет</div>
-        <div class="color-picker-wrapper">
-            <!-- Круглый инпут выбора цвета -->
-            <input type="color" class="color-picker-input" id="customColorInput">
-            <div class="color-picker-circle" id="colorPreviewCircle"></div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+    <div class="settings-sidebar" id="settingsSidebar">
