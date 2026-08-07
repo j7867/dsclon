@@ -1,5 +1,4 @@
 let myName = localStorage.getItem('chat_nickname');
-if (!myName) {
     myName = prompt("Enter your nickname:") || "User";
     localStorage.setItem('chat_nickname', myName);
 }
@@ -12,18 +11,6 @@ const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
 
-const zones = {
-    chatArea: document.getElementById('chatArea'),
-    channelsSidebar: document.getElementById('channelsSidebar'),
-    guildsSidebar: document.getElementById('guildsSidebar'),
-    settingsSidebar: document.getElementById('settingsSidebar')
-};
-
-Object.keys(zones).forEach(zoneKey => {
-    const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
-    if (savedColor && zones[zoneKey]) {
-        zones[zoneKey].style.backgroundColor = savedColor;
-    }
 });
 
 if (zoneSelect && customColorInput && colorPreviewCircle) {
