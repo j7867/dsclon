@@ -1,29 +1,44 @@
-let currentTargetUser = 'Иван';
+import { initializeApp } from "https://gstatic.com";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://gstatic.com";
 
-const chatHistory = {
-    'Иван': [{ author: 'Иван', text: 'Привет! Как дела с разработкой сайта?' }],
-    'Алексей': [],
-    'Мария': []
+const firebaseConfig = {
+    apiKey: "AIzaSyAY20LAIcpbkR6r4HUjCVctcWYfnDC4svw",
+    authDomain: "://firebaseapp.com",
+    projectId: "ds-chat78",
+    storageBucket: "ds-chat78.firebasestorage.app",
+    messagingSenderId: "1084561649631",
+    appId: "1:1084561649631:web:5361cf4ae5540104e09e6a"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let myName = localStorage.getItem('chat_nickname');
+if (!myName) {
+    myName = prompt("Введите ваш никнейм для чата:") || "Пользователь";
+    localStorage.setItem('chat_nickname', myName);
+}
 
 const messagesContainer = document.getElementById('messagesContainer');
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
-const chatUserTitle = document.getElementById('current-chat-user');
 const chatArea = document.getElementById('chatArea');
 
-function renderMessages() {
+window.changeBg = function(color) {
+    chatArea.style.backgroundColor = color;
+}
+
+const q = query(collection(db, "messages"), orderBy("time", "asc"));
+onSnapshot(q, (snapshot) => {
     messagesContainer.innerHTML = '';
-    const messages = chatHistory[currentTargetUser] || [];
-    
-    messages.forEach(msg => {
+    snapshot.forEach((doc) => {
+        const msg = doc.data();
         const msgElement = document.createElement('div');
         msgElement.className = 'message';
         
         const firstLetter = msg.author.charAt(0).toUpperCase();
-        const avatarColor = msg.author === 'Вы' ? '#5865f2' : '#747f8d';
+        const avatarColor = msg.author === myName ? '#5865f2' : '#747f8d';
 
-        // Создаем внутренности сообщения безопасным путем
         msgElement.innerHTML = `
             <div class="user-avatar" style="background-color: ${avatarColor};">${firstLetter}</div>
             <div class="message-content">
@@ -34,45 +49,26 @@ function renderMessages() {
         messagesContainer.appendChild(msgElement);
     });
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
+});
 
-function sendMessage() {
+async function sendMessage() {
     const text = messageInput.value.trim();
     if (!text) return;
 
-    chatHistory[currentTargetUser].push({
-        author: 'Вы',
-        text: text
-    });
-
     messageInput.value = '';
-    renderMessages();
-}
 
-function selectUser(username) {
-    currentTargetUser = username;
-    chatUserTitle.textContent = username;
-    
-    document.querySelectorAll('.user-item').forEach(item => {
-        item.classList.remove('active');
-        if(item.querySelector('span').textContent === username) {
-            item.classList.add('active');
-        }
-    });
-
-    renderMessages();
-}
-
-function changeBg(color) {
-    chatArea.style.backgroundColor = color;
+    try {
+        await addDoc(collection(db, "messages"), {
+            author: myName,
+            text: text,
+            time: Date.now()
+        });
+    } catch (e) {
+        console.error("Ошибка отправки: ", e);
+    }
 }
 
 sendBtn.addEventListener('click', sendMessage);
 messageInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
+    if (e.key === 'Enter') sendMessage();
 });
-
-// Запускаем первичный рендеринг при загрузке страницы
-renderMessages();
