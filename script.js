@@ -127,3 +127,35 @@ messageInput.onkeydown = function(e) {
 };
 
 renderMessages();
+// Код для покраски выбранной зоны при нажатии на APPLY
+document.addEventListener('DOMContentLoaded', () => {
+    const applyColorBtn = document.getElementById('applyColorBtn') || document.querySelector('.apply-btn');
+
+    if (applyColorBtn) {
+        applyColorBtn.addEventListener('click', () => {
+            const colorInput = document.getElementById('customColorInput') || document.querySelector('.color-picker-input');
+            const zoneTrigger = document.getElementById('zoneSelectTrigger');
+            
+            // Считываем выбранную в меню зону (например, chatArea)
+            const selectedZone = zoneTrigger ? zoneTrigger.getAttribute('data-selected-value') : null; 
+            const selectedColor = colorInput ? colorInput.value : '';
+
+            // Список всех зон, которые можно красить
+            const zoneElements = {
+                'chatArea': document.getElementById('chatArea'),
+                'channelsSidebar': document.getElementById('channelsSidebar'),
+                'guildsSidebar': document.getElementById('guildsSidebar'),
+                'settingsSidebar': document.getElementById('settingsSidebar')
+            };
+
+            const targetElement = zoneElements[selectedZone];
+
+            if (targetElement && selectedColor) {
+                // Применяем выбранный цвет к фону зоны
+                targetElement.style.backgroundColor = selectedColor;
+            } else {
+                alert('Пожалуйста, выберите зону в списке перед нажатием APPLY!');
+            }
+        });
+    }
+});
