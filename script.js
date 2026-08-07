@@ -10,19 +10,20 @@ const sendBtn = document.getElementById('sendBtn');
 const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
+const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
 
 // Переменная для хранения текущей выбранной зоны
 let activeZoneKey = null;
 
-// Полный объект зон (вернули centralChat)
+// Объект зон (ключи теперь строго соответствуют вашим data-value в HTML!)
 const zones = {
-    'centralChat': document.getElementById('messagesContainer') || document.querySelector('.messages-container'),
+    'chatArea': document.getElementById('messagesContainer') || document.querySelector('.messages-container') || document.querySelector('.chat-area'),
     'channelsSidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar'),
     'guildsSidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
     'settingsSidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
 };
 
-// Проверяем сохраненные цвета при загрузке страницы
+// Загрузка сохраненных цветов при старте страницы
 Object.keys(zones).forEach(zoneKey => {
     const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
     if (savedColor && zones[zoneKey]) {
@@ -36,11 +37,11 @@ function clearAllHighlights() {
     });
 }
 
-// 1. ЛОГИКА ДЛЯ КАСТОМНОГО МЕНЮ (НАВЕДЕНИЕ И КЛИК)
+// ЛОГИКА ДЛЯ КАСТОМНОГО СПИСКА (НАВЕДЕНИЕ И КЛИК)
 const options = document.querySelectorAll('.custom-option');
 if (options.length > 0) {
     options.forEach(option => {
-        // Подсветка зоны при наведении на пункт меню
+        // Подсветка зоны при наведении курсора на пункт меню
         option.addEventListener('mouseenter', () => {
             clearAllHighlights();
             const targetValue = option.getAttribute('data-value');
@@ -55,17 +56,22 @@ if (options.length > 0) {
             clearAllHighlights();
         });
 
-        // КЛИК ПО ПУНКТУ: фиксируем зону и обновляем круг цветов!
+        // КЛИК ПО ПУНКТУ: Выбираем зону, меняем текст в триггере и обновляем круг цветов!
         option.addEventListener('click', () => {
             activeZoneKey = option.getAttribute('data-value');
             const targetElement = zones[activeZoneKey];
             
+            // Обновляем текст в шапке выпадающего списка
+            if (zoneSelectTrigger) {
+                zoneSelectTrigger.textContent = option.textContent;
+            }
+            
             if (targetElement && customColorInput && colorPreviewCircle) {
-                // Берем текущий цвет этой зоны из браузера
+                // Получаем текущий цвет фона элемента
                 const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
                 const hexColor = rgbToHex(currentZoneBg);
                 
-                // Перекрашиваем инпут и круг под цвет выбранной зоны
+                // Синхронизируем инпут и цветной кружок
                 customColorInput.value = hexColor;
                 colorPreviewCircle.style.backgroundColor = hexColor;
             }
@@ -73,14 +79,14 @@ if (options.length > 0) {
     });
 }
 
-// 2. ИЗМЕНЕНИЕ ЦВЕТА В ИНПУТЕ (ОБНОВЛЕНИЕ КРУГА)
+// Обновление круга при ручном выборе цвета в пикере
 if (customColorInput && colorPreviewCircle) {
     customColorInput.addEventListener('input', (e) => {
         colorPreviewCircle.style.backgroundColor = e.target.value;
     });
 }
 
-// 3. НАЖАТИЕ НА КНОПКУ APPLY (СОХРАНЕНИЕ ЦВЕТА)
+// Применение цвета по кнопке APPLY
 if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
         if (activeZoneKey && zones[activeZoneKey]) {
@@ -88,12 +94,12 @@ if (applyColorBtn) {
             zones[activeZoneKey].style.backgroundColor = selectedColor;
             localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
         } else {
-            alert('Сначала выберите зону в списке!');
+            alert('Сначала выберите зону из списка!');
         }
     });
 }
 
-// Функция перевода цвета в HEX формат
+// Функция перевода RGB в HEX формат
 function rgbToHex(rgb) {
     if (!rgb || rgb.startsWith('#')) return rgb || '#313338';
     const rgbValues = rgb.match(/\d+/g);
