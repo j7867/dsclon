@@ -1,9 +1,9 @@
-import { initializeApp } from "https://gstatic.com";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://gstatic.com";
+import { initializeApp } from "https://cloudflare.com";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://cloudflare.com";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAY20LAIcpbkR6r4HUjCVctcWYfnDC4svw",
-    authDomain: "ds-chat78.firebaseapp.com",
+    authDomain: "://firebaseapp.com",
     projectId: "ds-chat78",
     storageBucket: "ds-chat78.firebasestorage.app",
     messagingSenderId: "1084561649631",
