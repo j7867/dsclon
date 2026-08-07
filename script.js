@@ -7,31 +7,40 @@ if (!myName) {
 const messagesContainer = document.getElementById('messagesContainer');
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
-const zoneSelect = document.getElementById('zoneSelect');
 const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
 
+// Переменная для хранения текущей выбранной зоны
+let activeZoneKey = null;
+
+// Полный объект зон (вернули centralChat)
 const zones = {
-    'Central Chat': document.getElementById('messagesContainer'),
-    'Channels Sidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar'),
+    'centralChat': document.getElementById('messagesContainer') || document.querySelector('.messages-container'),
+    'channelsSidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar'),
     'guildsSidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
     'settingsSidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
 };
 
-// Функция удаления подсветки со всех зон
+// Проверяем сохраненные цвета при загрузке страницы
+Object.keys(zones).forEach(zoneKey => {
+    const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
+    if (savedColor && zones[zoneKey]) {
+        zones[zoneKey].style.backgroundColor = savedColor;
+    }
+});
+
 function clearAllHighlights() {
     Object.values(zones).forEach(el => {
         if (el) el.classList.remove('zone-highlight');
     });
 }
 
-// 1. ЛОГИКА НАВЕДЕНИЯ НА ПУНКТЫ МЕНЮ
-// Ищем все элементы кастомного списка (если это обычный select, код ниже просто пропустится без ошибок)
+// 1. ЛОГИКА ДЛЯ КАСТОМНОГО МЕНЮ (НАВЕДЕНИЕ И КЛИК)
 const options = document.querySelectorAll('.custom-option');
 if (options.length > 0) {
     options.forEach(option => {
-        // Наведение мыши
+        // Подсветка зоны при наведении на пункт меню
         option.addEventListener('mouseenter', () => {
             clearAllHighlights();
             const targetValue = option.getAttribute('data-value');
@@ -40,44 +49,53 @@ if (options.length > 0) {
                 targetElement.classList.add('zone-highlight');
             }
         });
-        // Увод мыши
+
+        // Убираем подсветку при уходе мыши
         option.addEventListener('mouseleave', () => {
             clearAllHighlights();
+        });
+
+        // КЛИК ПО ПУНКТУ: фиксируем зону и обновляем круг цветов!
+        option.addEventListener('click', () => {
+            activeZoneKey = option.getAttribute('data-value');
+            const targetElement = zones[activeZoneKey];
+            
+            if (targetElement && customColorInput && colorPreviewCircle) {
+                // Берем текущий цвет этой зоны из браузера
+                const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
+                const hexColor = rgbToHex(currentZoneBg);
+                
+                // Перекрашиваем инпут и круг под цвет выбранной зоны
+                customColorInput.value = hexColor;
+                colorPreviewCircle.style.backgroundColor = hexColor;
+            }
         });
     });
 }
 
-// 2. ВЫБОР ЗОНЫ И СМЕНА ЦВЕТА
-if (zoneSelect && customColorInput && colorPreviewCircle) {
-    zoneSelect.addEventListener('change', () => {
-        const currentZone = zoneSelect.value;
-        if (zones[currentZone]) {
-            const currentZoneBg = window.getComputedStyle(zones[currentZone]).backgroundColor;
-            const hexColor = rgbToHex(currentZoneBg);
-            customColorInput.value = hexColor;
-            colorPreviewCircle.style.backgroundColor = hexColor;
-        }
-    });
-
+// 2. ИЗМЕНЕНИЕ ЦВЕТА В ИНПУТЕ (ОБНОВЛЕНИЕ КРУГА)
+if (customColorInput && colorPreviewCircle) {
     customColorInput.addEventListener('input', (e) => {
         colorPreviewCircle.style.backgroundColor = e.target.value;
     });
 }
 
+// 3. НАЖАТИЕ НА КНОПКУ APPLY (СОХРАНЕНИЕ ЦВЕТА)
 if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
-        const selectedZone = zoneSelect.value;
-        const selectedColor = customColorInput.value;
-        if (zones[selectedZone]) {
-            zones[selectedZone].style.backgroundColor = selectedColor;
-            localStorage.setItem('chat_bg_' + selectedZone, selectedColor);
+        if (activeZoneKey && zones[activeZoneKey]) {
+            const selectedColor = customColorInput.value;
+            zones[activeZoneKey].style.backgroundColor = selectedColor;
+            localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
+        } else {
+            alert('Сначала выберите зону в списке!');
         }
     });
 }
 
-// Вспомогательная функция перевода цвета
+// Функция перевода цвета в HEX формат
 function rgbToHex(rgb) {
-    if (rgb.startsWith('#')) return rgb;
+    if (!rgb || rgb.startsWith('#')) return rgb || '#313338';
     const rgbValues = rgb.match(/\d+/g);
     if (!rgbValues) return '#313338';
     const r = parseInt(rgbValues[0]).toString(16).padStart(2, '0');
