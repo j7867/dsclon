@@ -12,7 +12,7 @@ const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
 
-cconst zones = {
+const zones = {
     'Central Chat': document.getElementById('messagesContainer'),
     'Channels Sidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar'),
     'guildsSidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
