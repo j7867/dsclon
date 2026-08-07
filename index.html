@@ -378,72 +378,14 @@
              transition: all 0.15s ease;
             z-index: 9999 !important;
          }
-     </style>
- 
-     <script src="script.js"></script>
+        transition: all 0.15s ease;
+    z-index: 9999 !important;
+  }
+</style>
 
+<script src="script.js"></script>
 
-    <script src="script.js"></script>
-    
-    <!-- Логика работы наведения и переключения зон -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const trigger = document.getElementById('zoneSelectTrigger');
-            const container = document.querySelector('.custom-select-container');
-            const options = document.querySelectorAll('.custom-option');
-
-                   const zoneElements = {
-            'chatArea': document.getElementById('chatArea') || document.querySelector('.chat-area') || document.querySelector('.chat-container'),
-            'channelsSidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar') || document.querySelector('.sidebar'),
-            'guildsSidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
-            'settingsSidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
-        };
-
-            // Функция для удаления подсветки со всех зон
-            function clearAllHighlights() {
-                Object.values(zoneElements).forEach(el => {
-                    if (el) el.classList.remove('zone-highlight');
-                });
-            }
-
-            // Открытие и закрытие выпадающего списка по клику
-            trigger.addEventListener('click', () => {
-                container.classList.toggle('open');
-            });
-
-            // Закрывать список, если кликнули мимо него
-            window.addEventListener('click', (e) => {
-                if (!container.contains(e.target)) {
-                    container.classList.remove('open');
-                }
-            });
-
-            // Отслеживаем действия на каждом пункте списка
-            options.forEach(option => {
-                // Выбор пункта кликом
-                option.addEventListener('click', () => {
-                    trigger.textContent = option.textContent;
-                    trigger.setAttribute('data-selected-value', option.getAttribute('data-value'));
-                    container.classList.remove('open');
-                });
-
-                // НАВЕДЕНИЕ МЫШКИ: сразу включаем белую рамку и черный туман на нужной зоне
-                option.addEventListener('mouseenter', () => {
-                    clearAllHighlights(); // Сначала гасим всё остальное
-                    const targetValue = option.getAttribute('data-value');
-                    const targetElement = zoneElements[targetValue];
-                    if (targetElement) {
-                        targetElement.classList.add('zone-highlight');
-                    }
-                });
-
-                // УВОД МЫШКИ: мгновенно убираем эффект тумана и рамку, как только курсор ушел с пункта
-                option.addEventListener('mouseleave', () => {
-                    clearAllHighlights();
-                });
-            });
-        });
-    <script src="script.js"></script>
 </body>
 </html>
+
                 
