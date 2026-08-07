@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
             --text-color: #f2f3f5;
             --text-muted: #949ba4;
             --accent-color: #5865f2;
-            --border-color: #1f2023; /* Цвет разделительных полос */
+            --border-color: #1f2023;
         }
         * {
             box-sizing: border-box;
@@ -29,7 +29,6 @@
             color: var(--text-color);
             overflow: hidden;
         }
-        /* Левая панель серверов */
         .guilds-sidebar {
             width: 72px;
             background-color: var(--bg-channels);
@@ -38,7 +37,7 @@
             align-items: center;
             padding-top: 12px;
             gap: 8px;
-            border-right: 1px solid var(--border-color); /* Полоска-граница */
+            border-right: 1px solid var(--border-color);
         }
         .guild-icon {
             width: 48px;
@@ -57,7 +56,6 @@
             border-radius: 16px;
             background-color: var(--accent-color);
         }
-        /* Панель каналов */
         .channels-sidebar {
             width: 240px;
             background-color: var(--bg-sidebar);
@@ -65,7 +63,7 @@
             flex-direction: column;
             padding: 12px;
             gap: 2px;
-            border-right: 1px solid var(--border-color); /* Полоска-граница */
+            border-right: 1px solid var(--border-color);
         }
         .sidebar-header {
             font-size: 12px;
@@ -99,7 +97,6 @@
             font-size: 14px;
             font-weight: bold;
         }
-        /* Центральный чат */
         .chat-area {
             flex: 1;
             display: flex;
@@ -109,7 +106,7 @@
         }
         .chat-header {
             height: 48px;
-            border-bottom: 1px solid var(--border-color); /* Полоска-граница */
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             padding: 0 16px;
@@ -228,11 +225,10 @@
             height: 24px;
             fill: currentColor;
         }
-        /* Правая панель настроек */
         .settings-sidebar {
             width: 220px;
             background-color: var(--bg-sidebar);
-            border-left: 1px solid var(--border-color); /* Полоска-граница */
+            border-left: 1px solid var(--border-color);
             padding: 16px;
             display: flex;
             flex-direction: column;
@@ -301,21 +297,21 @@
         <div class="guild-icon active">DM</div>
     </div>
     <div class="channels-sidebar" id="channelsSidebar">
-        <div class="sidebar-header">Каналы</div>
+        <div class="sidebar-header">CHANNELS</div>
         <div class="user-item active">
             <div class="user-avatar" style="background-color: #5865f2;">#</div>
-            <span>общий-чат</span>
+            <span>general-chat</span>
         </div>
     </div>
     <div class="chat-area" id="chatArea">
         <div class="chat-header">
-            <span># общий-чат</span>
+            <span># general-chat</span>
         </div>
         <div class="messages-container" id="messagesContainer"></div>
         <div class="input-area">
             <div class="input-wrapper">
-                <input type="text" class="message-input" id="messageInput" placeholder="Напишите в общий-чат..." autocomplete="off">
-                <button class="send-btn" id="sendBtn" title="Отправить">
+                <input type="text" class="message-input" id="messageInput" placeholder="Send a message..." autocomplete="off">
+                <button class="send-btn" id="sendBtn" title="Send">
                     <svg viewBox="0 0 24 24">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                     </svg>
@@ -324,3 +320,19 @@
         </div>
     </div>
     <div class="settings-sidebar" id="settingsSidebar">
+        <div class="settings-title">SELECT ZONE</div>
+        <select class="zone-select" id="zoneSelect">
+            <option value="chatArea">Central Chat</option>
+            <option value="channelsSidebar">Channels Sidebar</option>
+            <option value="guildsSidebar">Left Guilds Sidebar</option>
+            <option value="settingsSidebar">Right Settings Sidebar</option>
+        </select>
+        <div class="color-picker-wrapper">
+            <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
+            <div class="color-picker-circle" id="colorPreviewCircle"></div>
+        </div>
+        <button class="apply-btn" id="applyColorBtn">APPLY</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
