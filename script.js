@@ -1,4 +1,3 @@
-
 const scriptApp = document.createElement('script');
 scriptApp.src = "https://gstatic.com";
 document.head.appendChild(scriptApp);
@@ -10,7 +9,7 @@ document.head.appendChild(scriptDb);
 scriptDb.onload = function() {
     const firebaseConfig = {
         apiKey: "AIzaSyAY20LAIcpbkR6r4HUjCVctcWYfnDC4svw",
-        authDomain: "://firebaseapp.com",
+        authDomain: "ds-chat78.firebaseapp.com",
         projectId: "ds-chat78",
         storageBucket: "ds-chat78.firebasestorage.app",
         messagingSenderId: "1084561649631",
