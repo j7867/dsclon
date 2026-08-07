@@ -339,20 +339,155 @@
             </div>
         </div>
     </div>
-    <div class="settings-sidebar" id="settingsSidebar">
+        <div class="settings-sidebar" id="settingsSidebar">
         <div class="settings-title">SELECT ZONE</div>
-        <select class="zone-select" id="zoneSelect">
-            <option value="chatArea">Central Chat</option>
-            <option value="channelsSidebar">Channels Sidebar</option>
-            <option value="guildsSidebar">Left Guilds Sidebar</option>
-            <option value="settingsSidebar">Right Settings Sidebar</option>
-        </select>
+        
+        <!-- Кастомный выпадающий список, который умеет отслеживать наведение -->
+        <div class="custom-select-container">
+            <div class="custom-select-trigger" id="zoneSelectTrigger">Select a zone...</div>
+            <div class="custom-select-options" id="zoneSelectOptions">
+                <div class="custom-option" data-value="chatArea">Central Chat</div>
+                <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
+                <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
+                <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
+            </div>
+        </div>
+
         <div class="color-picker-wrapper">
-            <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
+            <input type="type" class="color-picker-input" id="customColorInput" value="#313338">
             <div class="color-picker-circle" id="colorPreviewCircle"></div>
         </div>
         <button class="apply-btn" id="applyColorBtn">APPLY</button>
     </div>
+
+    <!-- Новые стили для тумана, белой рамки и кастомного списка -->
+    <style>
+        /* Стили для эффекта черного тумана и белой рамки */
+        .zone-highlight {
+            position: relative;
+            outline: 2px solid #ffffff !important; /* Белая рамка */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Создаем черный полупрозрачный туман внутри зоны */
+        .zone-highlight::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Черный туман (0.6 - густота) */
+            z-index: 9999;
+            pointer-events: none; /* Чтобы туман не мешал кликать */
+        }
+
+        /* Оформление кастомного выпадающего списка */
+        .custom-select-container {
+            position: relative;
+            width: 90%;
+            margin: 10px auto;
+            font-family: sans-serif;
+            background: #1e1f22;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .custom-select-trigger {
+            padding: 10px;
+            color: #dbdee1;
+            border: 1px solid #4e5058;
+            border-radius: 4px;
+        }
+        .custom-select-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1e1f22;
+            border: 1px solid #4e5058;
+            border-top: none;
+            z-index: 1000;
+            border-radius: 0 0 4px 4px;
+        }
+        .custom-select-container.open .custom-select-options {
+            display: block;
+        }
+        .custom-option {
+            padding: 10px;
+            color: #dbdee1;
+            transition: background 0.2s;
+        }
+        .custom-option:hover {
+            background: #35373c; /* Подсветка самого пункта в списке при наведении */
+        }
+    </style>
+
+    <script src="script.js"></script>
+    
+    <!-- Логика работы наведения и переключения зон -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const trigger = document.getElementById('zoneSelectTrigger');
+            const container = document.querySelector('.custom-select-container');
+            const options = document.querySelectorAll('.custom-option');
+
+            // Карта элементов на странице для подсветки
+            const zoneElements = {
+                'chatArea': document.getElementById('chatArea'),
+                'channelsSidebar': document.getElementById('channelsSidebar'),
+                'guildsSidebar': document.getElementById('guildsSidebar'),
+                'settingsSidebar': document.getElementById('settingsSidebar')
+            };
+
+            // Функция для удаления подсветки со всех зон
+            function clearAllHighlights() {
+                Object.values(zoneElements).forEach(el => {
+                    if (el) el.classList.remove('zone-highlight');
+                });
+            }
+
+            // Открытие и закрытие выпадающего списка по клику
+            trigger.addEventListener('click', () => {
+                container.classList.toggle('open');
+            });
+
+            // Закрывать список, если кликнули мимо него
+            window.addEventListener('click', (e) => {
+                if (!container.contains(e.target)) {
+                    container.classList.remove('open');
+                }
+            });
+
+            // Отслеживаем действия на каждом пункте списка
+            options.forEach(option => {
+                // Выбор пункта кликом
+                option.addEventListener('click', () => {
+                    trigger.textContent = option.textContent;
+                    trigger.setAttribute('data-selected-value', option.getAttribute('data-value'));
+                    container.classList.remove('open');
+                });
+
+                // НАВЕДЕНИЕ МЫШКИ: сразу включаем белую рамку и черный туман на нужной зоне
+                option.addEventListener('mouseenter', () => {
+                    clearAllHighlights(); // Сначала гасим всё остальное
+                    const targetValue = option.getAttribute('data-value');
+                    const targetElement = zoneElements[targetValue];
+                    if (targetElement) {
+                        targetElement.classList.add('zone-highlight');
+                    }
+                });
+
+                // УВОД МЫШКИ: мгновенно убираем эффект тумана и рамку, как только курсор ушел с пункта
+                option.addEventListener('mouseleave', () => {
+                    clearAllHighlights();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
        <script src="script.js"></script>
     <script>
         // Код для подсветки выбранной зоны при клике на APPLY
