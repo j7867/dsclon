@@ -340,36 +340,109 @@
         </div>
     </div>
         <div class="settings-sidebar" id="settingsSidebar">
-        <div class="settings-title">SELECT ZONE</div>
-        
-        <!-- Кастомный выпадающий список, который умеет отслеживать наведение -->
-        <div class="custom-select-container">
-            <div class="custom-select-trigger" id="zoneSelectTrigger">Select a zone...</div>
-            <div class="custom-select-options" id="zoneSelectOptions">
-                <div class="custom-option" data-value="chatArea">Central Chat</div>
-                <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
-                <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
-                <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
-            </div>
-        </div>
-
-        <div class="color-picker-wrapper">
-            <input type="type" class="color-picker-input" id="customColorInput" value="#313338">
-            <div class="color-picker-circle" id="colorPreviewCircle"></div>
-        </div>
-                <button class="apply-btn" id="applyColorBtn">APPLY</button>
+  <!-- Кнопка вызова настроек (шестеренка или текст) -->
+  <button class="settings-trigger-btn" id="openSettingsBtn">⚙️ Настройки</button>
+<!-- Модальное окно настроек (HTML-разметка) -->
+<div class="settings-modal-overlay" id="settingsModalOverlay">
+  <div class="settings-modal-content">
+    <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
+    <h2 class="modal-title">Настройка зон</h2>
+    
+    <!-- Кастомный выпадающий список со стрелочкой -->
+    <div class="custom-select-container">
+      <div class="custom-select-trigger" id="zoneSelectTrigger">
+        Выберите зону <span class="select-arrow">▼</span>
+      </div>
+      <div class="custom-select-options" id="zoneSelectOptions">
+        <div class="custom-option" data-value="chatArea">Central Chat</div>
+        <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
+        <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
+        <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
+      </div>
     </div>
+
+    <!-- Блок выбора цвета -->
+    <div class="color-picker-wrapper">
+      <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
+      <div class="color-picker-circle" id="colorPreviewCircle"></div>
+    </div>
+
+    <button class="apply-btn" id="applyColorBtn">APPLY</button>
+  </div>
+</div>
+
+<!-- А вот теперь открываем тег СТИЛЕЙ для CSS кода -->
 <style>
-  /* Класс подсветки: неоновая рамка снаружи + глубокий туман изнутри */
+  /* Класс подсветки зон на сайте */
   .zone-highlight {
-    outline: 3px solid #ffffff !important; /* Яркая белая рамка */
-    box-shadow: 
-      0 0 15px #ffffff,                          /* Внешнее неоновое свечение */
-      0 0 30px rgba(255, 255, 255, 0.4),          /* Второе внешнее размытие */
-      inset 0 0 100px 30px rgba(0, 0, 0, 0.95),   /* Центр: глубокий черный туман */
-      inset 0 0 40px rgba(255, 255, 255, 0.6) !important; /* У краев: светлеющий туман */
+    outline: 3px solid #ffffff !important;
+    box-shadow: 0 0 15px #ffffff, 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important;
     transition: all 0.15s ease;
     z-index: 9999 !important;
+  }
+
+  /* Стили для самого всплывающего окна */
+  .settings-modal-content {
+    background-color: #313338 !important;
+    padding: 30px;
+    border-radius: 8px;
+    width: 340px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    transform: scale(0.7) translateY(-30px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .settings-modal-overlay.active .settings-modal-content {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-title {
+    color: #ffffff !important;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .custom-select-trigger {
+    background-color: #1e1f22 !important;
+    color: #dbdee1 !important;
+    padding: 12px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #111214;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #111214 !important;
+    border-radius: 4px;
+    margin-top: 4px;
+    display: none;
+    z-index: 10100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #232428;
+    overflow: hidden;
+  }
+
+  .custom-option {
+    padding: 10px 16px;
+    color: #b5bac1 !important;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .custom-option:hover {
+    background-color: #5865f2 !important;
+    color: #ffffff !important;
   }
 </style>
 
