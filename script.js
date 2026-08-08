@@ -52,7 +52,6 @@ if (options.length > 0) {
         option.addEventListener('mouseleave', () => {
             clearAllHighlights();
         });
-
         option.addEventListener('click', () => {
             activeZoneKey = option.getAttribute('data-value');
             const targetElement = zones[activeZoneKey];
@@ -75,31 +74,28 @@ if (options.length > 0) {
                 customColorInput.value = hexColor;
                 colorPreviewCircle.style.backgroundColor = hexColor;
             }
+              });
+    }
+
+    if (customColorInput && colorPreviewCircle) {
+        customColorInput.addEventListener('input', (e) => {
+            colorPreviewCircle.style.backgroundColor = e.target.value;
         });
-    });
-}
+    }
 
-if (customColorInput && colorPreviewCircle) {
-    customColorInput.addEventListener('input', (e) => {
-        colorPreviewCircle.style.backgroundColor = e.target.value;
-    });
-}
-
-if (applyColorBtn) {
+    if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
         if (activeZoneKey && zones[activeZoneKey]) {
             const selectedColor = customColorInput.value;
             zones[activeZoneKey].style.backgroundColor = selectedColor;
-            localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
-        } else {
-            alert('Сначала выберите зону из списка!');
+                    localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
+            alert('Цвет для зоны успешно применен и сохранен!');
         }
-    });
+    }
 }
 
 // Функция перевода цвета в HEX формат
 function rgbToHex(rgb) {
-    if (!rgb || rgb.startsWith('#')) return rgb || '#313338';
     const rgbValues = rgb.match(/\d+/g);
     if (!rgbValues) return '#313338';
     const r = parseInt(rgbValues[0]).toString(16).padStart(2, '0');
@@ -108,48 +104,6 @@ function rgbToHex(rgb) {
     return `#${r}${g}${b}`;
 }
 
-// ПЛАВНОЕ ОТКРЫТИЕ И ЗАКРЫТИЕ ОКНА НАСТРОЕК ПРЯМО ПОД ШЕСТЕРЁНКОЙ
-const gearBtn = document.getElementById('openSettingsBtn');
-const modalOverlay = document.getElementById('settingsModalOverlay');
-
-if (gearBtn && modalOverlay) {
-    gearBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        modalOverlay.classList.toggle('active');
-    });
-}
-
-const closeBtn = document.getElementById('closeSettingsBtn');
-const mainScreen = document.getElementById('mainSettingsScreen');
-const zoneScreen = document.getElementById('zoneSettingsScreen');
-
-if (closeBtn && modalOverlay && mainScreen && zoneScreen) {
-    closeBtn.addEventListener('click', () => {
-        zoneScreen.classList.remove('active-screen');
-        mainScreen.classList.add('active-screen');
-        modalOverlay.classList.remove('active');
-        clearAllHighlights();
-    });
-}
-
-// ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ЭКРАНОВ ВНУТРИ ОКНА НАСТРОЕК
-const goToZonesBtn = document.getElementById('goToZonesBtn');
-const backToMenuBtn = document.getElementById('backToMenuBtn');
-
-if (goToZonesBtn && mainScreen && zoneScreen) {
-    goToZonesBtn.addEventListener('click', () => {
-        mainScreen.classList.remove('active-screen');
-        zoneScreen.classList.add('active-screen');
-    });
-}
-
-if (backToMenuBtn && mainScreen && zoneScreen) {
-    backToMenuBtn.addEventListener('click', () => {
-        zoneScreen.classList.remove('active-screen');
-        mainScreen.classList.add('active-screen');
-        clearAllHighlights();
-    });
-}
 // ==========================================
 // ЛОГИКА РАБОТЫ ЧАТА (ОТПРАВКА И ПРОКРУТКА)
 // ==========================================
@@ -182,17 +136,63 @@ function handleSendMessage() {
     messageInput.focus();
 }
 
-// 1. Отправка по клику на галочку/кнопку
-if (sendBtn) {
+// Получаем элементы кнопок и экранов
+const goToZonesBtn = document.getElementById('goToZonesBtn');
+const backToMenuBtn = document.getElementById('backToMenuBtn');
+const mainSettingsScreen = document.getElementById('mainSettingsScreen');
+const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
+
+// Переход на Экран 2 (Настройка зон)
+goToZonesBtn.addEventListener('click', () => {
+    mainSettingsScreen.classList.remove('active-screen');
+    zoneSettingsScreen.classList.add('active-screen');
+});
+
+// Возврат на Экран 1 (Главное меню настроек)
+backToMenuBtn.addEventListener('click', () => {
+    zoneSettingsScreen.classList.remove('active-screen');
+    mainSettingsScreen.classList.add('active-screen');
+});
+const zoneSelectOptions = document.getElementById('zoneSelectOptions');
+if (zoneSelectTrigger && zoneSelectOptions) {
+    zoneSelectTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        zoneSelectOptions.classList.toggle('active');
+    });
+    document.addEventListener('click', () => {
+        zoneSelectOptions.classList.remove('active');
+    });
+// Логика кнопки ПРИМЕНИТЬ
+if (typeof applyColorBtn !== 'undefined' && applyColorBtn) {
+    applyColorBtn.addEventListener('click', () => {
+        if (!activeZoneKey) {
+            alert('Сначала выберите зону из списка!');
+            return;
+        }
+
+        const selectedColor = customColorInput.value;
+        const targetElement = zones[activeZoneKey];
+
+        if (targetElement) {
+            targetElement.style.backgroundColor = selectedColor;
+            localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
+            alert('Цвет для зоны успешно применен и сохранен!');
+        }
+    });
+}
+// Обработчик клика по кнопке "Отправить"
+if (typeof sendBtn !== 'undefined' && sendBtn) {
     sendBtn.addEventListener('click', handleSendMessage);
 }
 
-// 2. Отправка по нажатию на кнопку Enter на клавиатуре
-if (messageInput) {
+// Обработчик нажатия Enter в поле ввода
+if (typeof messageInput !== 'undefined' && messageInput) {
     messageInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Предотвращаем лишние переносы строк
+            e.preventDefault(); // Предотвращаем перенос строки
             handleSendMessage();
         }
     });
+}
+
 }
