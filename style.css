@@ -421,36 +421,51 @@ html, body {
 .back-menu-btn:hover { color: #ffffff; }
 .zone-highlight { outline: 3px solid #ffffff !important; box-shadow: 0 0 15px #ffffff, inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important; z-index: 9998 !important; }
 .modal-title { color: #ffffff !important; font-size: 16px; font-weight: 600; margin-bottom: 15px; }
-/* ВОЗВРАЩАЕМ СТИЛИ ТЕКСТА И ШРИФТЫ ДИСКОРДА */
-.sidebar-header {
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    padding-left: 8px;
-    letter-spacing: 0.5px;
+/* ОРИГИНАЛЬНЫЙ КРУГЛЫЙ ДИЗАЙН КНОПОК ИЗ DISCORD */
+.settings-gear-trigger, .notification-bell {
+    background-color: rgba(43, 45, 49, 0.7) !important; /* Полупрозрачный фон */
+    backdrop-filter: blur(4px) !important; /* Размытие заднего фона */
+    border: none !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important; /* ИДЕАЛЬНЫЙ КРУГ, КАК НА СКРИНЕ */
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: #b5bac1 !important;
+    transition: background-color 0.2s, color 0.2s, transform 0.15s !important;
 }
-.chat-header span {
-    color: #ffffff !important;
-    font-weight: bold;
-    font-size: 16px;
+
+/* Эффект при наведении */
+.settings-gear-trigger:hover, .notification-bell:hover {
+    background-color: #35373c !important;
+    color: #f2f3f5 !important;
 }
-.message-author {
-    font-weight: 600;
-    font-size: 14px;
-    color: #ffffff !important;
-    margin-right: 4px;
+
+/* Размеры иконок внутри круга */
+.settings-gear-trigger svg, .notification-bell svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: currentColor;
+    transition: transform 0.3s ease !important;
 }
-.user-item span {
-    font-size: 15px;
-    font-weight: 500;
-    color: #dbdee1;
+
+/* Вращение шестерёнки при наведении */
+.settings-gear-trigger:hover svg {
+    transform: rotate(90deg);
 }
-.user-item:hover span, .user-item.active span {
-    color: #ffffff !important;
+
+/* Корректируем отступы парящего окна под новые кнопки */
+.settings-sidebar {
+    top: 56px !important;
+    right: 16px !important;
 }
-.chat-area { flex: 1 !important; width: auto !important; }
+.notifications-dropdown {
+    top: 56px !important;
+    right: 60px !important;
+}
+
 /* ВЫРАВНИВАНИЕ ОКНА НАСТРОЕК ПОД ШЕСТЕРЕНКУ */
 .settings-sidebar {
     top: 64px !important;
