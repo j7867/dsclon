@@ -310,25 +310,14 @@
         outline: 3px solid #00ff00 !important;
         box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
         transition: outline 0.2s ease;
-    }
- </style>
-<body>
-   <div class="settings-sidebar" id="settingsSidebar">
-  <!-- Одноцветная серая шестерёнка в цвет фона с тенью -->
-  <button class="settings-gear-trigger" id="openSettingsBtn" title="Настройка зон">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M11.99 15c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm7.12-1.92c.04-.36.07-.73.07-1.11s-.03-.75-.07-1.11l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C13.54 2.11 13.3 2 13 2h-4c-.3 0-.54.11-.59.35L8.03 5c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.36-.07.74-.07 1.11s.03.75.07 1.11L2.08 14.8c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.05.24.29.35.59.35h4c.3 0 .54-.11.59-.35l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z" fill="currentColor"/>
-    </svg>
-  </button>
+  </style>
 
-  <!-- Окно настроек, которое теперь позиционируется строго под кнопкой -->
-  <div class="settings-dropdown-box" id="settingsModalOverlay">
-    <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
-        <!-- 1. Левая панель с серверами (DM) -->
+  <!-- 1. САМАЯ ЛЕВАЯ ПАНЕЛЬ С СЕРВЕРАМИ (Где кнопка DM) -->
+  <div class="guilds-sidebar" id="guildsSidebar">
     <div class="guild-icon active">DM</div>
   </div>
 
-  <!-- 2. Панель каналов -->
+  <!-- 2. ВТОРАЯ ПАНЕЛЬ С КАНАЛАМИ (# general-chat) -->
   <div class="channels-sidebar" id="channelsSidebar">
     <div class="sidebar-header">CHANNELS</div>
     <div class="user-item active">
@@ -337,7 +326,7 @@
     </div>
   </div>
 
-  <!-- 3. Центральная область чата -->
+  <!-- 3. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА (Где сообщения и ввод текста) -->
   <div class="chat-area" id="chatArea">
     <div class="chat-header">
       <span># general-chat</span>
@@ -355,7 +344,7 @@
     </div>
   </div>
 
-  <!-- 4. Исправленная правая панель: только одна шестерёнка -->
+  <!-- 4. САМАЯ ПРАВАЯ ПАНЕЛЬ С НАСТРОЙКАМИ (Где будет шестерёнка) -->
   <div class="settings-sidebar" id="settingsSidebar">
     <button class="settings-gear-trigger" id="openSettingsBtn" title="Настройка зон">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
@@ -364,7 +353,7 @@
     </button>
   </div>
 
-  <!-- ОКНО НАСТРОЕК ВЫНЕСЕНО НАРУЖУ: парит независимо поверх всех слоев сайта -->
+  <!-- ОКНО НАСТРОЕК (Парит поверх сайта и никуда не сдвигает сетку) -->
   <div class="settings-dropdown-box" id="settingsModalOverlay">
     <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
     <h2 class="modal-title">Настройка зон</h2>
@@ -389,9 +378,8 @@
     <button class="apply-btn" id="applyColorBtn">APPLY</button>
   </div>
 
-  <!-- СТИЛИ С ФИКСИРОВАННЫМ ПОЗИЦИОНИРОВАНИЕМ ОКНА -->
+  <!-- ОТДЕЛЬНЫЙ ТЕГ СТИЛЕЙ CSS ДЛЯ НАСТРОЕК -->
   <style>
-    /* Класс неоновой подсветки зон */
     .zone-highlight {
       outline: 3px solid #ffffff !important;
       box-shadow: 0 0 15px #ffffff, 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important;
@@ -399,7 +387,6 @@
       z-index: 9998 !important;
     }
 
-    /* Стили для кнопки-шестерёнки */
     .settings-gear-trigger {
       background: #2b2d31; 
       border: none;
@@ -433,12 +420,10 @@
         inset 3px 3px 6px rgba(255, 255, 255, 0.15);
     }
 
-    /* Вращение ровно на 75 градусов по часовой стрелке */
     .settings-gear-trigger:hover svg {
-      transform: rotate(75deg);
+      transform: rotate(75deg); /* Вращение на 75 градусов по часовой стрелке */
     }
 
-    /* ОКНО НАСТРОЕК: парит точно справа под шестерёнкой */
     .settings-dropdown-box {
       position: fixed;
       top: 70px; 
@@ -535,6 +520,7 @@
     }
   </style>
 
+  <!-- Подключение JS-файла -->
   <script src="script.js"></script>
 
 </body>
