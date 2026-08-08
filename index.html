@@ -395,6 +395,53 @@
 
   <!-- ОТДЕЛЬНЫЙ ТЕГ СТИЛЕЙ CSS ДЛЯ НАСТРОЕК -->
   <style>
+          /* Стили для управления экранами внутри мини-окна */
+    .modal-screen {
+      display: none; /* По умолчанию экраны скрыты */
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    /* Класс, который делает нужный экран видимым */
+    .modal-screen.active-screen {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Кнопка "Настройка зон" в главном меню */
+    .menu-nav-btn {
+      width: 100%;
+      background-color: #383a40;
+      color: #dbdee1;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .menu-nav-btn:hover {
+      background-color: #4e5058;
+      color: #ffffff;
+    }
+
+    /* Кнопка "Назад" во втором меню */
+    .back-menu-btn {
+      background: none;
+      border: none;
+      color: #b5bac1;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 5px;
+      transition: color 0.15s ease;
+    }
+    .back-menu-btn:hover {
+      color: #ffffff;
+    }
+
     .zone-highlight {
       outline: 3px solid #ffffff !important;
       box-shadow: 0 0 15px #ffffff, 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important;
