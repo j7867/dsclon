@@ -137,31 +137,19 @@ function handleSendMessage() {
 // Получаем элементы кнопок и экранов
 const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
-const mainSettingsScreen = document.getElementById('settingsMenu') || document.getElementById('mainSettingsScreen') || document.querySelector('.settings-menu');
-const zoneSettingsScreen = document.getElementById('zoneSettingsScreen') || document.querySelector('.zone-settings-screen');
-const settingsTrigger = document.getElementById('settingsTrigger') || document.querySelector('.settings-trigger') || document.getElementById('toggleSettingsBtn');
-if (mainSettingsScreen) {
-    mainSettingsScreen.classList.add('active-screen', 'active', 'show');
-    mainSettingsScreen.style.display = 'block'; 
-}
 
-// Переход на Экран 2 (Настройка зон)
-if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
-    goToZonesBtn.addEventListener('click', () => {
-        mainSettingsScreen.classList.remove('active-screen');
-        zoneSettingsScreen.classList.add('active-screen');
-    });
-}
+// Ваша реальная правая панель из HTML
+const settingsSidebar = document.getElementById('settingsSidebar');
 
-// Возврат на Экран 1 (Главное меню настроек)
-if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
-    backToMenuBtn.addEventListener('click', () => {
-        zoneSettingsScreen.classList.remove('active-screen');
-        mainSettingsScreen.classList.add('active-screen');
-    });
+// Принудительно показываем панель настроек, чтобы шестеренка и колокольчик вернулись
+if (settingsSidebar) {
+    settingsSidebar.style.display = 'flex'; // или 'block', в зависимости от вашей верстки
+    settingsSidebar.classList.add('active', 'show');
 }
 
 const zoneSelectOptions = document.getElementById('zoneSelectOptions');
+const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
+
 if (zoneSelectTrigger && zoneSelectOptions) {
     zoneSelectTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
