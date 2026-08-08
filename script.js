@@ -150,3 +150,49 @@ if (backToMenuBtn && mainScreen && zoneScreen) {
         clearAllHighlights();
     });
 }
+// ==========================================
+// ЛОГИКА РАБОТЫ ЧАТА (ОТПРАВКА И ПРОКРУТКА)
+// ==========================================
+
+// Функция добавления сообщения на экран и авто-прокрутки вниз
+function appendMessage(sender, text) {
+    if (!messagesContainer) return;
+    
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message-item';
+    messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    messagesContainer.appendChild(messageElement);
+    
+    // АВТО-ПРОКРУТКА ЧАТА ВНИЗ
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Функция самой отправки
+function handleSendMessage() {
+    if (!messageInput) return;
+    
+    const text = messageInput.value.trim();
+    if (text === '') return; // Пустые сообщения не отправляем
+    
+    // Отправляем сообщение от вашего никнейма
+    appendMessage(myName, text);
+    
+    // Очищаем поле ввода и возвращаем на него фокус
+    messageInput.value = '';
+    messageInput.focus();
+}
+
+// 1. Отправка по клику на галочку/кнопку
+if (sendBtn) {
+    sendBtn.addEventListener('click', handleSendMessage);
+}
+
+// 2. Отправка по нажатию на кнопку Enter на клавиатуре
+if (messageInput) {
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Предотвращаем лишние переносы строк
+            handleSendMessage();
+        }
+    });
+}
