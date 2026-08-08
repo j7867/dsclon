@@ -421,18 +421,21 @@
       visibility: visible;
       transform: translateY(0) scale(1);
     }
-
-          /* Стили для управления экранами внутри мини-окна */
+    /* Базовый класс для экранов: плавно скрываем и смещаем вправо */
     .modal-screen {
-      display: none; /* По умолчанию экраны скрыты */
+      display: none;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      height: 100%;
+      /* Начальный сдвиг вправо для эффекта въезда */
+      transform: translateX(15px);
+      transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease;
     }
 
-    /* Класс, который делает нужный экран видимым */
+    /* Когда экран активен — он встает ровно по центру и плавно проявляется */
     .modal-screen.active-screen {
       display: block;
       opacity: 1;
+      transform: translateX(0);
     }
 
     /* Кнопка "Настройка зон" в главном меню */
