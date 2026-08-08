@@ -17,9 +17,9 @@ let activeZoneKey = null;
 // Объект сайдбаров и чата
 const zones = {
     'chatArea': document.getElementById('messagesContainer') || document.querySelector('.messages-container') || document.querySelector('.chat-area'),
-    'channelsSidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar'),
-    'guildsSidebar': document.getElementById('guildsSidebar') || document.querySelector('.guilds-sidebar'),
-    'settingsSidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
+    'channelssidebar': document.getElementById('channelssidebar') || document.querySelector('.channels-sidebar'),
+    'guildsidebar': document.getElementById('guildsidebar') || document.querySelector('.guilds-sidebar'),
+    'settingssidebar': document.getElementById('settingssidebar') || document.querySelector('.settings-sidebar')
 };
 
 // Применяем сохраненные цвета
@@ -52,10 +52,11 @@ if (options.length > 0) {
         option.addEventListener('mouseleave', () => {
             clearAllHighlights();
         });
+
         option.addEventListener('click', () => {
             activeZoneKey = option.getAttribute('data-value');
             const targetElement = zones[activeZoneKey];
-            
+
             const selectContainer = option.closest('.custom-select-container');
             if (selectContainer) {
                 selectContainer.classList.add('hide-options');
@@ -63,17 +64,20 @@ if (options.length > 0) {
                     selectContainer.classList.remove('hide-options');
                 }, { once: true });
             }
-                 if (zoneSelectTrigger) {
-            zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
-        }
 
-                  if (targetElement && customColorInput && colorPreviewCircle) {
-            const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
-            const hexColor = rgbToHex(currentZoneBg);
-            customColorInput.value = hexColor;
-            colorPreviewCircle.style.backgroundColor = hexColor;
-        }  
-});
+            if (zoneSelectTrigger) {
+                zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
+            }
+
+            if (targetElement && customColorInput && colorPreviewCircle) {
+                const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
+                const hexColor = rgbToHex(currentZoneBg);
+                customColorInput.value = hexColor;
+                colorPreviewCircle.style.backgroundColor = hexColor;
+            }
+        });
+    });
+}
 
 if (customColorInput && colorPreviewCircle) {
     customColorInput.addEventListener('input', (e) => {
@@ -88,7 +92,7 @@ if (applyColorBtn) {
             zones[activeZoneKey].style.backgroundColor = selectedColor;
             localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
             alert('Цвет для зоны успешно применен и сохранен!');
-              }
+        }
     });
 }
 
@@ -102,19 +106,15 @@ function rgbToHex(rgb) {
     return `#${r}${g}${b}`;
 }
 
-// ==========================================
 // ЛОГИКА РАБОТЫ ЧАТА (ОТПРАВКА И ПРОКРУТКА)
-// ==========================================
-
-// Функция добавления сообщения на экран и авто-прокрутки вниз
 function appendMessage(sender, text) {
     if (!messagesContainer) return;
-    
+
     const messageElement = document.createElement('div');
     messageElement.className = 'message-item';
     messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
     messagesContainer.appendChild(messageElement);
-    
+
     // АВТО-ПРОКРУТКА ЧАТА ВНИЗ
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
@@ -122,13 +122,13 @@ function appendMessage(sender, text) {
 // Функция самой отправки
 function handleSendMessage() {
     if (!messageInput) return;
-    
+
     const text = messageInput.value.trim();
     if (text === '') return; // Пустые сообщения не отправляем
-    
+
     // Отправляем сообщение от вашего никнейма
     appendMessage(myName, text);
-    
+
     // Очищаем поле ввода и возвращаем на него фокус
     messageInput.value = '';
     messageInput.focus();
@@ -141,24 +141,33 @@ const mainSettingsScreen = document.getElementById('mainSettingsScreen');
 const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
 
 // Переход на Экран 2 (Настройка зон)
-goToZonesBtn.addEventListener('click', () => {
-    mainSettingsScreen.classList.remove('active-screen');
-    zoneSettingsScreen.classList.add('active-screen');
-});
+if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
+    goToZonesBtn.addEventListener('click', () => {
+        mainSettingsScreen.classList.remove('active-screen');
+        zoneSettingsScreen.classList.add('active-screen');
+    });
+}
 
 // Возврат на Экран 1 (Главное меню настроек)
-backToMenuBtn.addEventListener('click', () => {
-    zoneSettingsScreen.classList.remove('active-screen');
-    mainSettingsScreen.classList.add('active-screen');
+if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
+    backToMenuBtn.addEventListener('click', () => {
+        zoneSettingsScreen.classList.remove('active-screen');
+        mainSettingsScreen.classList.add('active-screen');
+    });
+}
+
 const zoneSelectOptions = document.getElementById('zoneSelectOptions');
 if (zoneSelectTrigger && zoneSelectOptions) {
     zoneSelectTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
         zoneSelectOptions.classList.toggle('active');
     });
+
     document.addEventListener('click', () => {
         zoneSelectOptions.classList.remove('active');
     });
+}
+
 // Логика кнопки ПРИМЕНИТЬ
 if (typeof applyColorBtn !== 'undefined' && applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
@@ -177,6 +186,7 @@ if (typeof applyColorBtn !== 'undefined' && applyColorBtn) {
         }
     });
 }
+
 // Обработчик клика по кнопке "Отправить"
 if (typeof sendBtn !== 'undefined' && sendBtn) {
     sendBtn.addEventListener('click', handleSendMessage);
@@ -187,10 +197,7 @@ if (typeof messageInput !== 'undefined' && messageInput) {
     messageInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault(); // Предотвращаем перенос строки
-                  handleSendMessage();
+            handleSendMessage();
         }
     });
 }
-});
-
-
