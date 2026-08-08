@@ -187,8 +187,10 @@ if (typeof messageInput !== 'undefined' && messageInput) {
     messageInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault(); // Предотвращаем перенос строки
-            handleSendMessage();
-          }
+                  handleSendMessage();
+        }
     });
 }
+});
+
 
