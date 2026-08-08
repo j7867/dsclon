@@ -111,14 +111,46 @@ function appendMessage(sender, text) {
     if (!messagesContainer) return;
 
     const messageElement = document.createElement('div');
-    messageElement.className = 'message-item';
-    messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    messageElement.className = 'message';
+    
+    messageElement.innerHTML = `
+        <div class="message-content">
+            <strong>${sender}:</strong> <span class="text-node">${text}</span>
+        </div>
+        <div class="message-actions">
+            <button class="action-btn edit-btn" title="Редактировать">✏️</button>
+            <button class="action-btn delete-btn" title="Удалить">🗑️</button>
+            <button class="action-btn arrow-btn" title="Еще">></button>
+        </div>
+            </div>
+    `;
+
     messagesContainer.appendChild(messageElement);
 
-    // АВТО-ПРОКРУТКА ЧАТА ВНИЗ
+    // // АВТО-ПРОКРУТКА ЧАТА ВНИЗ
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+} // Логика для кнопки-стрелочки внутри сообщения
+    const arrowBtn = messageElement.querySelector('.arrow-btn');
+    if (arrowBtn) {
+        arrowBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            arrowBtn.classList.toggle('open');
+            
+            let userMenu = messageElement.querySelector('.user-action-menu');
+            if (!userMenu) {
+                userMenu = document.createElement('div');
+                userMenu.className = 'user-action-menu';
+                userMenu.innerHTML = `
+                    <div class="menu-item add-friend">Добавить в друзья</div>
+                    <div class="menu-item send-dm">Написать в ЛС</div>
+                `;
+                messageElement.appendChild(userMenu);
+            }
+            userMenu.classList.toggle('visible');
+        });
+    }
 }
-
 // Функция самой отправки
 function handleSendMessage() {
     if (!messageInput) return;
