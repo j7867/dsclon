@@ -67,13 +67,14 @@ if (options.length > 0) {
             zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
         }
 
-        if (targetElement && customColorInput && colorPreviewCircle) {
+                  if (targetElement && customColorInput && colorPreviewCircle) {
             const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
             const hexColor = rgbToHex(currentZoneBg);
             customColorInput.value = hexColor;
-                    colorPreviewCircle.style.backgroundColor = hexColor;
-        }
-    });
+            colorPreviewCircle.style.backgroundColor = hexColor;
+        }  
+});
+
 if (customColorInput && colorPreviewCircle) {
     customColorInput.addEventListener('input', (e) => {
         colorPreviewCircle.style.backgroundColor = e.target.value;
@@ -186,8 +187,4 @@ if (typeof messageInput !== 'undefined' && messageInput) {
         if (e.key === 'Enter') {
             e.preventDefault(); // Предотвращаем перенос строки
             handleSendMessage();
-        }
-    });
-}
-}
-});
+    
