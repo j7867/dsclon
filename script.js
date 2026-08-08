@@ -56,28 +56,35 @@ if (options.length > 0) {
             clearAllHighlights();
         });
 
-        // КЛИК ПО ПУНКТУ: Выбираем зону, меняем текст в триггере и обновляем круг цветов!
+               // Клик по зоне: фиксируем её, обновляем круг и плавно закрываем список вариантов!
         option.addEventListener('click', () => {
             activeZoneKey = option.getAttribute('data-value');
             const targetElement = zones[activeZoneKey];
             
-            // Обновляем текст в шапке выпадающего списка
+            // МАГИЯ ЗАКРЫТИЯ: Находим контейнер списка и вешаем класс скрытия
+            const selectContainer = option.closest('.custom-select-container');
+            if (selectContainer) {
+                selectContainer.classList.add('hide-options');
+                
+                // Как только мышка полностью уйдёт с контейнера, снимаем класс скрытия, 
+                // чтобы при следующем наведении меню снова открывалось штатно!
+                selectContainer.addEventListener('mouseleave', () => {
+                    selectContainer.classList.remove('hide-options');
+                }, { once: true }); // once: true означает, что проверка сработает ровно 1 раз
+            }
+            
             if (zoneSelectTrigger) {
-                zoneSelectTrigger.textContent = option.textContent;
+                zoneSelectTrigger.innerHTML = `${option.textContent} <span class="select-arrow">▼</span>`;
             }
             
             if (targetElement && customColorInput && colorPreviewCircle) {
-                // Получаем текущий цвет фона элемента
                 const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
                 const hexColor = rgbToHex(currentZoneBg);
-                
-                // Синхронизируем инпут и цветной кружок
                 customColorInput.value = hexColor;
                 colorPreviewCircle.style.backgroundColor = hexColor;
             }
         });
-    });
-}
+
 
 // Обновление круга при ручном выборе цвета в пикере
 if (customColorInput && colorPreviewCircle) {
