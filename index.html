@@ -19,6 +19,8 @@
         .chat-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-main); position: relative; }
         .chat-header { height: 48px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 16px; font-weight: bold; font-size: 16px; }
         .messages-container { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+        
+        /* ПЛАВНАЯ ОБВОДКА СООБЩЕНИЯ */
         .message { display: flex; gap: 16px; animation: fadeIn 0.15s ease-out; position: relative; padding: 8px; border-radius: 4px; outline: 1px solid transparent; transition: background-color 0.2s ease, outline-color 0.2s ease; }
         .message:hover { background-color: rgba(0, 0, 0, 0.08); outline-color: rgba(255, 255, 255, 0.15); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -30,6 +32,8 @@
         .message-input::placeholder { color: var(--text-muted); }
         .send-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; transition: color 0.1s; }
         .send-btn:hover { color: #fff; } .send-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        
+        /* КНОПКИ НА СООБЩЕНИИ И ПОВОРОТ СТРЕЛКИ */
         .message-actions { opacity: 0; visibility: hidden; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background-color: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 5; height: 32px; display: flex; align-items: center; transition: opacity 0.2s ease, visibility 0.2s ease; }
         .message:hover .message-actions { opacity: 1; visibility: visible; }
         .action-btn { background: none; border: none; padding: 0 10px; height: 100%; cursor: pointer; color: var(--text-muted); font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
@@ -37,12 +41,16 @@
         .action-btn.delete-btn:hover { color: #f23f43; }
         .action-btn.arrow-btn { background: none !important; border: none !important; outline: none !important; box-shadow: none !important; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
         .action-btn.arrow-btn.open { transform: rotate(90deg); }
+        
+        /* СЕРОЕ МЕНЮ "ДОБАВИТЬ В ДРУЗЬЯ" */
         .user-action-menu { display: none; position: absolute; right: 16px; top: 36px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 4px; padding: 6px; z-index: 999; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
         .user-action-menu.visible { display: block; }
         .user-action-menu .menu-item { padding: 8px 14px; color: #b5bac1; cursor: pointer; font-size: 14px; border-radius: 4px; transition: all 0.15s; white-space: nowrap; }
         .user-action-menu .menu-item:hover { background-color: #4e5058; color: #ffffff; }
-        .settings-sidebar { background-color: #313338; padding: 16px; border-left: 1px solid var(--border-color); width: 240px; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; position: relative; }
-        .settings-header-container { display: flex; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+
+        /* НАСТРОЙКИ (ШИРИНА 390px) */
+        .settings-sidebar { background-color: #313338; padding: 16px; border-left: 1px solid var(--border-color); width: 390px !important; height: 100%; display: flex; flex-direction: column; gap: 16px; position: relative; }
+        .settings-header-container { display: flex; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 5px; height: 32px; }
         .modal-screen { position: absolute; width: calc(100% - 32px); opacity: 0; visibility: hidden; transform: translateX(15px); transition: all 0.25s ease; top: 60px; }
         .modal-screen.active-screen { opacity: 1; visibility: visible; transform: translateX(0); }
         .menu-nav-btn { width: 100%; background-color: #383a40; color: #dbdee1; border: none; padding: 10px 14px; border-radius: 4px; cursor: pointer; text-align: left; font-size: 14px; transition: all 0.15s; }
@@ -50,45 +58,34 @@
         .back-menu-btn { background: none; border: none; color: #b5bac1; font-size: 12px; cursor: pointer; margin-bottom: 5px; }
         .back-menu-btn:hover { color: #ffffff; }
         .zone-highlight { outline: 3px solid #ffffff !important; box-shadow: 0 0 15px #ffffff, inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important; z-index: 9998 !important; }
+        
+        /* ШЕСТЕРЁНКА И КОЛОКОЛЬЧИК В НАСТРОЙКАХ */
         .settings-gear-trigger { background: none; border: none; width: 32px; height: 32px; cursor: pointer; display: flex; justify-content: center; align-items: center; color: #b5bac1; transition: color 0.2s ease; }
         .settings-gear-trigger svg { width: 20px; height: 20px; transition: transform 0.35s ease; }
         .settings-gear-trigger:hover { color: #ffffff; }
         .settings-gear-trigger:hover svg { transform: rotate(75deg); }
         .modal-title { color: #ffffff !important; font-size: 16px; font-weight: 600; margin: 0; }
-        .custom-select-container { position: relative; margin-bottom: 20px; width: 100%; }
-        .custom-select-trigger { background-color: #1e1f22 !important; color: #dbdee1 !important; padding: 12px 16px; border-radius: 4px; cursor: pointer; border: 1px solid #111214; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
-        .custom-select-options { position: absolute; top: 100% !important; left: 0; right: 0; background-color: #111214 !important; border-radius: 4px; margin-top: 5px !important; opacity: 0; visibility: hidden; z-index: 10100; border: 1px solid #232428; overflow: hidden; transform: translateY(-8px); transition: all 0.25s ease; }
-        .custom-select-container:hover .custom-select-options { opacity: 1 !important; visibility: visible !important; transform: translateY(0); }
-        .custom-select-container.hide-options .custom-select-options { opacity: 0 !important; visibility: hidden !important; transform: translateY(-8px) !important; }
-        .custom-option { padding: 10px 16px; color: #b5bac1 !important; font-size: 14px; cursor: pointer; }
-        .custom-option:hover { background-color: #5865f2 !important; color: #ffffff !important; }
-        .color-picker-wrapper { position: relative; width: 48px; height: 48px; cursor: pointer; margin: 15px auto 0 auto; display: block; }
-        .color-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-        .color-picker-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background-color: #313338; transition: transform 0.2s; }
-        .color-picker-wrapper:hover .color-picker-circle { transform: scale(1.08); }
-                /* Возвращаем ширину настроек 390px */
-        .settings-sidebar { width: 390px !important; }
-        .modal-screen { width: calc(100% - 32px); }
-
-        /* Иконка колокольчика в шапке чата */
-        .chat-header { justify-content: space-between; }
-        .header-left { display: flex; align-items: center; gap: 8px; }
+        
         .notification-bell { background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; position: relative; padding: 4px; transition: color 0.2s; }
         .notification-bell:hover { color: #fff; }
         .bell-badge { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background-color: #f23f43; border-radius: 50%; display: none; }
         .bell-badge.active { display: block; }
 
-        /* Всплывающее меню уведомлений под колокольчиком */
-        .notifications-dropdown { display: none; position: absolute; top: 42px; right: 16px; background-color: #111214; border: 1px solid var(--border-color); border-radius: 8px; width: 320px; max-height: 400px; overflow-y: auto; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 8px; }
+        /* ОКНО УВЕДОМЛЕНИЙ */
+        .notifications-dropdown { display: none; position: absolute; background-color: #111214; border: 1px solid var(--border-color); border-radius: 8px; width: 320px; max-height: 400px; overflow-y: auto; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 8px; }
         .notifications-dropdown.visible { display: block; }
-        .notification-item { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 4px; background-color: var(--bg-sidebar); margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.03); font-size: 14px; }
-        .notification-item:last-child { margin-bottom: 0; }
-        .notification-item .notif-title { font-weight: bold; font-size: 13px; text-transform: uppercase; color: var(--text-muted); }
+        .notification-item { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 4px; background-color: var(--bg-sidebar); margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.03); font-size: 14px; text-align: left; }
+        .notification-item .notif-title { font-weight: bold; font-size: 12px; text-transform: uppercase; color: var(--text-muted); }
         .notification-item .notif-text { color: #dbdee1; line-height: 1.4; }
         .notif-empty { color: var(--text-muted); text-align: center; padding: 20px; font-size: 14px; }
-    </style>
-</head>
-<body>
+
+        .custom-select-container { position: relative; margin-bottom: 20px; width: 100%; }
+        .custom-select-trigger { background-color: #1e1f22 !important; color: #dbdee1 !important; padding: 12px 16px; border-radius: 4px; cursor: pointer; border: 1px solid #111214; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .custom-select-options { position: absolute; top: 100% !important; left: 0; right: 0; background-color: #111214 !important; border-radius: 4px; margin-top: 5px !important; opacity: 0; visibility: hidden; z-index: 10100; border: 1px solid #232428; overflow: hidden; transform: translateY(-8px); transition: all 0.25s ease; }
+        .custom-select-container:hover .custom-select-options { opacity: 1 !important; visibility: visible !important; transform: translateY(0); }
+        .custom-select-container.hide-options .custom-select-options { opacity: 0 !important; visibility: hidden !important; transform: translateY(-8px) !important; }
+.custom-option { padding: 10px 16px; color: #b5bac1 !important; font-size: 14px; cursor: pointer; }.custom-option:hover { background-color: #5865f2 !important; color: #ffffff !important; }.color-picker-wrapper { position: relative; width: 48px; height: 48px; cursor: pointer; margin: 15px auto 0 auto; display: block; }.color-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }.color-picker-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background-color: #313338; transition: transform 0.2s; }.color-picker-wrapper:hover .color-picker-circle { transform: scale(1.08); }
+        <body>
 
   <div class="guilds-sidebar" id="guildsSidebar">
     <div class="guild-icon active">DM</div>
@@ -118,9 +115,27 @@
   <div class="settings-sidebar" id="settingsSidebar">
     <div class="settings-header-container">
         <h2 class="modal-title">Настройки</h2>
-        <button class="settings-gear-trigger" id="settingTrigger" title="Настройки">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
-        </button>
+        <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+            <!-- Колокольчик сидит на панели вверху слева от шестеренки -->
+            <button class="notification-bell" id="notificationBell" title="Уведомления">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1-1.5-1s-1.5.17-1.5 1v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+                <div class="bell-badge" id="bellBadge"></div>
+            </button>
+            
+            <button class="settings-gear-trigger" id="settingTrigger" title="Настройки">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                </svg>
+            </button>
+
+            <!-- Серое выпадающее меню уведомлений -->
+            <div class="notifications-dropdown" id="notificationsDropdown" style="top: 36px; right: 0px;">
+                <div class="notif-empty" id="notifEmptyText">Уведомлений пока нет</div>
+                <div id="notifList"></div>
+            </div>
+        </div>
     </div>
 
     <div class="modal-screen active-screen" id="mainSettingsScreen">
@@ -149,20 +164,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-    <div class="chat-header">
-      <div class="header-left">
-        <span># general-chat</span>
-      </div>
-      <div style="position: relative;">
-        <button class="notification-bell" id="notificationBell" title="Уведомления">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1-1.5-1s-1.5.17-1.5 1v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-          </svg>
-          <div class="bell-badge" id="bellBadge"></div>
-        </button>
-        <div class="notifications-dropdown" id="notificationsDropdown">
-          <div class="notif-empty" id="notifEmptyText">Уведомлений пока нет</div>
-          <div id="notifList"></div>
-        </div>
-      </div>
-    </div>
