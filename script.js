@@ -146,9 +146,7 @@ if (settingsSidebar) {
     settingsSidebar.style.display = 'flex'; // или 'block', в зависимости от вашей верстки
     settingsSidebar.classList.add('active', 'show');
 }
-
 const zoneSelectOptions = document.getElementById('zoneSelectOptions');
-const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
 
 if (zoneSelectTrigger && zoneSelectOptions) {
     zoneSelectTrigger.addEventListener('click', (e) => {
