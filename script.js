@@ -137,8 +137,13 @@ function handleSendMessage() {
 // Получаем элементы кнопок и экранов
 const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
-const mainSettingsScreen = document.getElementById('mainSettingsScreen');
-const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
+const mainSettingsScreen = document.getElementById('settingsMenu') || document.getElementById('mainSettingsScreen') || document.querySelector('.settings-menu');
+const zoneSettingsScreen = document.getElementById('zoneSettingsScreen') || document.querySelector('.zone-settings-screen');
+const settingsTrigger = document.getElementById('settingsTrigger') || document.querySelector('.settings-trigger') || document.getElementById('toggleSettingsBtn');
+if (mainSettingsScreen) {
+    mainSettingsScreen.classList.add('active-screen', 'active', 'show');
+    mainSettingsScreen.style.display = 'block'; 
+}
 
 // Переход на Экран 2 (Настройка зон)
 if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
