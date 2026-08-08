@@ -128,3 +128,36 @@ if (closeBtn && modalOverlay) {
         clearAllHighlights();
     });
 }
+// ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ЭКРАНОВ ВНУТРИ ОКНА НАСТРОЕК
+const goToZonesBtn = document.getElementById('goToZonesBtn');
+const backToMenuBtn = document.getElementById('backToMenuBtn');
+const mainSettingsScreen = document.getElementById('mainSettingsScreen');
+const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
+
+// Переход на экран настройки зон
+if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
+    goToZonesBtn.addEventListener('click', () => {
+        mainSettingsScreen.classList.remove('active-screen');
+        zoneSettingsScreen.classList.add('active-screen');
+    });
+}
+
+// Возврат на главный экран настроек
+if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
+    backToMenuBtn.addEventListener('click', () => {
+        zoneSettingsScreen.classList.remove('active-screen');
+        mainSettingsScreen.classList.add('active-screen');
+        clearAllHighlights(); // Убираем подсветку зон при выходе
+    });
+}
+
+// Сброс на начальный экран при закрытии мини-окна через крестик
+const topCloseBtn = document.getElementById('closeSettingsBtn');
+if (topCloseBtn && mainSettingsScreen && zoneSettingsScreen) {
+    topCloseBtn.addEventListener('click', () => {
+        setTimeout(() => {
+            zoneSettingsScreen.classList.remove('active-screen');
+            mainSettingsScreen.classList.add('active-screen');
+        }, 300); // Сбрасываем экран после завершения плавной анимации закрытия
+    });
+}
