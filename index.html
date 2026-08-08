@@ -122,6 +122,50 @@
             flex-direction: column;
             gap: 16px;
         }
+                /* Прячем правую панель по умолчанию за край экрана */
+        .settings-sidebar {
+            position: fixed !important;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 390px !important;
+            transform: translateX(100%) !important; /* Улетает вправо */
+            transition: transform 0.25s ease-in-out !important;
+            z-index: 9999;
+        }
+
+        /* Когда JS добавляет класс active, панель плавно выезжает */
+        .settings-sidebar.active {
+            transform: translateX(0) !important;
+        }
+
+        /* Возвращаем оригинальный круглый дизайн кнопкам */
+        .settings-gear-trigger, .notification-bell {
+            background: #2b2d31 !important;
+            border: none !important;
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            color: #b5bac1 !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+            transition: color 0.2s, background-color 0.2s !important;
+        }
+
+        .settings-gear-trigger:hover, .notification-bell:hover {
+            color: #ffffff !important;
+            background-color: #313338 !important;
+        }
+
+        /* Сдвигаем меню уведомлений, чтобы оно не перекрывало кнопки */
+        .notifications-dropdown {
+            top: 50px !important;
+            right: 50px !important;
+        }
+
         .message {
             display: flex;
             gap: 16px;
