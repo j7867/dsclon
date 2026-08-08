@@ -139,14 +139,17 @@ const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
 
 // Ваша реальная правая панель из HTML
-const settingsSidebar = document.getElementById('settingsSidebar');
+const settingssidebar = document.getElementById('settingssidebar');
 
-// Принудительно показываем панель настроек, чтобы шестеренка и колокольчик вернулись
-if (settingsSidebar) {
-    settingsSidebar.style.display = 'flex'; // или 'block', в зависимости от вашей верстки
-    settingsSidebar.classList.add('active', 'show');
-}
 const zoneSelectOptions = document.getElementById('zoneSelectOptions');
+// Находим кнопку шестеренки (проверьте, чтобы класс или ID совпадал с вашим HTML)
+const settingsToggleBtn = document.getElementById('settingsTrigger') || document.querySelector('.settings-trigger') || document.querySelector('.fa-gear');
+
+    settingsToggleBtn.addEventListener('click', () => {
+        // Переключаем класс активности для боковой панели
+        settingsSidebar.classList.toggle('active');
+       });
+}
 
 if (zoneSelectTrigger && zoneSelectOptions) {
     zoneSelectTrigger.addEventListener('click', (e) => {
