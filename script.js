@@ -88,9 +88,10 @@ if (applyColorBtn) {
             zones[activeZoneKey].style.backgroundColor = selectedColor;
             localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
             alert('Цвет для зоны успешно применен и сохранен!');
-            }
+                    }
     });
 }
+});
 });
 
 // Функция перевода цвета в HEX формат
