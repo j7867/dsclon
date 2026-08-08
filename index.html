@@ -576,25 +576,39 @@
       justify-content: space-between;
       align-items: center;
     }
+.custom-select-options {
+    position: absolute;
+    top: 100% !important; 
+    left: 0;
+    right: 0;
+    background-color: #111214 !important;
+    border-radius: 4px;
+    margin-top: 5px !important;
+    
+    opacity: 0;
+    visibility: hidden;
+    z-index: 10100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #232428;
+    overflow: hidden;
 
-    .custom-select-options {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background-color: #111214 !important;
-      border-radius: 4px;
-      margin-top: 4px;
-      display: none;
-      z-index: 10100;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-      border: 1px solid #232428;
-      overflow: hidden;
-    }
+    /* НАЧАЛО АНИМАЦИИ: список изначально чуть приподнят вверх */
+    transform: translateY(-8px);
 
-    .custom-select-container:hover .custom-select-options {
-   display: block !important;
-    }
+    /* ПЛАВНОСТЬ: настраиваем мягкое скольжение и проявление вместе с задержкой ухода */
+    transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.25s ease;
+    transition-delay: 0.35s; 
+}
+
+/* ЭФФЕКТ НАВЕДЕНИЯ: Список ловит мышку мгновенно, плавно опускается на место и проявляется */
+.custom-select-container:hover .custom-select-options {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0); /* Плавно встает на свою позицию */
+    transition-delay: 0s !important; 
+}
+
+
 
     .custom-option {
       padding: 10px 16px;
