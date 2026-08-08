@@ -91,9 +91,6 @@ if (applyColorBtn) {
               }
     });
 }
-});
-});
-
 
 // Функция перевода цвета в HEX формат
 function rgbToHex(rgb) {
