@@ -352,25 +352,22 @@
       </svg>
     </button>
   </div>
-
-  <!-- ОКНО НАСТРОЕК (Парит поверх сайта и никуда не сдвигает сетку) -->
-    <!-- ОКНО НАСТРОЕК (Двухэкранное, парит независимо) -->
+  <!-- ОКНО НАСТРОЕК (Двухэкранное, парит независимо) -->
   <div class="settings-dropdown-box" id="settingsModalOverlay">
     <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
 
     <!-- ЭКРАН 1: Главное меню настроек -->
     <div class="modal-screen active-screen" id="mainSettingsScreen">
       <h2 class="modal-title">Настройки</h2>
-      <!-- Новая кнопка перехода к кастомизации -->
       <button class="menu-nav-btn" id="goToZonesBtn">Настройка зон</button>
     </div>
 
     <!-- ЭКРАН 2: Панель кастомизации (Изначально скрыта) -->
     <div class="modal-screen" id="zoneSettingsScreen">
-      <!-- Кнопка возврата на главный экран -->
       <button class="back-menu-btn" id="backToMenuBtn">← Назад</button>
-      <h2 class="modal-title" style="margin-top: 10px;">Настройка зон</h2>
+      <h2 class="modal-title" style="margin-top: 5px;">Настройка зон</h2>
       
+      <!-- 1. Выберите зону -->
       <div class="custom-select-container">
         <div class="custom-select-trigger" id="zoneSelectTrigger">
           Выберите зону <span class="select-arrow">▼</span>
@@ -383,18 +380,48 @@
         </div>
       </div>
 
+      <!-- 2. Круг с цветами ПОД выбором зоны -->
       <div class="color-picker-wrapper">
         <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
         <div class="color-picker-circle" id="colorPreviewCircle"></div>
       </div>
 
-      <button class="apply-btn" id="applyColorBtn">APPLY</button>
+      <!-- 3. Кнопка ПРИМЕНИТЬ в самом низу -->
+      <button class="apply-btn" id="applyColorBtn">ПРИМЕНИТЬ</button>
     </div>
   </div>
 
-
   <!-- ОТДЕЛЬНЫЙ ТЕГ СТИЛЕЙ CSS ДЛЯ НАСТРОЕК -->
   <style>
+          /* ОКНО НАСТРОЕК: Фиксируем размеры (300х250), чтобы оно не прыгало */
+    .settings-dropdown-box {
+      position: fixed;
+      top: 70px; 
+      right: 20px; 
+      background-color: #313338 !important;
+      padding: 20px;
+      border-radius: 8px;
+      
+      width: 300px !important;
+      height: 250px !important; 
+      box-sizing: border-box;
+      
+      z-index: 9999; 
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      border: 1px solid #232428;
+      
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-15px) scale(0.95);
+      transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .settings-dropdown-box.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
           /* Стили для управления экранами внутри мини-окна */
     .modal-screen {
       display: none; /* По умолчанию экраны скрыты */
