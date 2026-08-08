@@ -162,4 +162,5 @@ if (backToMenuBtn && mainScreen && zoneScreen) {
         mainScreen.classList.add('active-screen');
         clearAllHighlights(); // Убираем рамки подсветки зон при выходе
     });
-}
+};
+
