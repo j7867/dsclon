@@ -188,4 +188,4 @@ if (typeof messageInput !== 'undefined' && messageInput) {
         if (e.key === 'Enter') {
             e.preventDefault(); // Предотвращаем перенос строки
             handleSendMessage();
-    
+        }
