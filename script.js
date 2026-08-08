@@ -63,37 +63,33 @@ if (options.length > 0) {
                     selectContainer.classList.remove('hide-options');
                 }, { once: true });
             }
-            
-            if (zoneSelectTrigger) {
-                zoneSelectTrigger.innerHTML = `${option.textContent} <span class="select-arrow">▼</span>`;
-            }
-            
-            if (targetElement && customColorInput && colorPreviewCircle) {
-                const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
-                const hexColor = rgbToHex(currentZoneBg);
-                customColorInput.value = hexColor;
-                colorPreviewCircle.style.backgroundColor = hexColor;
-            }
-              });
-    }
+                 if (zoneSelectTrigger) {
+            zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
+        }
 
-    if (customColorInput && colorPreviewCircle) {
-        customColorInput.addEventListener('input', (e) => {
-            colorPreviewCircle.style.backgroundColor = e.target.value;
-        });
-    }
+        if (targetElement && customColorInput && colorPreviewCircle) {
+            const currentZoneBg = window.getComputedStyle(targetElement).backgroundColor;
+            const hexColor = rgbToHex(currentZoneBg);
+            customColorInput.value = hexColor;
+                    colorPreviewCircle.style.backgroundColor = hexColor;
+        }
+    });
+if (customColorInput && colorPreviewCircle) {
+    customColorInput.addEventListener('input', (e) => {
+        colorPreviewCircle.style.backgroundColor = e.target.value;
+    });
+}
 
-    if (applyColorBtn) {
+if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
         if (activeZoneKey && zones[activeZoneKey]) {
             const selectedColor = customColorInput.value;
             zones[activeZoneKey].style.backgroundColor = selectedColor;
-                    localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
+            localStorage.setItem('chat_bg_' + activeZoneKey, selectedColor);
             alert('Цвет для зоны успешно применен и сохранен!');
         }
-    }
+    });
 }
-
 // Функция перевода цвета в HEX формат
 function rgbToHex(rgb) {
     const rgbValues = rgb.match(/\d+/g);
