@@ -271,4 +271,4 @@ if (typeof messageInput !== 'undefined' && messageInput) {
             screen1.classList.add('active-screen');
         });
     }
-})();
+});
