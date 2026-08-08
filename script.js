@@ -189,3 +189,4 @@ if (typeof messageInput !== 'undefined' && messageInput) {
             e.preventDefault(); // Предотвращаем перенос строки
             handleSendMessage();
         }
+    });
