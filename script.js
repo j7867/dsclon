@@ -116,14 +116,15 @@ function rgbToHex(rgb) {
     const b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
     return `#${r}${g}${b}`;
 }
+
 // ПЛАВНОЕ ОТКРЫТИЕ И ЗАКРЫТИЕ ОКНА НАСТРОЕК ПРЯМО ПОД ШЕСТЕРЁНКОЙ
 const gearBtn = document.getElementById('openSettingsBtn');
 const modalOverlay = document.getElementById('settingsModalOverlay');
 
 if (gearBtn && modalOverlay) {
     gearBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Чтобы клик случайно не сбрасывался
-        modalOverlay.classList.toggle('active'); // toggle плавно откроет или закроет окно при повторном клике!
+        e.stopPropagation();
+        modalOverlay.classList.toggle('active');
     });
 }
 
@@ -133,11 +134,8 @@ const zoneScreen = document.getElementById('zoneSettingsScreen');
 
 if (closeBtn && modalOverlay && mainScreen && zoneScreen) {
     closeBtn.addEventListener('click', () => {
-        // 1. Плавный сброс экранов на первый при закрытии через крестик
         zoneScreen.classList.remove('active-screen');
         mainScreen.classList.add('active-screen');
-        
-        // 2. Полное закрытие самого окна и уборка подсветок
         modalOverlay.classList.remove('active');
         clearAllHighlights();
     });
@@ -147,7 +145,6 @@ if (closeBtn && modalOverlay && mainScreen && zoneScreen) {
 const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
 
-// Переход на экран настройки зон при клике на кнопку
 if (goToZonesBtn && mainScreen && zoneScreen) {
     goToZonesBtn.addEventListener('click', () => {
         mainScreen.classList.remove('active-screen');
@@ -155,12 +152,10 @@ if (goToZonesBtn && mainScreen && zoneScreen) {
     });
 }
 
-// Возврат на главный экран настроек при клике на кнопку Назад
 if (backToMenuBtn && mainScreen && zoneScreen) {
     backToMenuBtn.addEventListener('click', () => {
         zoneScreen.classList.remove('active-screen');
         mainScreen.classList.add('active-screen');
-        clearAllHighlights(); // Убираем рамки подсветки зон при выходе
+        clearAllHighlights();
     });
-};
-
+}
