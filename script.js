@@ -109,3 +109,22 @@ function rgbToHex(rgb) {
     const b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
     return `#${r}${g}${b}`;
 }
+// ПЛАВНОЕ ОТКРЫТИЕ И ЗАКРЫТИЕ ОКНА НАСТРОЕК ПРЯМО ПОД ШЕСТЕРЁНКОЙ
+const gearBtn = document.getElementById('openSettingsBtn');
+const modalOverlay = document.getElementById('settingsModalOverlay');
+
+if (gearBtn && modalOverlay) {
+    gearBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Чтобы клик случайно не сбрасывался
+        modalOverlay.classList.toggle('active'); // toggle плавно откроет или закроет окно при повторном клике!
+    });
+}
+
+// Закрытие окна при клике на крестик внутри него
+const closeBtn = document.getElementById('closeSettingsBtn');
+if (closeBtn && modalOverlay) {
+    closeBtn.addEventListener('click', () => {
+        modalOverlay.classList.remove('active');
+        clearAllHighlights();
+    });
+}
