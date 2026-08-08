@@ -267,6 +267,19 @@ html, body {
     transform: translateY(-15px) scale(0.95);
     transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
 }
+/* РАСКРЫВАЕМ ЧАТ НА ВСЮ ШИРИНУ ЭКРАНА */
+.chat-area {
+    flex: 1 !important;
+    width: auto !important;
+}
+
+/* ИСПРАВЛЕНИЕ СЛИПАНИЯ ЭКРАНОВ */
+.settings-sidebar .modal-screen {
+    display: none !important;
+}
+.settings-sidebar .modal-screen.active-screen {
+    display: block !important;
+}
 
 /* Плавное проявление при клике */
 .settings-sidebar.active {
