@@ -247,22 +247,44 @@ html, body {
 .user-action-menu .menu-item:hover { background-color: #4e5058; color: #ffffff; }
 
 /* ПАРЯЩЕЕ ОКНО НАСТРОЕК (ИЗ ТВОЕГО СКРИНА) */
+/* ПАРЯЩЕЕ ОКНО НАСТРОЕК (НЕ ПАНЕЛЬ) */
 .settings-sidebar {
     position: fixed !important;
     top: 70px;
     right: 20px;
     background-color: #313338 !important;
-    padding: 25px 20px 20px 20px;
+    padding: 20px;
     border-radius: 8px;
     width: 280px !important;
-    height: auto !important;
+    height: auto !important; /* Высота подстраивается под контент, а не на весь экран */
     z-index: 9999;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
     border: 1px solid #232428;
+    
+    /* Изначально скрыто */
     opacity: 0;
     visibility: hidden;
     transform: translateY(-15px) scale(0.95);
-    transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* Плавное проявление при клике */
+.settings-sidebar.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* Фиксируем размеры экранов внутри маленького окна */
+.settings-sidebar .modal-screen {
+    position: relative !important;
+    width: 100% !important;
+    display: none !important;
+}
+.settings-sidebar .modal-screen.active-screen {
+    display: block !important;
+}
+
 }
 .settings-sidebar.active {
     opacity: 1 !important;
@@ -413,3 +435,4 @@ html, body {
 .user-item:hover span, .user-item.active span {
     color: #ffffff !important;
 }
+.chat-area { flex: 1 !important; width: auto !important; }
