@@ -150,7 +150,7 @@ function appendMessage(sender, text) {
             userMenu.classList.toggle('visible');
         });
     }
-}
+
 // Функция самой отправки
 function handleSendMessage() {
     if (!messageInput) return;
