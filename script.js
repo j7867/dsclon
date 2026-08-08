@@ -195,3 +195,48 @@ if (typeof messageInput !== 'undefined' && messageInput) {
         }
     });
 }
+// ФИНАЛЬНЫЙ ИСПРАВЛЯЮЩИЙ СКРИПТ ДЛЯ ОТКРЫТИЯ НАСТРОЕК
+(function() {
+    // Находим панель и экраны по вашему HTML
+    const sidebar = document.getElementById('settingsSidebar');
+    const screen1 = document.getElementById('mainSettingsScreen');
+    const screen2 = document.getElementById('zoneSettingsScreen');
+    
+    // Автоматически находим кнопку шестерёнки на странице
+    const gearBtn = document.getElementById('settingsTrigger') || 
+                    document.querySelector('.settings-trigger') || 
+                    document.querySelector('.fa-gear') ||
+                    document.querySelector('[title="Настройки"]');
+
+    if (gearBtn && sidebar) {
+        // Вешаем железный клик на шестерёнку
+        gearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+            
+            // Сбрасываем меню на Экран 1 при каждом открытии
+            if (screen1 && screen2) {
+                screen1.classList.add('active-screen');
+                screen2.classList.remove('active-screen');
+            }
+        });
+    }
+
+    // Находим кнопки переключения экранов внутри самой панели
+    const toZones = document.getElementById('goToZonesBtn');
+    const toMenu = document.getElementById('backToMenuBtn');
+
+    if (toZones && screen1 && screen2) {
+        toZones.addEventListener('click', () => {
+            screen1.classList.remove('active-screen');
+            screen2.classList.add('active-screen');
+        });
+    }
+
+    if (toMenu && screen1 && screen2) {
+        toMenu.addEventListener('click', () => {
+            screen2.classList.remove('active-screen');
+            screen1.classList.add('active-screen');
+        });
+    }
+})();
