@@ -272,24 +272,8 @@ html, body {
     flex: 1 !important;
     width: auto !important;
 }
-
 /* ИСПРАВЛЕНИЕ СЛИПАНИЯ ЭКРАНОВ */
 .settings-sidebar .modal-screen {
-    display: none !important;
-}
-.settings-sidebar .modal-screen.active-screen {
-    display: block !important;
-}
-
-/* Плавное проявление при клике */
-.settings-sidebar.active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
-}
-
-/* Фиксируем размеры экранов внутри маленького окна */
-.settings-sidebar .modal-screen {
     position: relative !important;
     width: 100% !important;
     display: none !important;
@@ -298,59 +282,77 @@ html, body {
     display: block !important;
 }
 
-}
+/* ПЛАВНОЕ ПРОЯВЛЕНИЕ ОКНА НАСТРОЕК */
 .settings-sidebar.active {
     opacity: 1 !important;
     visibility: visible !important;
     transform: translateY(0) scale(1) !important;
 }
-.modal-screen {
-    position: relative !important;
-    width: 100% !important;
-    top: 0 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
+
+//* ОРИГИНАЛЬНЫЙ ДИЗАЙН КНОПОК DISCORD (КРУГЛЫЕ ПЛАШКИ ПОВЕРХ ЧАТА) */
+.settings-gear-trigger, .notification-bell {
+    position: fixed !important;
+    top: 16px;
+    background-color: rgba(43, 45, 49, 0.6) !important; /* Полупрозрачный фон */
+    backdrop-filter: blur(4px) !important; /* Размытие заднего плана */
+    border: none !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important; /* СУКА СТРОГО КРУГЛЫЕ, КАК НА СКРИНЕ */
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: #b5bac1 !important;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
 }
 
-/* КНОПКА ШЕСТЕРЕНКА */
+/* ШЕСТЕРЕНКА НА СВОЕМ МЕСТЕ */
 .settings-gear-trigger {
-    position: fixed !important;
-    top: 20px;
-    right: 20px;
-    background: #2b2d31 !important;
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 4px !important;
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    color: #b5bac1 !important;
-    z-index: 10000;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: color 0.2s, background-color 0.2s;
+    right: 16px !important;
 }
 
-/* КОЛОКОЛЬЧИК СЛЕВА ОТ ШЕСТЕРЕНКИ */
+/* КОЛОКОЛЬЧИК СЛЕВА ОТ НЕЕ */
 .notification-bell {
-    position: fixed !important;
-    top: 20px;
-    right: 64px;
-    background: #2b2d31 !important;
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 4px !important;
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    color: #b5bac1 !important;
-    z-index: 10000;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: color 0.2s, background-color 0.2s;
+    right: 60px !important; /* Идеальное расстояние, чтобы не слипались */
+}
+
+/* ЭФФЕКТЫ ПРИ НАВЕДЕНИИ НА КРУГЛЫЕ КНОПКИ */
+.settings-gear-trigger:hover, .notification-bell:hover {
+    color: #ffffff !important;
+    background-color: #313338 !important;
+    transform: scale(1.05); /* Легкое увеличение при ховере */
+}
+
+.settings-gear-trigger svg, .notification-bell svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: currentColor;
+}
+
+.settings-gear-trigger:hover svg {
+    transform: rotate(75deg); /* Вращение шестеренки */
+    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* КРАСНАЯ ТОЧКА УВЕДОМЛЕНИЙ НА КРУГЛОМ КОЛОКОЛЬЧИКЕ */
+.bell-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background-color: #f23f43;
+    border-radius: 50%;
+    display: none;
+    border: 2px solid #2b2d31;
+}
+.bell-badge.active {
+    display: block;
+}
+
 }
 .settings-gear-trigger:hover, .notification-bell:hover {
     color: #ffffff !important;
