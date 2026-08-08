@@ -12,10 +12,9 @@ const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
 const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
 
-// Переменная для хранения текущей выбранной зоны
 let activeZoneKey = null;
 
-// Объект зон (ключи теперь строго соответствуют вашим data-value в HTML!)
+// Объект сайдбаров и чата
 const zones = {
     'chatArea': document.getElementById('messagesContainer') || document.querySelector('.messages-container') || document.querySelector('.chat-area'),
     'channelsSidebar': document.getElementById('channelsSidebar') || document.querySelector('.channels-sidebar'),
@@ -23,7 +22,7 @@ const zones = {
     'settingsSidebar': document.getElementById('settingsSidebar') || document.querySelector('.settings-sidebar')
 };
 
-// Загрузка сохраненных цветов при старте страницы
+// Применяем сохраненные цвета
 Object.keys(zones).forEach(zoneKey => {
     const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
     if (savedColor && zones[zoneKey]) {
@@ -37,11 +36,10 @@ function clearAllHighlights() {
     });
 }
 
-// ЛОГИКА ДЛЯ КАСТОМНОГО СПИСКА (НАВЕДЕНИЕ И КЛИК)
+// НАВЕДЕНИЕ И ВЫБОР ВНУТРИ МОДАЛЬНОГО ОКНА
 const options = document.querySelectorAll('.custom-option');
 if (options.length > 0) {
     options.forEach(option => {
-        // Подсветка зоны при наведении курсора на пункт меню
         option.addEventListener('mouseenter', () => {
             clearAllHighlights();
             const targetValue = option.getAttribute('data-value');
@@ -51,26 +49,20 @@ if (options.length > 0) {
             }
         });
 
-        // Убираем подсветку при уходе мыши
         option.addEventListener('mouseleave', () => {
             clearAllHighlights();
         });
 
-               // Клик по зоне: фиксируем её, обновляем круг и плавно закрываем список вариантов!
         option.addEventListener('click', () => {
             activeZoneKey = option.getAttribute('data-value');
             const targetElement = zones[activeZoneKey];
             
-            // МАГИЯ ЗАКРЫТИЯ: Находим контейнер списка и вешаем класс скрытия
             const selectContainer = option.closest('.custom-select-container');
             if (selectContainer) {
                 selectContainer.classList.add('hide-options');
-                
-                // Как только мышка полностью уйдёт с контейнера, снимаем класс скрытия, 
-                // чтобы при следующем наведении меню снова открывалось штатно!
                 selectContainer.addEventListener('mouseleave', () => {
                     selectContainer.classList.remove('hide-options');
-                }, { once: true }); // once: true означает, что проверка сработает ровно 1 раз
+                }, { once: true });
             }
             
             if (zoneSelectTrigger) {
@@ -84,16 +76,15 @@ if (options.length > 0) {
                 colorPreviewCircle.style.backgroundColor = hexColor;
             }
         });
+    });
+}
 
-
-// Обновление круга при ручном выборе цвета в пикере
 if (customColorInput && colorPreviewCircle) {
     customColorInput.addEventListener('input', (e) => {
         colorPreviewCircle.style.backgroundColor = e.target.value;
     });
 }
 
-// Применение цвета по кнопке APPLY
 if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
         if (activeZoneKey && zones[activeZoneKey]) {
@@ -106,7 +97,7 @@ if (applyColorBtn) {
     });
 }
 
-// Функция перевода RGB в HEX формат
+// Функция перевода цвета в HEX формат
 function rgbToHex(rgb) {
     if (!rgb || rgb.startsWith('#')) return rgb || '#313338';
     const rgbValues = rgb.match(/\d+/g);
