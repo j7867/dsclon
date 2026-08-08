@@ -383,49 +383,45 @@
   <!-- ОТДЕЛЬНЫЙ ТЕГ СТИЛЕЙ CSS ДЛЯ НАСТРОЕК -->
   <style>
          /* ОКНО НАСТРОЕК: Фиксируем размеры (300х250), чтобы оно не прыгало */
-    .settings-sidebar {
-        position: fixed;
-        top: 70px;
-        right: 20px;
-        background-color: #313338 !important;
-      padding: 20px;
-      border-radius: 8px;
-      
-      width: 390px !important;
-     height: 550px !important; 
-      box-sizing: border-box;
-      
-      z-index: 9999; 
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-      border: 1px solid #232428;
-      
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-15px) scale(0.95);
-      transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
-    }
+   .settings-sidebar {
+    background-color: #313338;
+    padding: 20px;
+    border-radius: 8px;
+    width: 390px;
+    height: 100%; /* Чтобы панель была во всю высоту, а не фиксированным мелким окном */
+    box-sizing: border-box;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    border: 1px solid #232428;
+    
+    /* Оставляем твою плавную анимацию появления */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px) scale(0.95);
+    transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
+}
 
       .settings-sidebar.active {
         opacity: 1;
         visibility: visible;
         transform: translateY(0) scale(1);
     }
-    /* Базовый класс для экранов: плавно скрываем и смещаем вправо */
-    .modal-screen {
-      display: none;
-      opacity: 0;
-      height: 100%;
-      /* Начальный сдвиг вправо для эффекта въезда */
-      transform: translateX(15px);
-      transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease;
-    }
+   /* Базовый класс для экранов: плавно скрываем и смещаем вправо */
+.modal-screen {
+    position: absolute; /* Чтобы экраны не толкали друг друга вниз при смене */
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(15px);
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease, visibility 0.25s ease;
+}
 
-    /* Когда экран активен — он встает ровно по центру и плавно проявляется */
-    .modal-screen.active-screen {
-      display: block;
-      opacity: 1;
-      transform: translateX(0);
-    }
+/* Когда экран активен - он встает ровно по центру и плавно проявляется */
+.modal-screen.active-screen {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
 
     /* Кнопка "Настройка зон" в главном меню */
     .menu-nav-btn {
