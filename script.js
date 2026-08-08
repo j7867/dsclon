@@ -149,7 +149,6 @@ const settingsToggleBtn = document.getElementById('settingsTrigger') || document
         // Переключаем класс активности для боковой панели
         settingsSidebar.classList.toggle('active');
        });
-}
 
 if (zoneSelectTrigger && zoneSelectOptions) {
     zoneSelectTrigger.addEventListener('click', (e) => {
