@@ -120,11 +120,15 @@ if (gearBtn && modalOverlay) {
     });
 }
 
-if (closeBtn && modalOverlay && mainSettingsScreen && zoneSettingsScreen) {
+const closeBtn = document.getElementById('closeSettingsBtn');
+const mainScreen = document.getElementById('mainSettingsScreen');
+const zoneScreen = document.getElementById('zoneSettingsScreen');
+
+if (closeBtn && modalOverlay && mainScreen && zoneScreen) {
     closeBtn.addEventListener('click', () => {
-        // 1. Плавный сброс экранов на первый при закрытии
-        zoneSettingsScreen.classList.remove('active-screen');
-        mainSettingsScreen.classList.add('active-screen');
+        // 1. Плавный сброс экранов на первый при закрытии через крестик
+        zoneScreen.classList.remove('active-screen');
+        mainScreen.classList.add('active-screen');
         
         // 2. Полное закрытие самого окна и уборка подсветок
         modalOverlay.classList.remove('active');
@@ -135,29 +139,20 @@ if (closeBtn && modalOverlay && mainSettingsScreen && zoneSettingsScreen) {
 // ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ЭКРАНОВ ВНУТРИ ОКНА НАСТРОЕК
 const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
-const mainSettingsScreen = document.getElementById('mainSettingsScreen');
-const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
 
-// Переход на экран настройки зон
-if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
+// Переход на экран настройки зон при клике на кнопку
+if (goToZonesBtn && mainScreen && zoneScreen) {
     goToZonesBtn.addEventListener('click', () => {
-        mainSettingsScreen.classList.remove('active-screen');
-        zoneSettingsScreen.classList.add('active-screen');
+        mainScreen.classList.remove('active-screen');
+        zoneScreen.classList.add('active-screen');
     });
 }
 
-// Возврат на главный экран настроек
-if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
+// Возврат на главный экран настроек при клике на кнопку Назад
+if (backToMenuBtn && mainScreen && zoneScreen) {
     backToMenuBtn.addEventListener('click', () => {
-        zoneSettingsScreen.classList.remove('active-screen');
-        mainSettingsScreen.classList.add('active-screen');
-        clearAllHighlights(); // Убираем подсветку зон при выходе
-    });
-}
-
-if (closeBtn && modalOverlay) {
-    closeBtn.addEventListener('click', () => {
-        modalOverlay.classList.remove('active');
-        clearAllHighlights();
+        zoneScreen.classList.remove('active-screen');
+        mainScreen.classList.add('active-screen');
+        clearAllHighlights(); // Убираем рамки подсветки зон при выходе
     });
 }
