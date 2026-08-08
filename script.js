@@ -120,14 +120,18 @@ if (gearBtn && modalOverlay) {
     });
 }
 
-// Закрытие окна при клике на крестик внутри него
-const closeBtn = document.getElementById('closeSettingsBtn');
-if (closeBtn && modalOverlay) {
+if (closeBtn && modalOverlay && mainSettingsScreen && zoneSettingsScreen) {
     closeBtn.addEventListener('click', () => {
+        // 1. Плавный сброс экранов на первый при закрытии
+        zoneSettingsScreen.classList.remove('active-screen');
+        mainSettingsScreen.classList.add('active-screen');
+        
+        // 2. Полное закрытие самого окна и уборка подсветок
         modalOverlay.classList.remove('active');
         clearAllHighlights();
     });
 }
+
 // ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ЭКРАНОВ ВНУТРИ ОКНА НАСТРОЕК
 const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
@@ -151,13 +155,9 @@ if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
     });
 }
 
-// Сброс на начальный экран при закрытии мини-окна через крестик
-const topCloseBtn = document.getElementById('closeSettingsBtn');
-if (topCloseBtn && mainSettingsScreen && zoneSettingsScreen) {
-    topCloseBtn.addEventListener('click', () => {
-        setTimeout(() => {
-            zoneSettingsScreen.classList.remove('active-screen');
-            mainSettingsScreen.classList.add('active-screen');
-        }, 300); // Сбрасываем экран после завершения плавной анимации закрытия
+if (closeBtn && modalOverlay) {
+    closeBtn.addEventListener('click', () => {
+        modalOverlay.classList.remove('active');
+        clearAllHighlights();
     });
 }
