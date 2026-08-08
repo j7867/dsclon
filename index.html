@@ -313,7 +313,40 @@
     }
  </style>
 <body>
-    <div class="guilds-sidebar" id="guildsSidebar">
+   <div class="settings-sidebar" id="settingsSidebar">
+  <!-- Одноцветная серая шестерёнка в цвет фона с тенью -->
+  <button class="settings-gear-trigger" id="openSettingsBtn" title="Настройка зон">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M11.99 15c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm7.12-1.92c.04-.36.07-.73.07-1.11s-.03-.75-.07-1.11l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C13.54 2.11 13.3 2 13 2h-4c-.3 0-.54.11-.59.35L8.03 5c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.36-.07.74-.07 1.11s.03.75.07 1.11L2.08 14.8c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.05.24.29.35.59.35h4c.3 0 .54-.11.59-.35l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <!-- Окно настроек, которое теперь позиционируется строго под кнопкой -->
+  <div class="settings-dropdown-box" id="settingsModalOverlay">
+    <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
+    <h2 class="modal-title">Настройка зон</h2>
+    
+    <div class="custom-select-container">
+      <div class="custom-select-trigger" id="zoneSelectTrigger">
+        Выберите зону <span class="select-arrow">▼</span>
+      </div>
+      <div class="custom-select-options" id="zoneSelectOptions">
+        <div class="custom-option" data-value="chatArea">Central Chat</div>
+        <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
+        <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
+        <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
+      </div>
+    </div>
+
+    <div class="color-picker-wrapper">
+      <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
+      <div class="color-picker-circle" id="colorPreviewCircle"></div>
+    </div>
+
+    <button class="apply-btn" id="applyColorBtn">APPLY</button>
+  </div>
+</div>
+
         <div class="guild-icon active">DM</div>
     </div>
     <div class="channels-sidebar" id="channelsSidebar">
