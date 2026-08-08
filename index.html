@@ -324,55 +324,38 @@
   <!-- Окно настроек, которое теперь позиционируется строго под кнопкой -->
   <div class="settings-dropdown-box" id="settingsModalOverlay">
     <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
-    <h2 class="modal-title">Настройка зон</h2>
-    
-    <div class="custom-select-container">
-      <div class="custom-select-trigger" id="zoneSelectTrigger">
-        Выберите зону <span class="select-arrow">▼</span>
-      </div>
-      <div class="custom-select-options" id="zoneSelectOptions">
-        <div class="custom-option" data-value="chatArea">Central Chat</div>
-        <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
-        <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
-        <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
-      </div>
-    </div>
-
-    <div class="color-picker-wrapper">
-      <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
-      <div class="color-picker-circle" id="colorPreviewCircle"></div>
-    </div>
-
-    <button class="apply-btn" id="applyColorBtn">APPLY</button>
+        <!-- 1. Левая панель с серверами (DM) -->
+    <div class="guild-icon active">DM</div>
   </div>
-</div>
 
-        <div class="guild-icon active">DM</div>
+  <!-- 2. Панель каналов -->
+  <div class="channels-sidebar" id="channelsSidebar">
+    <div class="sidebar-header">CHANNELS</div>
+    <div class="user-item active">
+      <div class="user-avatar" style="background-color: #5865f2;">*</div>
+      <span>general-chat</span>
     </div>
-    <div class="channels-sidebar" id="channelsSidebar">
-        <div class="sidebar-header">CHANNELS</div>
-        <div class="user-item active">
-            <div class="user-avatar" style="background-color: #5865f2;">#</div>
-            <span>general-chat</span>
-        </div>
+  </div>
+
+  <!-- 3. Центральная область чата -->
+  <div class="chat-area" id="chatArea">
+    <div class="chat-header">
+      <span># general-chat</span>
     </div>
-    <div class="chat-area" id="chatArea">
-        <div class="chat-header">
-            <span># general-chat</span>
-        </div>
-        <div class="messages-container" id="messagesContainer"></div>
-        <div class="input-area">
-            <div class="input-wrapper">
-                <input type="text" class="message-input" id="messageInput" placeholder="Send a message..." autocomplete="off">
-                <button class="send-btn" id="sendBtn" title="Send">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
+    <div class="messages-container" id="messagesContainer"></div>
+    <div class="input-area">
+      <div class="input-wrapper">
+        <input type="text" class="message-input" id="messageInput" placeholder="Send a message..." autocomplete="off">
+        <button class="send-btn" id="sendBtn" title="Send">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </button>
+      </div>
     </div>
-        <!-- Исправленная правая панель: только ОДНА шестерёнка, без окон внутри -->
+  </div>
+
+  <!-- 4. Исправленная правая панель: только одна шестерёнка -->
   <div class="settings-sidebar" id="settingsSidebar">
     <button class="settings-gear-trigger" id="openSettingsBtn" title="Настройка зон">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
@@ -381,7 +364,7 @@
     </button>
   </div>
 
-  <!-- ОКНО НАСТРОЕК ВЫНЕСЕНО НАРУЖУ: оно парит поверх сайта и ничего не ломает -->
+  <!-- ОКНО НАСТРОЕК ВЫНЕСЕНО НАРУЖУ: парит независимо поверх всех слоев сайта -->
   <div class="settings-dropdown-box" id="settingsModalOverlay">
     <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
     <h2 class="modal-title">Настройка зон</h2>
@@ -406,7 +389,7 @@
     <button class="apply-btn" id="applyColorBtn">APPLY</button>
   </div>
 
-  <!-- СТИЛИ С ФИКСИРОВАННЫМ ПОЗИЦИОНИРОВАНИЕМ -->
+  <!-- СТИЛИ С ФИКСИРОВАННЫМ ПОЗИЦИОНИРОВАНИЕМ ОКНА -->
   <style>
     /* Класс неоновой подсветки зон */
     .zone-highlight {
@@ -455,27 +438,25 @@
       transform: rotate(75deg);
     }
 
-    /* ОКНО НАСТРОЕК: теперь оно привязано к экрану (fixed) и выплывает точно справа под шестерёнкой */
+    /* ОКНО НАСТРОЕК: парит точно справа под шестерёнкой */
     .settings-dropdown-box {
       position: fixed;
-      top: 70px; /* Строго под уровнем шестерёнки */
-      right: 20px; /* Прижато к правому краю сайта */
+      top: 70px; 
+      right: 20px; 
       background-color: #313338 !important;
       padding: 25px 20px 20px 20px;
       border-radius: 8px;
       width: 280px;
-      z-index: 9999; /* Поверх всех окон и панелей */
+      z-index: 9999; 
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
       border: 1px solid #232428;
       
-      /* Анимация плавного появления сверху вниз */
       opacity: 0;
       visibility: hidden;
       transform: translateY(-15px) scale(0.95);
       transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
     }
 
-    /* Активация окна */
     .settings-dropdown-box.active {
       opacity: 1;
       visibility: visible;
@@ -558,4 +539,3 @@
 
 </body>
 </html>
-
