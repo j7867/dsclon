@@ -451,3 +451,14 @@ html, body {
     color: #ffffff !important;
 }
 .chat-area { flex: 1 !important; width: auto !important; }
+/* ВЫРАВНИВАНИЕ ОКНА НАСТРОЕК ПОД ШЕСТЕРЕНКУ */
+.settings-sidebar {
+    top: 64px !important;
+    right: 16px !important;
+}
+
+/* ВЫРАВНИВАНИЕ МЕНЮ УВЕДОМЛЕНИЙ ПОД КОЛОКОЛЬЧИК */
+.notifications-dropdown {
+    top: 64px !important;
+    right: 60px !important;
+}
