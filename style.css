@@ -384,3 +384,32 @@ html, body {
 .back-menu-btn:hover { color: #ffffff; }
 .zone-highlight { outline: 3px solid #ffffff !important; box-shadow: 0 0 15px #ffffff, inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important; z-index: 9998 !important; }
 .modal-title { color: #ffffff !important; font-size: 16px; font-weight: 600; margin-bottom: 15px; }
+/* ВОЗВРАЩАЕМ СТИЛИ ТЕКСТА И ШРИФТЫ ДИСКОРДА */
+.sidebar-header {
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    padding-left: 8px;
+    letter-spacing: 0.5px;
+}
+.chat-header span {
+    color: #ffffff !important;
+    font-weight: bold;
+    font-size: 16px;
+}
+.message-author {
+    font-weight: 600;
+    font-size: 14px;
+    color: #ffffff !important;
+    margin-right: 4px;
+}
+.user-item span {
+    font-size: 15px;
+    font-weight: 500;
+    color: #dbdee1;
+}
+.user-item:hover span, .user-item.active span {
+    color: #ffffff !important;
+}
