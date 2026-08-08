@@ -610,8 +610,13 @@
     transform: translateY(0); /* Плавно встает на свою позицию */
     transition-delay: 0s !important; 
 }
-
-
+    /* Класс, который JavaScript будет вешать при клике, чтобы спрятать меню */
+    .custom-select-container.hide-options .custom-select-options {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      transform: translateY(-8px) !important;
+      transition-delay: 0s !important; /* Убираем задержку, чтобы скрывалось сразу */
+    }
 
     .custom-option {
       padding: 10px 16px;
