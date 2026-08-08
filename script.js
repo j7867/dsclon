@@ -148,7 +148,6 @@ goToZonesBtn.addEventListener('click', () => {
 backToMenuBtn.addEventListener('click', () => {
     zoneSettingsScreen.classList.remove('active-screen');
     mainSettingsScreen.classList.add('active-screen');
-});
 const zoneSelectOptions = document.getElementById('zoneSelectOptions');
 if (zoneSelectTrigger && zoneSelectOptions) {
     zoneSelectTrigger.addEventListener('click', (e) => {
