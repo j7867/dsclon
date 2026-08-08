@@ -131,6 +131,27 @@ function appendMessage(sender, text) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
     
 } // Логика для кнопки-стрелочки внутри сообщения
+    // ЛОГИКА РАБОТЫ ЧАТА (ОТПРАВКА И ПРОКРУТКА)
+function appendMessage(sender, text) {
+    if (!messagesContainer) return;
+
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message';
+    
+    messageElement.innerHTML = `
+        <div class="message-content">
+            <strong>${sender}:</strong> <span class="text-node">${text}</span>
+        </div>
+        <div class="message-actions">
+            <button class="action-btn edit-btn" title="Редактировать">✏️</button>
+            <button class="action-btn delete-btn" title="Удалить">🗑️</button>
+            <button class="action-btn arrow-btn" title="Еще">></button>
+        </div>
+    `;
+    
+    messagesContainer.appendChild(messageElement);
+
+    // Логика для кнопки-стрелочки внутри сообщения
     const arrowBtn = messageElement.querySelector('.arrow-btn');
     if (arrowBtn) {
         arrowBtn.addEventListener('click', (e) => {
@@ -151,7 +172,11 @@ function appendMessage(sender, text) {
         });
     }
 
-// Функция самой отправки
+    // АВТО-ПРОКРУТКА ЧАТА ВНИЗ
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// функция самой отправки
 function handleSendMessage() {
     if (!messageInput) return;
 
@@ -165,6 +190,7 @@ function handleSendMessage() {
     messageInput.value = '';
     messageInput.focus();
 }
+
 
 // Получаем элементы кнопок и экранов
 const goToZonesBtn = document.getElementById('goToZonesBtn');
@@ -271,4 +297,4 @@ if (typeof messageInput !== 'undefined' && messageInput) {
             screen1.classList.add('active-screen');
         });
     }
-});
+})();
