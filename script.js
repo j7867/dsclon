@@ -190,5 +190,3 @@ if (typeof messageInput !== 'undefined' && messageInput) {
         }
     });
 }
-
-}
