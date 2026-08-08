@@ -372,61 +372,51 @@
             </div>
         </div>
     </div>
-       <div class="settings-sidebar" id="settingsSidebar">
-    <!-- Кнопка-шестерёнка в цвет фона панели с тенью и бликом -->
+        <!-- Исправленная правая панель: только ОДНА шестерёнка, без окон внутри -->
+  <div class="settings-sidebar" id="settingsSidebar">
     <button class="settings-gear-trigger" id="openSettingsBtn" title="Настройка зон">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://w3.org">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M11.99 15c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm7.12-1.92c.04-.36.07-.73.07-1.11s-.03-.75-.07-1.11l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C13.54 2.11 13.3 2 13 2h-4c-.3 0-.54.11-.59.35L8.03 5c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.36-.07.74-.07 1.11s.03.75.07 1.11L2.08 14.8c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.05.24.29.35.59.35h4c.3 0 .54-.11.59-.35l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65z" fill="currentColor"/>
       </svg>
     </button>
-
-    <!-- Окно настроек, которое будет выплывать строго под шестерёнкой -->
-    <div class="settings-dropdown-box" id="settingsModalOverlay">
-      <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
-      <h2 class="modal-title">Настройка зон</h2>
-      
-      <div class="custom-select-container">
-        <div class="custom-select-trigger" id="zoneSelectTrigger">
-          Выберите зону <span class="select-arrow">▼</span>
-        </div>
-        <div class="custom-select-options" id="zoneSelectOptions">
-          <div class="custom-option" data-value="chatArea">Central Chat</div>
-          <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
-          <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
-          <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
-        </div>
-      </div>
-
-      <div class="color-picker-wrapper">
-        <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
-        <div class="color-picker-circle" id="colorPreviewCircle"></div>
-      </div>
-
-      <button class="apply-btn" id="applyColorBtn">APPLY</button>
-    </div>
   </div>
 
-  <!-- Открываем тег СТИЛЕЙ, куда складываем весь необходимый CSS-код -->
+  <!-- ОКНО НАСТРОЕК ВЫНЕСЕНО НАРУЖУ: оно парит поверх сайта и ничего не ломает -->
+  <div class="settings-dropdown-box" id="settingsModalOverlay">
+    <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
+    <h2 class="modal-title">Настройка зон</h2>
+    
+    <div class="custom-select-container">
+      <div class="custom-select-trigger" id="zoneSelectTrigger">
+        Выберите зону <span class="select-arrow">▼</span>
+      </div>
+      <div class="custom-select-options" id="zoneSelectOptions">
+        <div class="custom-option" data-value="chatArea">Central Chat</div>
+        <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
+        <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
+        <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
+      </div>
+    </div>
+
+    <div class="color-picker-wrapper">
+      <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
+      <div class="color-picker-circle" id="colorPreviewCircle"></div>
+    </div>
+
+    <button class="apply-btn" id="applyColorBtn">APPLY</button>
+  </div>
+
+  <!-- СТИЛИ С ФИКСИРОВАННЫМ ПОЗИЦИОНИРОВАНИЕМ -->
   <style>
-    /* Класс неоновой подсветки зон на сайте при наведении */
+    /* Класс неоновой подсветки зон */
     .zone-highlight {
       outline: 3px solid #ffffff !important;
       box-shadow: 0 0 15px #ffffff, 0 0 30px rgba(255, 255, 255, 0.4), inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important;
       transition: all 0.15s ease;
-      z-index: 9999 !important;
+      z-index: 9998 !important;
     }
 
-    /* Позиционирование правой панели */
-    .settings-sidebar {
-      position: relative;
-      background-color: #2b2d31;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 15px;
-    }
-
-    /* Кнопка-шестерёнка: в цвет фона панели с мягкой тенью и бликом */
+    /* Стили для кнопки-шестерёнки */
     .settings-gear-trigger {
       background: #2b2d31; 
       border: none;
@@ -438,31 +428,26 @@
       justify-content: center;
       align-items: center;
       color: #b5bac1;
-      position: relative;
-      
-      /* Мягкая внешняя тень за кнопкой + серо-белый внутренний блик сверху-слева */
+      margin: 15px auto;
       box-shadow: 
         0 4px 8px rgba(0, 0, 0, 0.3),
         inset 2px 2px 4px rgba(255, 255, 255, 0.08),
         inset -2px -2px 4px rgba(0, 0, 0, 0.2);
-      
       transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .settings-gear-trigger svg {
       width: 22px;
       height: 22px;
-      /* Плавное вращение по часовой стрелке */
       transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /* Поведение шестерёнки при наведении */
     .settings-gear-trigger:hover {
       color: #ffffff;
       background-color: #313338; 
       box-shadow: 
         0 6px 12px rgba(0, 0, 0, 0.4),
-        inset 3px 3px 6px rgba(255, 255, 255, 0.15); /* Усиливаем серо-белый блик сверху-слева */
+        inset 3px 3px 6px rgba(255, 255, 255, 0.15);
     }
 
     /* Вращение ровно на 75 градусов по часовой стрелке */
@@ -470,27 +455,27 @@
       transform: rotate(75deg);
     }
 
-    /* Окно настроек строго ПОД шестерёнкой */
+    /* ОКНО НАСТРОЕК: теперь оно привязано к экрану (fixed) и выплывает точно справа под шестерёнкой */
     .settings-dropdown-box {
-      position: absolute;
-      top: 65px; 
-      right: 15px; 
+      position: fixed;
+      top: 70px; /* Строго под уровнем шестерёнки */
+      right: 20px; /* Прижато к правому краю сайта */
       background-color: #313338 !important;
       padding: 25px 20px 20px 20px;
       border-radius: 8px;
       width: 280px;
-      z-index: 9999;
+      z-index: 9999; /* Поверх всех окон и панелей */
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
       border: 1px solid #232428;
       
-      /* Плавное выплывание сверху вниз */
+      /* Анимация плавного появления сверху вниз */
       opacity: 0;
       visibility: hidden;
       transform: translateY(-15px) scale(0.95);
       transition: transform 0.25s ease, opacity 0.25s ease, visibility 0.25s ease;
     }
 
-    /* Класс активации окна */
+    /* Активация окна */
     .settings-dropdown-box.active {
       opacity: 1;
       visibility: visible;
@@ -569,8 +554,8 @@
     }
   </style>
 
-  <!-- Подключаем внешний JavaScript-файл -->
   <script src="script.js"></script>
 
 </body>
 </html>
+
