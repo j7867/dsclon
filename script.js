@@ -81,7 +81,6 @@ if (messageInput) {
     });
 }
 
-// ОТКРЫТИЕ И ЗАКРЫТИЕ ПАРЯЩИХ ОКОН С ЗАЩИТОЙ ОТ КЛИКОВ
 if (settingTrigger && settingsSidebar) {
     settingTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -100,15 +99,12 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-// Защищаем само окно настроек от закрытия при кликах внутри него
 if (settingsSidebar) {
-    settingsSidebar.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
+    settingsSidebar.addEventListener('click', (e) => { e.stopPropagation(); });
 }
-// ==========================================
-// ЧАСТЬ 2: ЛОГИКА УВЕДОМЛЕНИЙ И КНОПОК ДРУЖБЫ
-// ==========================================
+if (notificationsDropdown) {
+    notificationsDropdown.addEventListener('click', (e) => { e.stopPropagation(); });
+}
 function addNotification(type, text) {
     if (!notifList || !bellBadge || !notifEmptyText) return;
     notificationsCount++;
@@ -144,7 +140,7 @@ function addNotification(type, text) {
             e.stopPropagation();
             contentWrapper.style.display = 'none';
             actionsWrapper.style.display = 'none';
-            notifItem.innerHTML = `<div class="notif-status-text accepted">✔️ Запрос в друзья принят</div>`;
+            notifItem.innerHTML = `<div class="notif-status-text accepted" style="color: #23a55a; font-size:13px; text-align:center; font-weight:500;">✔️ Запрос в друзья принят</div>`;
             setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
         });
 
@@ -152,7 +148,7 @@ function addNotification(type, text) {
             e.stopPropagation();
             contentWrapper.style.display = 'none';
             actionsWrapper.style.display = 'none';
-            notifItem.innerHTML = `<div class="notif-status-text declined">❌ Запрос в друзья отклонён</div>`;
+            notifItem.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500;">❌ Запрос в друзья отклонён</div>`;
             setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
         });
     }
@@ -166,20 +162,9 @@ function checkEmptyNotifications() {
     }
 }
 
-// Защищаем окно уведомлений от закрытия при кликах внутри него
-if (notificationsDropdown) {
-    notificationsDropdown.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-}
-
-
-// ==========================================
-// ЧАСТЬ 3: ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ И НАСТРОЙКА ЗОН
-// ==========================================
 if (goToZonesBtn) {
     goToZonesBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Идеальное переключение без закрытия меню!
+        e.stopPropagation();
         mainSettingsScreen.classList.remove('active-screen');
         zoneSettingsScreen.classList.add('active-screen');
     });
@@ -187,7 +172,7 @@ if (goToZonesBtn) {
 
 if (backToMenuBtn) {
     backToMenuBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Возврат без закрытия меню!
+        e.stopPropagation();
         zoneSettingsScreen.classList.remove('active-screen');
         mainSettingsScreen.classList.add('active-screen');
         if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
@@ -247,7 +232,7 @@ function rgbToHex(rgb) {
     let b = Math.max(0, Math.min(255, parseInt(rgbValues[2])));
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
-// КЛИК В ПУСТОТУ ЗАКРЫВАЕТ ВСЕ ОКНА
+
 document.addEventListener('click', () => {
     if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
     if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
@@ -256,7 +241,6 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
 });
 
-// ЗАГРУЗКА ЦВЕТОВ И СТАРТ ТАЙМЕРОВ УВЕДОМЛЕНИЙ
 window.addEventListener('DOMContentLoaded', () => {
     Object.keys(zones).forEach(zoneKey => {
         const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
@@ -266,4 +250,3 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
     setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
 });
-
