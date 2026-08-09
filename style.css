@@ -477,3 +477,57 @@ html, body {
     top: 64px !important;
     right: 60px !important;
 }
+/* КРУЧЕНИЕ КОЛОКОЛЬЧИКА ПРИ НАВЕДЕНИИ */
+.notification-bell:hover svg {
+    transform: rotate(20deg) !important;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+.notification-bell svg {
+    transition: transform 0.2s ease !important;
+}
+
+/* ЭФФЕКТЫ ДЛЯ ЗАЯВКИ В ДРУЗЬЯ (ГАЛОЧКА И КРЕСТИК) */
+.notif-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: flex-end;
+}
+
+.notif-action-btn {
+    background-color: rgba(43, 45, 49, 0.6) !important; /* Одноцветный полупрозрачный фон */
+    backdrop-filter: blur(5px) !important; /* Блюр на фоне */
+    border: none !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center;
+    font-size: 11px;
+    color: #b5bac1 !important; /* Одноцветные серые значки */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important; /* Мини тень */
+    
+    /* Плавное появление */
+    opacity: 0;
+    transform: scale(0.8);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Разная задержка для плавного поочередного появления */
+.notif-action-btn.accept-btn { animation-delay: 0.1s; }
+.notif-action-btn.decline-btn { animation-delay: 0.2s; }
+
+@keyframes popIn {
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Ховер эффекты (наведение) */
+.notif-action-btn:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+.notif-action-btn.accept-btn:hover { color: #23a55a !important; }
+.notif-action-btn.decline-btn:hover { color: #f23f43 !important; }
