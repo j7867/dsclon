@@ -178,7 +178,6 @@ function addNotification(type, text) {
     notifList.insertBefore(notifItem, notifList.firstChild);
 }
 
-
 function checkEmptyNotifications() {
     if (notifList && notifList.children.length === 0 && notifEmptyText) {
         notifEmptyText.style.display = 'block';
