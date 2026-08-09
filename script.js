@@ -99,12 +99,8 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-if (settingsSidebar) {
-    settingsSidebar.addEventListener('click', (e) => { e.stopPropagation(); });
-}
-if (notificationsDropdown) {
-    notificationsDropdown.addEventListener('click', (e) => { e.stopPropagation(); });
-}
+if (settingsSidebar) { settingsSidebar.addEventListener('click', (e) => { e.stopPropagation(); }); }
+if (notificationsDropdown) { notificationsDropdown.addEventListener('click', (e) => { e.stopPropagation(); }); }
 function addNotification(type, text) {
     if (!notifList || !bellBadge || !notifEmptyText) return;
     notificationsCount++;
@@ -113,7 +109,6 @@ function addNotification(type, text) {
 
     const notifItem = document.createElement('div');
     notifItem.className = 'notification-item';
-    
     let titleText = type === 'system' ? 'Системное обеспечение' : 'ЗАПРОС В ДРУЗЬЯ';
     
     let actionsHtml = type === 'friend' ? `
@@ -145,7 +140,6 @@ function addNotification(type, text) {
 
         declineBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            
             blurTarget.classList.add('blurred');
 
             const overlay = document.createElement('div');
