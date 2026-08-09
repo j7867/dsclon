@@ -80,8 +80,6 @@ if (messageInput) {
         if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); }
     });
 }
-
-// УПРАВЛЕНИЕ ОКНАМИ С УЧЕТОМ КЛАССОВ АНИМАЦИИ
 if (settingTrigger && settingsSidebar) {
     settingTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -100,7 +98,6 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-// УЛУЧШЕННАЯ ЛОГИКА УВЕДОМЛЕНИЙ С КНОПКАМИ И ПОДТВЕРЖДЕНИЕМ
 function addNotification(type, text) {
     if (!notifList || !bellBadge || !notifEmptyText) return;
     notificationsCount++;
@@ -111,7 +108,6 @@ function addNotification(type, text) {
     notifItem.className = 'notification-item';
     let titleText = type === 'system' ? 'Системное обновление' : 'Запрос в друзья';
     
-    // Если это запрос в друзья, создаем блок с кнопками галочки и крестика
     let actionsHtml = type === 'friend' ? `
         <div class="notif-actions">
             <button class="notif-action-btn accept-btn" title="Принять">✔️</button>
@@ -127,7 +123,6 @@ function addNotification(type, text) {
         ${actionsHtml}
     `;
     
-    // Вешаем обработчики на галочку и крестик, если это окно запроса дружбы
     if (type === 'friend') {
         const acceptBtn = notifItem.querySelector('.accept-btn');
         const declineBtn = notifItem.querySelector('.decline-btn');
@@ -136,7 +131,6 @@ function addNotification(type, text) {
 
         acceptBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            // В реальном времени заменяем тело уведомления на подтверждение
             contentWrapper.style.display = 'none';
             actionsWrapper.style.display = 'none';
             notifItem.innerHTML = `<div class="notif-status-text accepted">✔️ Запрос в друзья принят</div>`;
@@ -145,7 +139,6 @@ function addNotification(type, text) {
 
         declineBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            // В реальном времени заменяем тело уведомления на отказ
             contentWrapper.style.display = 'none';
             actionsWrapper.style.display = 'none';
             notifItem.innerHTML = `<div class="notif-status-text declined">❌ Запрос в друзья отклонён</div>`;
@@ -222,7 +215,7 @@ if (applyColorBtn) {
 function rgbToHex(rgb) {
     if (rgb.startsWith('#')) return rgb;
     let rgbValues = rgb.match(/\d+/g);
-    if (!rgbValues) return '#313338';
+    if (!rgbValues || rgbValues.length < 3) return '#313338';
     let r = parseInt(rgbValues[0]).toString(16).padStart(2, '0');
     let g = parseInt(rgbValues[1]).toString(16).padStart(2, '0');
     let b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
@@ -236,71 +229,13 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
 });
-// ТЕСТОВЫЕ УВЕДОМЛЕНИЯ ПРИ СТАРТЕ СТРАНИЦЫ
+
 window.addEventListener('DOMContentLoaded', () => {
     Object.keys(zones).forEach(zoneKey => {
         const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
         if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
     });
 
-    setTimeout(() => { addNotification('system', 'Обновите сайт для применения изменений.'); }, 2000);
+    setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
     setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
 });
-/* ПЛАВНАЯ АНИМАЦИЯ ДЛЯ ВЫПАДАЮЩИХ ОКОН */
-.settings-sidebar, .notifications-dropdown {
-    display: block !important;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px) scale(0.98);
-    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
-                opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
-                visibility 0.2s !important;
-}
-
-/* Классы активации для плавного проявления */
-.settings-sidebar.active, .notifications-dropdown.visible {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
-}
-
-/* КНОПКИ ДЕЙСТВИЯ В УВЕДОМЛЕНИИ */
-.notif-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-    justify-content: flex-end;
-}
-
-.notif-action-btn {
-    background-color: #2b2d31;
-    border: none;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease, background-color 0.2s !important;
-}
-
-/* Эффект кручения кнопок при наведении */
-.notif-action-btn:hover {
-    transform: rotate(360deg) scale(1.1);
-}
-.notif-action-btn.accept-btn:hover { background-color: #23a55a; }
-.notif-action-btn.decline-btn:hover { background-color: #f23f43; }
-
-/* Стиль для текста подтверждения запроса */
-.notif-status-text {
-    font-size: 13px;
-    font-weight: 500;
-    padding: 6px 0;
-    text-align: center;
-    animation: fadeIn 0.2s ease;
-}
-.notif-status-text.accepted { color: #23a55a; }
-.notif-status-text.declined { color: #f23f43; }
