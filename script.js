@@ -247,34 +247,3 @@ function rgbToHex(rgb) {
     return `#${r}${g}${b}`;
 }
 
-// КЛИК В ПУСТОТУ ЗАКРЫВАЕТ ВСЁ
-document.addEventListener('click', () => {
-    if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
-    if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
-    if (settingsSidebar) settingsSidebar.classList.remove('active');
-    document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
-    document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
-});
-
-// СТАРТ СТРАНИЦЫ И ТАЙМЕРЫ УВЕДОМЛЕНИЙ
-window.addEventListener('DOMContentLoaded', () => {
-    Object.keys(zones).forEach(zoneKey => {
-        const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
-        if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
-    });
-
-    setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
-    setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
-});
-/* ПЛАВНОЕ ВЫДЕЛЕНИЕ ЗОН ПРИ ВЫБОРЕ */
-.chat-area, .channels-sidebar, .guilds-sidebar {
-    transition: outline 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease !important;
-}
-
-/* КРАСИВЫЙ СТИЛЬ СВЕЧЕНИЯ ДЛЯ ВЫБРАННОЙ ЦЕНТРАЛЬНОЙ ПАНЕЛИ */
-.zone-highlight {
-    outline: 2px solid #ffffff !important;
-    outline-offset: -2px !important;
-    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2), 0 0 15px rgba(255, 255, 255, 0.3) !important;
-    z-index: 9998 !important;
-}
