@@ -656,15 +656,16 @@ html, body {
     }
 }
 
-/* 3. МИКРО-БЛЮР 0.5px И БОЛЕЕ ТЕМНЫЙ ЦВЕТ ЗАДНЕГО ФОНА */
+/* ПОЛНОСТЬЮ УБИРАЕМ ЦИФРОВОЙ БЛЮР И ДЕЛАЕМ МЯГКОЕ ЧЕРНО-СЕРОЕ ЗАТЕМНЕНИЕ */
 .notif-blur-target.blurred {
-    filter: blur(0.5px) !important; /* УМЕНЬШИЛИ БЛЮР ДО 0.5px */
-    opacity: 0.1 !important;
-    background-color: #1e1f22 !important;
+    filter: none !important; /* Нахрен блюр, он давал грязь */
+    opacity: 0.05 !important; /* Почти полностью гасим старый текст в ноль */
+    background-color: #111214 !important; /* Заливаем зону глубоким черно-серым цветом */
     border-radius: 4px;
 }
 
-/* Оверлей окна «Да/Нет» делаем еще темнее для контраста */
+/* ОКНО «ДА/НЕТ» ДЕЛАЕМ ПЛОТНЫМ ЧЕРНО-СЕРЫМ И МОНОЛИТНЫМ */
 .confirm-overlay {
-    background-color: rgba(30, 31, 34, 0.92) !important; /* Плотный темный графит */
+    background-color: #1e1f22 !important; /* Родной чистый черно-серый цвет Discord */
+    border-radius: 4px;
 }
