@@ -668,3 +668,15 @@ html, body {
     background-color: rgba(30, 31, 34, 0.93) !important; /* Плотный черно-серый матовый фон */
     border-radius: 4px;
 }
+/* ПЛАВНЫЙ ПОВОРОТ СТРЕЛОЧКИ ПРИ НАВЕДЕНИИ МЫШИ */
+.action-btn.arrow-btn:hover {
+    transform: rotate(90deg) !important;
+    color: #ffffff !important;
+}
+
+/* ЭФФЕКТ ПЛАВНОГО РАСТВОРЕНИЯ СООБЩЕНИЯ ПРИ УДАЛЕНИИ */
+.message.deleting {
+    opacity: 0 !important;
+    transform: translateX(20px) !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
