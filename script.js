@@ -113,7 +113,8 @@ function addNotification(type, text) {
 
     const notifItem = document.createElement('div');
     notifItem.className = 'notification-item';
-    let titleText = type === 'system' ? 'Системное обновление' : 'Запрос в друзья';
+    
+    let titleText = type === 'system' ? 'Системное обеспечение' : 'ЗАПРОС В ДРУЗЬЯ';
     
     let actionsHtml = type === 'friend' ? `
         <div class="notif-actions">
@@ -123,38 +124,60 @@ function addNotification(type, text) {
     ` : '';
 
     notifItem.innerHTML = `
-        <div class="notif-content-wrapper">
+        <div class="notif-blur-target">
             <div class="notif-title">${titleText}</div>
             <div class="notif-text">${text}</div>
+            ${actionsHtml}
         </div>
-        ${actionsHtml}
     `;
     
     if (type === 'friend') {
         const acceptBtn = notifItem.querySelector('.accept-btn');
         const declineBtn = notifItem.querySelector('.decline-btn');
-        const contentWrapper = notifItem.querySelector('.notif-content-wrapper');
-        const actionsWrapper = notifItem.querySelector('.notif-actions');
+        const blurTarget = notifItem.querySelector('.notif-blur-target');
 
         acceptBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            contentWrapper.style.display = 'none';
-            actionsWrapper.style.display = 'none';
-            notifItem.innerHTML = `<div class="notif-status-text accepted" style="color: #23a55a; font-size:13px; text-align:center; font-weight:500;">✔️ Запрос в друзья принят</div>`;
+            blurTarget.style.display = 'none';
+            notifItem.innerHTML = `<div class="notif-status-text accepted" style="color: #23a55a; font-size:13px; text-align:center; font-weight:500; padding: 10px 0;">✔️ Запрос в друзья принят</div>`;
             setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
         });
 
         declineBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            contentWrapper.style.display = 'none';
-            actionsWrapper.style.display = 'none';
-            notifItem.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500;">❌ Запрос в друзья отклонён</div>`;
-            setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+            
+            blurTarget.classList.add('blurred');
+
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            overlay.innerHTML = `
+                <div class="confirm-title">Вы точно хотите отклонить запрос в друзья?</div>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn yes-btn">Да</button>
+                    <button class="confirm-btn no-btn">Нет</button>
+                </div>
+            `;
+            notifItem.appendChild(overlay);
+
+            overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
+                eClick.stopPropagation();
+                overlay.remove();
+                blurTarget.style.display = 'none';
+                notifItem.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 10px 0;">❌ Запрос в друзья отклонён</div>`;
+                setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+            });
+
+            overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
+                eClick.stopPropagation();
+                overlay.remove();
+                blurTarget.classList.remove('blurred');
+            });
         });
     }
 
     notifList.insertBefore(notifItem, notifList.firstChild);
 }
+
 
 function checkEmptyNotifications() {
     if (notifList && notifList.children.length === 0 && notifEmptyText) {
