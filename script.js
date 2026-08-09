@@ -202,7 +202,9 @@ if (zoneSelectTrigger) {
     });
 }
 
+// ПОДДСВЕТКА ЗОН ПРИ НАВЕДЕНИИ И КЛИКЕ В МЕНЮ
 document.querySelectorAll('.custom-option').forEach(option => {
+    // 1. КЛИК ПО ПУНКТУ (ФИКСИРУЕТ ЗОНУ)
     option.addEventListener('click', (e) => {
         e.stopPropagation();
         if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
@@ -218,6 +220,23 @@ document.querySelectorAll('.custom-option').forEach(option => {
                 customColorInput.value = hex;
                 if (colorPreviewCircle) colorPreviewCircle.style.backgroundColor = hex;
             }
+        }
+    });
+
+    // 2. НАВЕДЕНИЕ МЫШКИ (ПЛАВНО ПОКАЗЫВАЕТ ЗОНУ)
+    option.addEventListener('mouseenter', () => {
+        const hoverZoneKey = option.getAttribute('data-value');
+        if (zones[hoverZoneKey]) {
+            zones[hoverZoneKey].classList.add('zone-highlight');
+        }
+    });
+
+    // 3. УВОД МЫШКИ (УБИРАЕТ ВРЕМЕННУЮ ПОДСВЕТКУ)
+    option.addEventListener('mouseleave', () => {
+        const hoverZoneKey = option.getAttribute('data-value');
+        // Убираем подсветку только если эта зона не является выбранной (активной) прямо сейчас
+        if (zones[hoverZoneKey] && hoverZoneKey !== activeZoneKey) {
+            zones[hoverZoneKey].classList.remove('zone-highlight');
         }
     });
 });
