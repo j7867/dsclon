@@ -622,27 +622,49 @@ html, body {
     color: #dbdee1;
 }
 .confirm-btn.no-btn:hover { background-color: #6d6f78; }
-//* ПЛАВНОЕ И МЯГКОЕ ОТКРЫТИЕ ОКНА УВЕДОМЛЕНИЙ И НАСТРОЕК */
-.settings-sidebar, .notifications-dropdown {
+/* 1. ПЛАВНОЕ ОТКРЫТИЕ ОКНА УВЕДОМЛЕНИЙ СВЕРХУ */
+.notifications-dropdown {
     display: block !important;
     opacity: 0;
     visibility: hidden;
-    /* Окно плавно опускается сверху (-12px) и слегка увеличивается (0.97) */
     transform: translateY(-12px) scale(0.97);
     transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
                 opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
                 visibility 0.25s !important;
 }
 
-/* Когда JS вешает класс видимости — окно мягко проявляется */
-.settings-sidebar.active, .notifications-dropdown.visible {
+/* Класс видимости для окна */
+.notifications-dropdown.visible {
     opacity: 1 !important;
     visibility: visible !important;
     transform: translateY(0) scale(1) !important;
 }
 
-/* МИКРО-БЛЮР НА ТЕКСТ ЗАЯВКИ ПРИ НАЖАТИИ НА КРЕСТИК */
+/* 2. ПЛАВНОЕ ПОЯВЛЕНИЕ САМИХ УВЕДОМЛЕНИЙ В СПИСКЕ */
+.notification-item {
+    animation: fadeInNotifItem 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+}
+
+@keyframes fadeInNotifItem {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 3. МИКРО-БЛЮР 0.5px И БОЛЕЕ ТЕМНЫЙ ЦВЕТ ЗАДНЕГО ФОНА */
 .notif-blur-target.blurred {
-    filter: blur(0.75px) !important; /* УЛЬТРА-ЛЕГКИЙ БЛЮР (0.75px) */
-    opacity: 0.18; /* Слегка приглушаем яркость заднего текста */
+    filter: blur(0.5px) !important; /* УМЕНЬШИЛИ БЛЮР ДО 0.5px */
+    opacity: 0.1 !important;
+    background-color: #1e1f22 !important;
+    border-radius: 4px;
+}
+
+/* Оверлей окна «Да/Нет» делаем еще темнее для контраста */
+.confirm-overlay {
+    background-color: rgba(30, 31, 34, 0.92) !important; /* Плотный темный графит */
 }
