@@ -246,4 +246,23 @@ function rgbToHex(rgb) {
     let b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
     return `#${r}${g}${b}`;
 }
+// КЛИК В ПУСТОТУ ЗАКРЫВАЕТ ВСЕ ОКНА
+document.addEventListener('click', () => {
+    if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
+    if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
+    if (settingsSidebar) settingsSidebar.classList.remove('active');
+    document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
+    document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
+});
+
+// ЗАГРУЗКА ЦВЕТОВ И СТАРТ ТАЙМЕРОВ УВЕДОМЛЕНИЙ
+window.addEventListener('DOMContentLoaded', () => {
+    Object.keys(zones).forEach(zoneKey => {
+        const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
+        if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
+    });
+
+    setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
+    setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
+});
 
