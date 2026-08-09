@@ -531,3 +531,94 @@ html, body {
 }
 .notif-action-btn.accept-btn:hover { color: #23a55a !important; }
 .notif-action-btn.decline-btn:hover { color: #f23f43 !important; }
+/* ОДНОЦВЕТНЫЕ СЕРЫЕ КНОПКИ ЗАЯВКИ */
+.notif-action-btn {
+    background-color: #2b2d31 !important;
+    border: none !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 11px;
+    color: #b5bac1 !important; /* Строго серые значки по умолчанию */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Ховер эффект кручения и подсветки */
+.notif-action-btn:hover {
+    transform: rotate(360deg) scale(1.1);
+    color: #ffffff !important;
+    background-color: #383a40 !important;
+}
+
+/* КОНТЕЙНЕР ДЛЯ БЛЮРА И ПОДТВЕРЖДЕНИЯ ВНУТРИ УВЕДОМЛЕНИЯ */
+.notification-item {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Этот класс будет вешаться на текст заявки при клике на крест */
+.notif-blur-target {
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+.notif-blur-target.blurred {
+    filter: blur(4px);
+    opacity: 0.3;
+    pointer-events: none; /* Отключаем клики по заблюренным кнопкам */
+}
+
+/* ПЛАТФОРМА ПОДТВЕРЖДЕНИЯ ПОВЕРХ БЛЮРА */
+.confirm-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(49, 51, 56, 0.85); /* Полупрозрачный фон окна */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    z-index: 10;
+    animation: fadeIn 0.15s ease;
+}
+
+.confirm-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #dbdee1;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.confirm-btn {
+    border: none;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+.confirm-btn.yes-btn {
+    background-color: #f23f43;
+    color: #ffffff;
+}
+.confirm-btn.yes-btn:hover { background-color: #da373c; }
+
+.confirm-btn.no-btn {
+    background-color: #4e5058;
+    color: #dbdee1;
+}
+.confirm-btn.no-btn:hover { background-color: #6d6f78; }
