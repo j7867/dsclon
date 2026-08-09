@@ -236,9 +236,19 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
 });
+// ТЕСТОВЫЕ УВЕДОМЛЕНИЯ ПРИ СТАРТЕ СТРАНИЦЫ
+window.addEventListener('DOMContentLoaded', () => {
+    Object.keys(zones).forEach(zoneKey => {
+        const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
+        if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
+    });
+
+    setTimeout(() => { addNotification('system', 'Обновите сайт для применения изменений.'); }, 2000);
+    setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
+});
 /* ПЛАВНАЯ АНИМАЦИЯ ДЛЯ ВЫПАДАЮЩИХ ОКОН */
 .settings-sidebar, .notifications-dropdown {
-    display: block !important; /* Меняем display:none, чтобы работала анимация */
+    display: block !important;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px) scale(0.98);
@@ -277,15 +287,14 @@ document.addEventListener('click', () => {
     transition: transform 0.3s ease, background-color 0.2s !important;
 }
 
-/* Плавное прокручивание кнопок при наведении */
+/* Эффект кручения кнопок при наведении */
 .notif-action-btn:hover {
     transform: rotate(360deg) scale(1.1);
 }
-
 .notif-action-btn.accept-btn:hover { background-color: #23a55a; }
 .notif-action-btn.decline-btn:hover { background-color: #f23f43; }
 
-/* СТИЛЬ ДЛЯ ТЕКСТА ПОДТВЕРЖДЕНИЯ */
+/* Стиль для текста подтверждения запроса */
 .notif-status-text {
     font-size: 13px;
     font-weight: 500;
@@ -295,4 +304,3 @@ document.addEventListener('click', () => {
 }
 .notif-status-text.accepted { color: #23a55a; }
 .notif-status-text.declined { color: #f23f43; }
-
