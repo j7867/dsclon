@@ -1,4 +1,3 @@
-// 1. НАХОДИМ ВСЕ ПАРЯЩИЕ ЭЛЕМЕНТЫ НА СТРАНИЦЕ
 const messagesContainer = document.getElementById('messagesContainer');
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -14,7 +13,6 @@ const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
 
-// ЭЛЕМЕНТЫ НОВОГО КОЛОКОЛЬЧИКА
 const notificationBell = document.getElementById('notificationBell');
 const notificationsDropdown = document.getElementById('notificationsDropdown');
 const bellBadge = document.getElementById('bellBadge');
@@ -32,7 +30,6 @@ const zones = {
 };
 let activeZoneKey = '';
 
-// 2. ЛОГИКА ОТПРАВКИ И ОБВОДКИ СООБЩЕНИЙ
 function appendMessage(sender, text) {
     if (!messagesContainer) return;
     const messageElement = document.createElement('div');
@@ -50,7 +47,6 @@ function appendMessage(sender, text) {
     `;
     messagesContainer.appendChild(messageElement);
 
-    // Поворот стрелочки и серое меню "Добавить в друзья"
     const arrowBtn = messageElement.querySelector('.arrow-btn');
     if (arrowBtn) {
         arrowBtn.addEventListener('click', (e) => {
@@ -85,7 +81,7 @@ if (messageInput) {
     });
 }
 
-// 3. ОТКРЫТИЕ ПАРЯЩИХ ОКНО ПО КЛИКУ НА КНОПКИ
+// УПРАВЛЕНИЕ ОКНАМИ С УЧЕТОМ КЛАССОВ АНИМАЦИИ
 if (settingTrigger && settingsSidebar) {
     settingTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -104,7 +100,7 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-// ЛОГИКА ДОБАВЛЕНИЯ УВЕДОМЛЕНИЙ В КОЛОКОЛ
+// УЛУЧШЕННАЯ ЛОГИКА УВЕДОМЛЕНИЙ С КНОПКАМИ И ПОДТВЕРЖДЕНИЕМ
 function addNotification(type, text) {
     if (!notifList || !bellBadge || !notifEmptyText) return;
     notificationsCount++;
@@ -114,14 +110,58 @@ function addNotification(type, text) {
     const notifItem = document.createElement('div');
     notifItem.className = 'notification-item';
     let titleText = type === 'system' ? 'Системное обновление' : 'Запрос в друзья';
+    
+    // Если это запрос в друзья, создаем блок с кнопками галочки и крестика
+    let actionsHtml = type === 'friend' ? `
+        <div class="notif-actions">
+            <button class="notif-action-btn accept-btn" title="Принять">✔️</button>
+            <button class="notif-action-btn decline-btn" title="Отклонить">❌</button>
+        </div>
+    ` : '';
+
     notifItem.innerHTML = `
-        <div class="notif-title">${titleText}</div>
-        <div class="notif-text">${text}</div>
+        <div class="notif-content-wrapper">
+            <div class="notif-title">${titleText}</div>
+            <div class="notif-text">${text}</div>
+        </div>
+        ${actionsHtml}
     `;
+    
+    // Вешаем обработчики на галочку и крестик, если это окно запроса дружбы
+    if (type === 'friend') {
+        const acceptBtn = notifItem.querySelector('.accept-btn');
+        const declineBtn = notifItem.querySelector('.decline-btn');
+        const contentWrapper = notifItem.querySelector('.notif-content-wrapper');
+        const actionsWrapper = notifItem.querySelector('.notif-actions');
+
+        acceptBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // В реальном времени заменяем тело уведомления на подтверждение
+            contentWrapper.style.display = 'none';
+            actionsWrapper.style.display = 'none';
+            notifItem.innerHTML = `<div class="notif-status-text accepted">✔️ Запрос в друзья принят</div>`;
+            setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+        });
+
+        declineBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // В реальном времени заменяем тело уведомления на отказ
+            contentWrapper.style.display = 'none';
+            actionsWrapper.style.display = 'none';
+            notifItem.innerHTML = `<div class="notif-status-text declined">❌ Запрос в друзья отклонён</div>`;
+            setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+        });
+    }
+
     notifList.insertBefore(notifItem, notifList.firstChild);
 }
 
-// ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ВНУТРИ НАСТРОЕК
+function checkEmptyNotifications() {
+    if (notifList && notifList.children.length === 0 && notifEmptyText) {
+        notifEmptyText.style.display = 'block';
+    }
+}
+
 if (goToZonesBtn) {
     goToZonesBtn.addEventListener('click', () => {
         mainSettingsScreen.classList.remove('active-screen');
@@ -136,7 +176,6 @@ if (backToMenuBtn) {
     });
 }
 
-// ВЫБОР И КАСТОМИЗАЦИЯ ЗОН
 if (zoneSelectTrigger) {
     zoneSelectTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -190,7 +229,6 @@ function rgbToHex(rgb) {
     return `#${r}${g}${b}`;
 }
 
-// КЛИК В ПУСТОТУ МЕСТА СБРАСЫВАЕТ ВСЕ ОКНА
 document.addEventListener('click', () => {
     if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
     if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
@@ -198,14 +236,63 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
 });
+/* ПЛАВНАЯ АНИМАЦИЯ ДЛЯ ВЫПАДАЮЩИХ ОКОН */
+.settings-sidebar, .notifications-dropdown {
+    display: block !important; /* Меняем display:none, чтобы работала анимация */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.98);
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
+                visibility 0.2s !important;
+}
 
-// ТЕСТОВЫЕ УВЕДОМЛЕНИЯ ПРИ СТАРТЕ СТРАНИЦЫ
-window.addEventListener('DOMContentLoaded', () => {
-    Object.keys(zones).forEach(zoneKey => {
-        const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
-        if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
-    });
+/* Классы активации для плавного проявления */
+.settings-sidebar.active, .notifications-dropdown.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
 
-    setTimeout(() => { addNotification('system', 'Обновите сайт для применения изменений.'); }, 2000);
-    setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
-});
+/* КНОПКИ ДЕЙСТВИЯ В УВЕДОМЛЕНИИ */
+.notif-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: flex-end;
+}
+
+.notif-action-btn {
+    background-color: #2b2d31;
+    border: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, background-color 0.2s !important;
+}
+
+/* Плавное прокручивание кнопок при наведении */
+.notif-action-btn:hover {
+    transform: rotate(360deg) scale(1.1);
+}
+
+.notif-action-btn.accept-btn:hover { background-color: #23a55a; }
+.notif-action-btn.decline-btn:hover { background-color: #f23f43; }
+
+/* СТИЛЬ ДЛЯ ТЕКСТА ПОДТВЕРЖДЕНИЯ */
+.notif-status-text {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 0;
+    text-align: center;
+    animation: fadeIn 0.2s ease;
+}
+.notif-status-text.accepted { color: #23a55a; }
+.notif-status-text.declined { color: #f23f43; }
+
