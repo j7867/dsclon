@@ -32,8 +32,18 @@ let activeZoneKey = '';
 
 function appendMessage(sender, text) {
     if (!messagesContainer) return;
+    
+    // Сравниваем ник отправителя с твоим ником, чтобы понять, твое ли сообщение
+    const isMyMessage = (sender === myName);
+    
     const messageElement = document.createElement('div');
     messageElement.className = 'message';
+    
+    // Корзину 🗑️ создаем только если это твое личное сообщение
+    const deleteBtnHtml = isMyMessage 
+        ? `<button class="action-btn delete-btn" title="Удалить">🗑️</button>` 
+        : '';
+
     messageElement.innerHTML = `
         <div class="message-content">
             <strong>${sender}</strong>
@@ -41,29 +51,47 @@ function appendMessage(sender, text) {
         </div>
         <div class="message-actions">
             <button class="action-btn edit-btn" title="Редактировать">✏️</button>
-            <button class="action-btn delete-btn" title="Удалить">🗑️</button>
+            ${deleteBtnHtml}
             <button class="action-btn arrow-btn" title="Еще">></button>
         </div>
     `;
     messagesContainer.appendChild(messageElement);
 
+    // Логика удаления (сработает только для твоих сообщений)
+    const deleteBtn = messageElement.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            messageElement.classList.add('deleting');
+            setTimeout(() => {
+                messageElement.remove();
+            }, 200); // Быстрое удаление за 200мс после того, как отыграет CSS-анимация растворения
+        });
+    }
+
     const arrowBtn = messageElement.querySelector('.arrow-btn');
     if (arrowBtn) {
         arrowBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            arrowBtn.classList.toggle('open');
             let userMenu = messageElement.querySelector('.user-action-menu');
             if (!userMenu) {
                 userMenu = document.createElement('div');
                 userMenu.className = 'user-action-menu';
                 userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
                 messageElement.appendChild(userMenu);
+                
+                userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
+                    eClick.stopPropagation();
+                    addNotification('friend', `${sender} отправил вам запрос в друзья.`);
+                    userMenu.classList.remove('visible');
+                });
             }
             userMenu.classList.toggle('visible');
         });
     }
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
 
 function handleSendMessage() {
     if (!messageInput) return;
