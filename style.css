@@ -622,33 +622,27 @@ html, body {
     color: #dbdee1;
 }
 .confirm-btn.no-btn:hover { background-color: #6d6f78; }
-/* КОРРЕКТИРУЕМ И УМЕНЬШАЕМ БЛЮР ЗАЯВКИ */
+//* ПЛАВНОЕ И МЯГКОЕ ОТКРЫТИЕ ОКНА УВЕДОМЛЕНИЙ И НАСТРОЕК */
+.settings-sidebar, .notifications-dropdown {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    /* Окно плавно опускается сверху (-12px) и слегка увеличивается (0.97) */
+    transform: translateY(-12px) scale(0.97);
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+                visibility 0.25s !important;
+}
+
+/* Когда JS вешает класс видимости — окно мягко проявляется */
+.settings-sidebar.active, .notifications-dropdown.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* МИКРО-БЛЮР НА ТЕКСТ ЗАЯВКИ ПРИ НАЖАТИИ НА КРЕСТИК */
 .notif-blur-target.blurred {
-    filter: blur(2px) !important; /* БЛЮР МЕНЬШЕ */
-    opacity: 0.25;
-}
-
-/* ДЕЛАЕМ ТЕКСТ ТЕМНЕЕ И ДОБАВЛЯЕМ ТЕНЬ ЗА НИМ */
-.confirm-title {
-    color: #949ba4 !important; /* ТЕКСТ ТЕМНЕЕ (Дискордовский muted цвет) */
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important; /* ТЕНЬ ЗА ТЕКСТОМ */
-    font-size: 13px !important;
-}
-
-/* ПЛАВНОЕ ПОЯВЛЕНИЕ ПЛАШЕК УВЕДОМЛЕНИЙ ПРИ ДОБАВЛЕНИИ */
-.notification-item {
-    animation: slideInNotif 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-    position: relative;
-    overflow: hidden;
-}
-
-@keyframes slideInNotif {
-    from {
-        opacity: 0;
-        transform: translateY(-8px) scale(0.96);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    filter: blur(0.75px) !important; /* УЛЬТРА-ЛЕГКИЙ БЛЮР (0.75px) */
+    opacity: 0.18; /* Слегка приглушаем яркость заднего текста */
 }
