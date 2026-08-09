@@ -80,6 +80,8 @@ if (messageInput) {
         if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); }
     });
 }
+
+// ОТКРЫТИЕ И ЗАКРЫТИЕ ПАРЯЩИХ ОКОН С ЗАЩИТОЙ ОТ КЛИКОВ
 if (settingTrigger && settingsSidebar) {
     settingTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -98,6 +100,15 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
+// Защищаем само окно настроек от закрытия при кликах внутри него
+if (settingsSidebar) {
+    settingsSidebar.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
+// ==========================================
+// ЧАСТЬ 2: ЛОГИКА УВЕДОМЛЕНИЙ И КНОПОК ДРУЖБЫ
+// ==========================================
 function addNotification(type, text) {
     if (!notifList || !bellBadge || !notifEmptyText) return;
     notificationsCount++;
@@ -155,14 +166,28 @@ function checkEmptyNotifications() {
     }
 }
 
+// Защищаем окно уведомлений от закрытия при кликах внутри него
+if (notificationsDropdown) {
+    notificationsDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
+
+
+// ==========================================
+// ЧАСТЬ 3: ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ И НАСТРОЙКА ЗОН
+// ==========================================
 if (goToZonesBtn) {
-    goToZonesBtn.addEventListener('click', () => {
+    goToZonesBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Идеальное переключение без закрытия меню!
         mainSettingsScreen.classList.remove('active-screen');
         zoneSettingsScreen.classList.add('active-screen');
     });
 }
+
 if (backToMenuBtn) {
-    backToMenuBtn.addEventListener('click', () => {
+    backToMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Возврат без закрытия меню!
         zoneSettingsScreen.classList.remove('active-screen');
         mainSettingsScreen.classList.add('active-screen');
         if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
@@ -222,6 +247,7 @@ function rgbToHex(rgb) {
     return `#${r}${g}${b}`;
 }
 
+// КЛИК В ПУСТОТУ ЗАКРЫВАЕТ ВСЁ
 document.addEventListener('click', () => {
     if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
     if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
@@ -230,6 +256,7 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
 });
 
+// СТАРТ СТРАНИЦЫ И ТАЙМЕРЫ УВЕДОМЛЕНИЙ
 window.addEventListener('DOMContentLoaded', () => {
     Object.keys(zones).forEach(zoneKey => {
         const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
