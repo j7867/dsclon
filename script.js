@@ -238,13 +238,14 @@ if (applyColorBtn) {
 }
 
 function rgbToHex(rgb) {
+    if (!rgb || typeof rgb !== 'string') return '#313338';
     if (rgb.startsWith('#')) return rgb;
     let rgbValues = rgb.match(/\d+/g);
     if (!rgbValues || rgbValues.length < 3) return '#313338';
-    let r = parseInt(rgbValues[0]).toString(16).padStart(2, '0');
-    let g = parseInt(rgbValues[1]).toString(16).padStart(2, '0');
-    let b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
-    return `#${r}${g}${b}`;
+    let r = Math.max(0, Math.min(255, parseInt(rgbValues[0])));
+    let g = Math.max(0, Math.min(255, parseInt(rgbValues[1])));
+    let b = Math.max(0, Math.min(255, parseInt(rgbValues[2])));
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 // КЛИК В ПУСТОТУ ЗАКРЫВАЕТ ВСЕ ОКНА
 document.addEventListener('click', () => {
