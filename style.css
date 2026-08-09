@@ -657,7 +657,7 @@ html, body {
 }
 /* МЯГКОЕ СЛАБОЕ РАЗМЫТИЕ С ТЕМНОЙ МАСКОЙ */
 .notif-blur-target.blurred {
-    filter: blur(7px) !important; /* СЛАБОЕ МЯГКОЕ РАЗМЫТИЕ */
+    filter: blur(4px) !important; /* СЛАБОЕ МЯГКОЕ РАЗМЫТИЕ */
     opacity: 0.6 !important; /* Приглушаем яркость текста сзади */
     background-color: #111214 !important; /* Черно-серая подложка, чтобы убрать светлые контуры */
     border-radius: 4px;
