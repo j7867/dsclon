@@ -622,3 +622,33 @@ html, body {
     color: #dbdee1;
 }
 .confirm-btn.no-btn:hover { background-color: #6d6f78; }
+/* КОРРЕКТИРУЕМ И УМЕНЬШАЕМ БЛЮР ЗАЯВКИ */
+.notif-blur-target.blurred {
+    filter: blur(2px) !important; /* БЛЮР МЕНЬШЕ */
+    opacity: 0.25;
+}
+
+/* ДЕЛАЕМ ТЕКСТ ТЕМНЕЕ И ДОБАВЛЯЕМ ТЕНЬ ЗА НИМ */
+.confirm-title {
+    color: #949ba4 !important; /* ТЕКСТ ТЕМНЕЕ (Дискордовский muted цвет) */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important; /* ТЕНЬ ЗА ТЕКСТОМ */
+    font-size: 13px !important;
+}
+
+/* ПЛАВНОЕ ПОЯВЛЕНИЕ ПЛАШЕК УВЕДОМЛЕНИЙ ПРИ ДОБАВЛЕНИИ */
+.notification-item {
+    animation: slideInNotif 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes slideInNotif {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
