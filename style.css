@@ -925,3 +925,12 @@ html, body {
     height: 18px !important;
     display: block !important;
 }
+/* Добавляем плавность вращения для кнопок при наведении */
+.header-right-group button {
+    transition: transform 0.3s ease-in-out, background-color 0.2s ease, color 0.2s ease !important;
+}
+
+/* При ховере плавно проворачиваем кнопку на 45 градусов по часовой стрелке */
+.header-right-group button:hover {
+    transform: rotate(45deg) !important;
+}
