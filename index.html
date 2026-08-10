@@ -38,35 +38,21 @@
   </div>
 
   <!-- 3. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА С КНОПКАМИ В ШАПКЕ -->
-  <div class="chat-area" id="chatArea">
-    <div class="chat-header" style="position: relative; display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      <span># general-chat</span>
-      
-      <!-- Круглые кнопки парят внутри шапки чата -->
-               <div class="header-controls" style="display: flex; gap: 8px; align-items: center;">
-        
-        <!-- 1. АВАТАРКА ПРОФИЛЯ (ТЕПЕРЬ СЛЕВА ОТ КОЛОКОЛЬЧИКА) -->
-        <div class="profile-avatar-trigger" id="profileTrigger">
-                <div class="user-avatar" id="openFullProfileBtn" style="background-co...">
-            
-            <!-- ПАРИЩЕЕ МИНИ-МЕНЮ (ОТКРЫВАЕТСЯ ПО ХОВЕРУ) -->
-            <div class="profile-mini-menu" id="profileMiniMenu">
-                <div class="mini-menu-header">
-                    <div class="user-avatar" id="miniMenuAvatar" style="background-color: #5865f2; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">U</div>
-                    <span id="miniMenuUsername">User</span>
-                </div>
-                <div class="mini-menu-divider"></div>
-        
-            </div>
+  <!-- 1. АВАТАРКА ПРОФИЛЯ -->
+<div class="profile-avatar-trigger" id="profileTrigger">
+    <div class="user-avatar" id="headerProfileAvatar" style="background-color: #5865f2;">U</div>
+
+    <!-- ПАРИЩЕЕ МИНИ-МЕНЮ (ОТКРЫВАЕТСЯ ПО ХОВЕРУ) -->
+    <div class="profile-mini-menu" id="profileMiniMenu">
+        <div class="mini-menu-header">
+            <div class="user-avatar" id="miniMenuAvatar" style="background-color: #5865f2; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">U</div>
+            <span id="miniMenuUsername">User</span>
         </div>
-
-           <!-- 2. КОЛОКОЛЬЧИК УВЕДОМЛЕНИЙ -->
-    <button class="notification-bell" id="notificationBell" title="Уведомления">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="..."></path></svg>
-        <div class="bell-badge" id="bellBadge"></div>
-    </button>
-
-      </div>
+        <div class="mini-menu-divider"></div>
+        <!-- Возвращаем кнопку настроек на место -->
+        <div class="mini-menu-item" id="openFullProfileBtn">Настройки профиля</div>
+    </div>
+</div>
 
       <!-- Меню уведомлений и парящие настройки привязаны к шапке -->
       <div class="notifications-dropdown" id="notificationsDropdown">
