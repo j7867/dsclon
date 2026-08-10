@@ -397,3 +397,83 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
     setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
 });
+// ==========================================
+/* 12. ЛОГИКА НАСТРОЕК ПРОФИЛЯ И КАСКАДНЫХ ТЕНЕЙ */
+// ==========================================
+const profileTrigger = document.getElementById('profileTrigger');
+const profileMiniMenu = document.getElementById('profileMiniMenu');
+const openFullProfileBtn = document.getElementById('openFullProfileBtn');
+const profileModalOverlay = document.getElementById('profileModalOverlay');
+const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
+const profileNicknameInput = document.getElementById('profileNicknameInput');
+const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
+
+const headerProfileAvatar = document.getElementById('headerProfileAvatar');
+const miniMenuAvatar = document.getElementById('miniMenuAvatar');
+const miniMenuUsername = document.getElementById('miniMenuUsername');
+
+let selectedAvatarColor = localStorage.getItem('chat_avatar_color') || '#5865f2';
+
+// Функция обновления визуального состояния аватарок на странице
+function updateProfileUI() {
+    myName = localStorage.getItem('chat_nickname') || 'User';
+    selectedAvatarColor = localStorage.getItem('chat_avatar_color') || '#5865f2';
+
+    if (miniMenuUsername) miniMenuUsername.textContent = myName;
+    if (headerProfileAvatar) {
+        headerProfileAvatar.textContent = myName.charAt(0).toUpperCase();
+        headerProfileAvatar.style.backgroundColor = selectedAvatarColor;
+    }
+    if (miniMenuAvatar) {
+        miniMenuAvatar.textContent = myName.charAt(0).toUpperCase();
+        miniMenuAvatar.style.backgroundColor = selectedAvatarColor;
+    }
+    if (profileNicknameInput) profileNicknameInput.value = myName;
+}
+
+// Открытие большого окна настроек аккаунта
+if (openFullProfileBtn && profileModalOverlay) {
+    openFullProfileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileModalOverlay.classList.add('active');
+        
+        // Подсвечиваем сохраненный цвет в палитре кружков
+        document.querySelectorAll('.avatar-color-circle').forEach(circle => {
+            if (circle.getAttribute('data-color') === selectedAvatarColor) {
+                circle.classList.add('selected');
+            } else {
+                circle.classList.remove('selected');
+            }
+        });
+    });
+}
+
+// Закрытие окна настроек профиля по крестику
+if (closeProfileModalBtn && profileModalOverlay) {
+    closeProfileModalBtn.addEventListener('click', () => {
+        profileModalOverlay.classList.remove('active');
+    });
+}
+
+// Выбор цвета аватара в модальном окне
+document.querySelectorAll('.avatar-color-circle').forEach(circle => {
+    circle.addEventListener('click', () => {
+        document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected'));
+        circle.classList.add('selected');
+        selectedAvatarColor = circle.getAttribute('data-color');
+    });
+});
+
+// Сохранение изменений профиля глобально
+if (saveProfileChangesBtn) {
+    saveProfileChangesBtn.addEventListener('click', () => {
+        const newNick = profileNicknameInput.value.trim();
+        if (newNick === '') { alert('Никнейм не может быть пустым!'); return; }
+        
+        localStorage.setItem('chat_nickname', newNick);
+        localStorage.setItem('chat_avatar_color', selectedAvatarColor);
+        
+        updateProfileUI();
+        profileModalOverlay.classList.remove('active');
+    });
+}
