@@ -30,6 +30,7 @@ const zones = {
 };
 let activeZoneKey = '';
 
+// Функция вывода сообщений в чат
 function appendMessage(sender, text) {
     if (!messagesContainer) return;
     
@@ -39,7 +40,7 @@ function appendMessage(sender, text) {
     const messageElement = document.createElement('div');
     messageElement.className = 'message';
     
-    // Корзину 🗑️ создаем только если это твое личное сообщение
+    // Корзину создаем только если это твое личное сообщение
     const deleteBtnHtml = isMyMessage 
         ? `<button class="action-btn delete-btn" title="Удалить">🗑️</button>` 
         : '';
@@ -57,7 +58,7 @@ function appendMessage(sender, text) {
     `;
     messagesContainer.appendChild(messageElement);
 
-    // Логика удаления (сработает только для твоих сообщений)
+    // Логика удаления (только для твоих сообщений)
     const deleteBtn = messageElement.querySelector('.delete-btn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', (e) => {
@@ -65,10 +66,11 @@ function appendMessage(sender, text) {
             messageElement.classList.add('deleting');
             setTimeout(() => {
                 messageElement.remove();
-            }, 200); // Быстрое удаление за 200мс после того, как отыграет CSS-анимация растворения
+            }, 200); // 200мс — анимация растворения из style.css
         });
     }
 
+    // Дополнительное контекстное меню по клику на стрелочку
     const arrowBtn = messageElement.querySelector('.arrow-btn');
     if (arrowBtn) {
         arrowBtn.addEventListener('click', (e) => {
@@ -86,13 +88,14 @@ function appendMessage(sender, text) {
                     userMenu.classList.remove('visible');
                 });
             }
+            arrowBtn.classList.toggle('open');
             userMenu.classList.toggle('visible');
         });
     }
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-
+// Отправка сообщений из инпута
 function handleSendMessage() {
     if (!messageInput) return;
     const text = messageInput.value.trim();
@@ -108,7 +111,7 @@ if (messageInput) {
         if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); }
     });
 }
-
+// Парящее окно настроек
 if (settingTrigger && settingsSidebar) {
     settingTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -117,6 +120,7 @@ if (settingTrigger && settingsSidebar) {
     });
 }
 
+// Выпадающий список уведомлений
 if (notificationBell && notificationsDropdown) {
     notificationBell.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -127,8 +131,18 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
+// Защита от закрытия при кликах внутри самих окон
 if (settingsSidebar) { settingsSidebar.addEventListener('click', (e) => { e.stopPropagation(); }); }
 if (notificationsDropdown) { notificationsDropdown.addEventListener('click', (e) => { e.stopPropagation(); }); }
+
+// Проверка на пустоту списка уведомлений
+function checkEmptyNotifications() {
+    if (notifList && notifList.children.length === 0 && notifEmptyText) {
+        notifEmptyText.style.display = 'block';
+    }
+}
+
+// Модуль создания уведомлений и запросов в друзья
 function addNotification(type, text) {
     if (!notifList || !bellBadge || !notifEmptyText) return;
     notificationsCount++;
@@ -159,6 +173,7 @@ function addNotification(type, text) {
         const declineBtn = notifItem.querySelector('.decline-btn');
         const blurTarget = notifItem.querySelector('.notif-blur-target');
 
+        // Принять дружбу
         acceptBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             blurTarget.style.display = 'none';
@@ -166,6 +181,7 @@ function addNotification(type, text) {
             setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
         });
 
+        // Отклонить дружбу с оверлеем подтверждения
         declineBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             blurTarget.classList.add('blurred');
@@ -181,6 +197,7 @@ function addNotification(type, text) {
             `;
             notifItem.appendChild(overlay);
 
+            // Подтверждение удаления
             overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
                 eClick.stopPropagation();
                 overlay.remove();
@@ -189,6 +206,7 @@ function addNotification(type, text) {
                 setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
             });
 
+            // Отмена удаления
             overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
                 eClick.stopPropagation();
                 overlay.remove();
@@ -197,15 +215,10 @@ function addNotification(type, text) {
         });
     }
 
+    // Добавляем новые уведомления в самое начало списка (сверху)
     notifList.insertBefore(notifItem, notifList.firstChild);
 }
-
-function checkEmptyNotifications() {
-    if (notifList && notifList.children.length === 0 && notifEmptyText) {
-        notifEmptyText.style.display = 'block';
-    }
-}
-
+// Навигация по экранам меню кастомизации
 if (goToZonesBtn) {
     goToZonesBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -220,9 +233,12 @@ if (backToMenuBtn) {
         zoneSettingsScreen.classList.remove('active-screen');
         mainSettingsScreen.classList.add('active-screen');
         if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
+        activeZoneKey = '';
+        if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
     });
 }
 
+// Открытие селекта зон
 if (zoneSelectTrigger) {
     zoneSelectTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -230,15 +246,15 @@ if (zoneSelectTrigger) {
     });
 }
 
-// ПОДДСВЕТКА ЗОН ПРИ НАВЕДЕНИИ И КЛИКЕ В МЕНЮ
+// Подсветка элементов интерфейса при наведении на пункты селекта
 document.querySelectorAll('.custom-option').forEach(option => {
-    // 1. КЛИК ПО ПУНКТУ (ФИКСИРУЕТ ЗОНУ)
+    // 1. Клик по пункту (Фиксирует и считывает цвет зоны)
     option.addEventListener('click', (e) => {
         e.stopPropagation();
         if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
         activeZoneKey = option.getAttribute('data-value');
         zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
-        option.parentElement.parentElement.classList.add('hide-options');
+        zoneSelectTrigger.parentElement.classList.add('hide-options');
         
         if (activeZoneKey && zones[activeZoneKey]) {
             zones[activeZoneKey].classList.add('zone-highlight');
@@ -251,7 +267,7 @@ document.querySelectorAll('.custom-option').forEach(option => {
         }
     });
 
-    // 2. НАВЕДЕНИЕ МЫШКИ (ПЛАВНО ПОКАЗЫВАЕТ ЗОНУ)
+    // 2. Наведение мышки (Временная подсветка зоны)
     option.addEventListener('mouseenter', () => {
         const hoverZoneKey = option.getAttribute('data-value');
         if (zones[hoverZoneKey]) {
@@ -259,32 +275,38 @@ document.querySelectorAll('.custom-option').forEach(option => {
         }
     });
 
-    // 3. УВОД МЫШКИ (УБИРАЕТ ВРЕМЕННУЮ ПОДСВЕТКУ)
+    // 3. Увод мышки (Удаление временной подсветки)
     option.addEventListener('mouseleave', () => {
         const hoverZoneKey = option.getAttribute('data-value');
-        // Убираем подсветку только если эта зона не является выбранной (активной) прямо сейчас
         if (zones[hoverZoneKey] && hoverZoneKey !== activeZoneKey) {
             zones[hoverZoneKey].classList.remove('zone-highlight');
         }
     });
 });
 
+// Синхронизация инпута палитры с кружком-превью
 if (customColorInput) {
     customColorInput.addEventListener('input', (e) => {
         if (colorPreviewCircle) colorPreviewCircle.style.backgroundColor = e.target.value;
     });
 }
 
+// Применение и сохранение выбранного цвета в локальную базу данных
 if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
         if (!activeZoneKey || !zones[activeZoneKey]) { alert('Сначала выберите зону!'); return; }
         const chosenColor = customColorInput.value;
         zones[activeZoneKey].style.backgroundColor = chosenColor;
         localStorage.setItem('chat_bg_' + activeZoneKey, chosenColor);
+        zones[activeZoneKey].classList.remove('zone-highlight');
+        
+        activeZoneKey = '';
+        if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
         alert('Цвет успешно применен!');
     });
 }
 
+// Утилита конвертации RGB/RGBA от браузера в чистый HEX (#ffffff)
 function rgbToHex(rgb) {
     if (!rgb || typeof rgb !== 'string') return '#313338';
     if (rgb.startsWith('#')) return rgb;
@@ -296,6 +318,7 @@ function rgbToHex(rgb) {
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
+// Сброс и закрытие всех активных окон по клику на любую пустую область экрана
 document.addEventListener('click', () => {
     if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
     if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
@@ -304,6 +327,7 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
 });
 
+// Загрузка кастомных сохраненных тем при обновлении страницы и тестовые уведомления
 window.addEventListener('DOMContentLoaded', () => {
     Object.keys(zones).forEach(zoneKey => {
         const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
