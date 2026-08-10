@@ -731,3 +731,23 @@ html, body {
 .user-profile-block a:hover {
     opacity: 1;
 }
+/* Включаем флексбокс для колонки с каналами */
+.channels-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100vh !important; /* Растягиваем колонку на всю высоту экрана */
+    box-sizing: border-box;
+}
+
+/* Стили для самого блока профиля, чтобы он красиво встал внизу */
+.user-profile-block {
+    margin-top: auto !important; /* Выталкивает блок в самый низ */
+    background-color: #232428 !important; /* Темный фон для панельки профиля */
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100%;
+    box-sizing: border-box;
+}
