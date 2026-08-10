@@ -208,13 +208,17 @@ function addNotification(type, text) {
             overlay.innerHTML = `<div class="confirm-title">Вы точно хотите отклонить запрос в друзья?</div><div class="confirm-buttons"><button class="confirm-btn yes-btn">Да</button><button class="confirm-btn no-btn">Нет</button></div>`;
             notifItem.appendChild(overlay);
 
-            overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
-                eClick.stopPropagation();
-                overlay.remove();
-                if (actionsContainer) actionsContainer.remove();
-                blurTarget.innerHTML = `<div style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">❌ Запрос в друзья отклонён</div>`;
-                setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
-            });
+                   overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
+            eClick.stopPropagation();
+            overlay.remove();
+            if (actionsContainer) actionsContainer.remove();
+            
+            // ИСПРАВЛЕНИЕ: Удаляем размытие перед изменением текста статуса
+            blurTarget.classList.remove('blurred'); 
+            
+            blurTarget.innerHTML = `<div style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">❌ Запрос в друзья отклонён</div>`;
+            setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+        });
 
             overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
                 eClick.stopPropagation();
