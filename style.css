@@ -144,6 +144,7 @@ html, body {
     flex-direction: column;
     background-color: var(--bg-main);
     position: relative;
+    overflow-x: hidden; /* ЗАПРЕЩАЕМ ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ ПРИ АНИМАЦИИ УДАЛЕНИЯ */
 }
 
 .chat-header {
