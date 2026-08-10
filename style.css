@@ -1,3 +1,6 @@
+/* ==========================================
+   1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И СБРОС СТИЛЕЙ
+   ========================================== */
 :root {
     --bg-main: #313338;
     --bg-sidebar: #2b2d31;
@@ -8,6 +11,7 @@
     --accent-color: #5865f2;
     --border-color: #1f2023;
 }
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -15,14 +19,46 @@
     font-family: 'Segoe UI', sans-serif;
     user-select: none;
 }
+
+html {
+    background-color: var(--bg-main);
+}
+
 html, body {
     display: flex;
-    height: 100vh;
+    height: 100%;
     width: 100vw;
     background-color: var(--bg-main);
     color: var(--text-color);
     overflow: hidden;
 }
+
+/* ==========================================
+   2. СЛУЖЕБНЫЕ СТИЛИ И АНИМАЦИИ (KEYFRAMES)
+   ========================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeInNotifItem {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.zone-highlight {
+    outline: 3px solid #ffffff !important;
+    box-shadow: 0 0 15px #ffffff, inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important;
+    z-index: 9998 !important;
+}
+
+/* ==========================================
+   3. БОКОВЫЕ ПАНЕЛИ (СЕРВЕРЫ И КАНАЛЫ)
+   ========================================== */
 .guilds-sidebar {
     width: 72px;
     background-color: var(--bg-channels);
@@ -33,6 +69,7 @@ html, body {
     gap: 8px;
     border-right: 1px solid var(--border-color);
 }
+
 .guild-icon {
     width: 48px;
     height: 48px;
@@ -46,10 +83,12 @@ html, body {
     transition: all 0.2s ease;
     color: var(--text-color);
 }
+
 .guild-icon:hover, .guild-icon.active {
     border-radius: 16px;
     background-color: var(--accent-color);
 }
+
 .channels-sidebar {
     width: 240px;
     background-color: var(--bg-sidebar);
@@ -59,6 +98,7 @@ html, body {
     gap: 2px;
     border-right: 1px solid var(--border-color);
 }
+
 .sidebar-header {
     font-size: 12px;
     text-transform: uppercase;
@@ -67,6 +107,7 @@ html, body {
     margin-bottom: 8px;
     padding-left: 8px;
 }
+
 .user-item {
     padding: 8px;
     border-radius: 4px;
@@ -76,10 +117,12 @@ html, body {
     gap: 10px;
     transition: background 0.1s;
 }
+
 .user-item:hover, .user-item.active {
     background-color: rgba(255, 255, 255, 0.06);
     color: var(--text-color);
 }
+
 .user-avatar {
     width: 32px;
     height: 32px;
@@ -91,13 +134,18 @@ html, body {
     font-size: 14px;
     font-weight: bold;
 }
+/* ==========================================
+   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И СООБЩЕНИЯ
+   ========================================== */
 .chat-area {
-    flex: 1;
+    flex: 1 !important;
+    width: auto !important;
     display: flex;
     flex-direction: column;
     background-color: var(--bg-main);
     position: relative;
 }
+
 .chat-header {
     height: 48px;
     border-bottom: 1px solid var(--border-color);
@@ -107,6 +155,7 @@ html, body {
     font-weight: bold;
     font-size: 16px;
 }
+
 .messages-container {
     flex: 1;
     padding: 16px;
@@ -115,6 +164,7 @@ html, body {
     flex-direction: column;
     gap: 16px;
 }
+
 .message {
     display: flex;
     gap: 16px;
@@ -123,32 +173,43 @@ html, body {
     padding: 8px;
     border-radius: 4px;
     outline: 1px solid transparent;
-    transition: background-color 0.2s ease, outline-color 0.2s ease;
+    transition: background-color 0.2s ease, outline-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
+
 .message:hover {
     background-color: rgba(0, 0, 0, 0.08);
     outline-color: rgba(255, 255, 255, 0.15);
 }
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+
+.message.deleting {
+    opacity: 0 !important;
+    transform: translateX(20px) !important;
 }
+
 .message-content {
     display: flex;
     flex-direction: column;
     gap: 4px;
     flex: 1;
 }
+
 .message-text {
     font-size: 15px;
     color: #dbdee1;
     word-break: break-word;
     user-select: text;
 }
+
+/* ==========================================
+   5. ФУТЕР И ЗОНА ВВОДА (ФИКС БЕЛОЙ ПОЛОСЫ)
+   ========================================== */
 .input-area {
     padding: 0 16px 24px 16px;
-    background-color: transparent;
+    background-color: var(--bg-main) !important;
+    position: relative;
+    z-index: 2;
 }
+
 .input-wrapper {
     background-color: var(--bg-input);
     border-radius: 8px;
@@ -157,6 +218,7 @@ html, body {
     padding: 10px 16px;
     gap: 12px;
 }
+
 .message-input {
     flex: 1;
     background: none;
@@ -165,9 +227,8 @@ html, body {
     color: var(--text-color);
     font-size: 15px;
 }
-.message-input::placeholder {
-    color: var(--text-muted);
-}
+.message-input::placeholder { color: var(--text-muted); }
+
 .send-btn {
     background: none;
     border: none;
@@ -180,6 +241,63 @@ html, body {
 }
 .send-btn:hover { color: #fff; }
 .send-btn svg { width: 24px; height: 24px; fill: currentColor; }
+
+/* ==========================================
+   6. ОРИГИНАЛЬНЫЕ КРУГЛЫЕ КНОПКИ ШАПКИ
+   ========================================== */
+.settings-gear-trigger, .notification-bell {
+    position: fixed !important;
+    top: 16px;
+    background-color: rgba(43, 45, 49, 0.7) !important;
+    backdrop-filter: blur(4px) !important;
+    border: none !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: #b5bac1 !important;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s, color 0.2s, transform 0.2s ease !important;
+}
+
+.settings-gear-trigger { right: 16px !important; }
+.notification-bell { right: 60px !important; }
+
+.settings-gear-trigger:hover, .notification-bell:hover {
+    color: #ffffff !important;
+    background-color: #35373c !important;
+    transform: scale(1.05);
+}
+
+.settings-gear-trigger svg, .notification-bell svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: currentColor;
+    transition: transform 0.3s ease !important;
+}
+
+.settings-gear-trigger:hover svg { transform: rotate(90deg) !important; }
+.notification-bell:hover svg { transform: rotate(20deg) !important; }
+
+.bell-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background-color: #f23f43;
+    border-radius: 50%;
+    display: none;
+    border: 2px solid #2b2d31;
+}
+.bell-badge.active { display: block; }
+/* ==========================================
+   7. МЕНЮ ДЕЙСТВИЙ НА СООБЩЕНИЯХ И ПОЛЬЗОВАТЕЛЯХ
+   ========================================== */
 .message-actions {
     opacity: 0;
     visibility: hidden;
@@ -197,7 +315,9 @@ html, body {
     align-items: center;
     transition: opacity 0.2s, visibility 0.2s;
 }
+
 .message:hover .message-actions { opacity: 1; visibility: visible; }
+
 .action-btn {
     background: none;
     border: none;
@@ -211,16 +331,22 @@ html, body {
     justify-content: center;
     transition: all 0.1s;
 }
+
 .action-btn:hover { background-color: rgba(255,255,255,0.05); color: #fff; }
 .action-btn.delete-btn:hover { color: #f23f43; }
+
 .action-btn.arrow-btn {
     background: none !important;
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
-.action-btn.arrow-btn.open { transform: rotate(90deg); }
+
+.action-btn.arrow-btn:hover, .action-btn.arrow-btn.open {
+    transform: rotate(90deg) !important;
+    color: #ffffff !important;
+}
 
 .user-action-menu {
     display: none;
@@ -234,6 +360,7 @@ html, body {
     z-index: 999;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
+
 .user-action-menu.visible { display: block; }
 .user-action-menu .menu-item {
     padding: 8px 14px;
@@ -246,138 +373,55 @@ html, body {
 }
 .user-action-menu .menu-item:hover { background-color: #4e5058; color: #ffffff; }
 
-/* ПАРЯЩЕЕ ОКНО НАСТРОЕК (ИЗ ТВОЕГО СКРИНА) */
-/* ПАРЯЩЕЕ ОКНО НАСТРОЕК (НЕ ПАНЕЛЬ) */
+/* ==========================================
+   8. ПАРЯЩЕЕ ОКНО НАСТРОЕК
+   ========================================== */
 .settings-sidebar {
     position: fixed !important;
-    top: 70px;
-    right: 20px;
+    top: 64px !important;
+    right: 16px !important;
     background-color: #313338 !important;
     padding: 20px;
     border-radius: 8px;
     width: 280px !important;
-    height: auto !important; /* Высота подстраивается под контент, а не на весь экран */
+    height: auto !important;
     z-index: 9999;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
     border: 1px solid #232428;
-    
-    /* Изначально скрыто */
     opacity: 0;
     visibility: hidden;
     transform: translateY(-15px) scale(0.95);
     transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
 }
-/* РАСКРЫВАЕМ ЧАТ НА ВСЮ ШИРИНУ ЭКРАНА */
-.chat-area {
-    flex: 1 !important;
-    width: auto !important;
-}
-/* ИСПРАВЛЕНИЕ СЛИПАНИЯ ЭКРАНОВ */
-.settings-sidebar .modal-screen {
-    position: relative !important;
-    width: 100% !important;
-    display: none !important;
-}
-.settings-sidebar .modal-screen.active-screen {
-    display: block !important;
-}
 
-/* ПЛАВНОЕ ПРОЯВЛЕНИЕ ОКНА НАСТРОЕК */
 .settings-sidebar.active {
     opacity: 1 !important;
     visibility: visible !important;
     transform: translateY(0) scale(1) !important;
 }
 
-//* ОРИГИНАЛЬНЫЙ ДИЗАЙН КНОПОК DISCORD (КРУГЛЫЕ ПЛАШКИ ПОВЕРХ ЧАТА) */
-.settings-gear-trigger, .notification-bell {
-    position: fixed !important;
-    top: 16px;
-    background-color: rgba(43, 45, 49, 0.6) !important; /* Полупрозрачный фон */
-    backdrop-filter: blur(4px) !important; /* Размытие заднего плана */
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important; /* СУКА СТРОГО КРУГЛЫЕ, КАК НА СКРИНЕ */
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    color: #b5bac1 !important;
-    z-index: 10000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+.settings-sidebar .modal-screen {
+    position: relative !important;
+    width: 100% !important;
+    display: none !important;
 }
+.settings-sidebar .modal-screen.active-screen { display: block !important; }
 
-/* ШЕСТЕРЕНКА НА СВОЕМ МЕСТЕ */
-.settings-gear-trigger {
-    right: 16px !important;
-}
-
-/* КОЛОКОЛЬЧИК СЛЕВА ОТ НЕЕ */
-.notification-bell {
-    right: 60px !important; /* Идеальное расстояние, чтобы не слипались */
-}
-
-/* ЭФФЕКТЫ ПРИ НАВЕДЕНИИ НА КРУГЛЫЕ КНОПКИ */
-.settings-gear-trigger:hover, .notification-bell:hover {
+.modal-title {
     color: #ffffff !important;
-    background-color: #313338 !important;
-    transform: scale(1.05); /* Легкое увеличение при ховере */
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
 }
 
-.settings-gear-trigger svg, .notification-bell svg {
-    width: 18px !important;
-    height: 18px !important;
-    fill: currentColor;
-}
-
-.settings-gear-trigger:hover svg {
-    transform: rotate(75deg); /* Вращение шестеренки */
-    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* КРАСНАЯ ТОЧКА УВЕДОМЛЕНИЙ НА КРУГЛОМ КОЛОКОЛЬЧИКЕ */
-.bell-badge {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 8px;
-    height: 8px;
-    background-color: #f23f43;
-    border-radius: 50%;
-    display: none;
-    border: 2px solid #2b2d31;
-}
-.bell-badge.active {
-    display: block;
-}
-
-}
-.settings-gear-trigger:hover, .notification-bell:hover {
-    color: #ffffff !important;
-    background-color: #383a40 !important;
-}
-.settings-gear-trigger svg, .notification-bell svg { width: 18px; height: 18px; }
-.settings-gear-trigger:hover svg { transform: rotate(75deg); }
-
-.bell-badge {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 8px;
-    height: 8px;
-    background-color: #f23f43;
-    border-radius: 50%;
-    display: none;
-}
-.bell-badge.active { display: block; }
-
+/* ==========================================
+   9. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ И ПОДТВЕРЖДЕНИЯ
+   ========================================== */
 .notifications-dropdown {
-    display: none;
+    display: block !important;
     position: fixed !important;
-    top: 70px;
-    right: 64px;
+    top: 64px !important;
+    right: 60px !important;
     background-color: #313338;
     border: 1px solid #232428;
     border-radius: 8px;
@@ -387,9 +431,23 @@ html, body {
     z-index: 9999;
     box-shadow: 0 8px 24px rgba(0,0,0,0.6);
     padding: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px) scale(0.97);
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+                visibility 0.25s !important;
 }
-.notifications-dropdown.visible { display: block; }
+
+.notifications-dropdown.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
+
 .notification-item {
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -399,94 +457,18 @@ html, body {
     margin-bottom: 6px;
     font-size: 13px;
     text-align: left;
+    animation: fadeInNotifItem 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
 }
-.notification-item .notif-title { font-weight: bold; font-size: 11px; text-transform: uppercase; color: var(--text-muted); }
+
+.notification-item .notif-title {
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
 .notification-item .notif-text { color: #dbdee1; }
 .notif-empty { color: var(--text-muted); text-align: center; padding: 15px; font-size: 13px; }
 
-.custom-select-container { position: relative; margin-bottom: 20px; width: 100%; }
-.custom-select-trigger { background-color: #1e1f22 !important; color: #dbdee1 !important; padding: 12px 16px; border-radius: 4px; cursor: pointer; border: 1px solid #111214; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
-.custom-select-options { position: absolute; top: 100% !important; left: 0; right: 0; background-color: #111214 !important; border-radius: 4px; margin-top: 5px !important; opacity: 0; visibility: hidden; z-index: 10100; border: 1px solid #232428; overflow: hidden; transform: translateY(-8px); transition: all 0.25s ease; }
-.custom-select-container:hover .custom-select-options { opacity: 1 !important; visibility: visible !important; transform: translateY(0); }
-.custom-select-container.hide-options .custom-select-options { opacity: 0 !important; visibility: hidden !important; transform: translateY(-8px) !important; }
-.custom-option { padding: 10px 16px; color: #b5bac1 !important; font-size: 14px; cursor: pointer; }
-.custom-option:hover { background-color: #5865f2 !important; color: #ffffff !important; }
-.color-picker-wrapper { position: relative; width: 48px; height: 48px; cursor: pointer; margin: 15px auto 0 auto; display: block; }
-.color-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-.color-picker-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background-color: #313338; transition: transform 0.2s; }
-.color-picker-wrapper:hover .color-picker-circle { transform: scale(1.08); }
-.menu-nav-btn { width: 100%; background-color: #383a40; color: #dbdee1; border: none; padding: 10px 14px; border-radius: 4px; cursor: pointer; text-align: left; font-size: 14px; transition: all 0.15s; }
-.menu-nav-btn:hover { background-color: #4e5058; color: #ffffff; }
-.back-menu-btn { background: none; border: none; color: #b5bac1; font-size: 12px; cursor: pointer; margin-bottom: 5px; }
-.back-menu-btn:hover { color: #ffffff; }
-.zone-highlight { outline: 3px solid #ffffff !important; box-shadow: 0 0 15px #ffffff, inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important; z-index: 9998 !important; }
-.modal-title { color: #ffffff !important; font-size: 16px; font-weight: 600; margin-bottom: 15px; }
-/* ОРИГИНАЛЬНЫЙ КРУГЛЫЙ ДИЗАЙН КНОПОК ИЗ DISCORD */
-.settings-gear-trigger, .notification-bell {
-    background-color: rgba(43, 45, 49, 0.7) !important; /* Полупрозрачный фон */
-    backdrop-filter: blur(4px) !important; /* Размытие заднего фона */
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important; /* ИДЕАЛЬНЫЙ КРУГ, КАК НА СКРИНЕ */
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    color: #b5bac1 !important;
-    transition: background-color 0.2s, color 0.2s, transform 0.15s !important;
-}
-
-/* Эффект при наведении */
-.settings-gear-trigger:hover, .notification-bell:hover {
-    background-color: #35373c !important;
-    color: #f2f3f5 !important;
-}
-
-/* Размеры иконок внутри круга */
-.settings-gear-trigger svg, .notification-bell svg {
-    width: 18px !important;
-    height: 18px !important;
-    fill: currentColor;
-    transition: transform 0.3s ease !important;
-}
-
-/* Вращение шестерёнки при наведении */
-.settings-gear-trigger:hover svg {
-    transform: rotate(90deg);
-}
-
-/* Корректируем отступы парящего окна под новые кнопки */
-.settings-sidebar {
-    top: 56px !important;
-    right: 16px !important;
-}
-.notifications-dropdown {
-    top: 56px !important;
-    right: 60px !important;
-}
-
-/* ВЫРАВНИВАНИЕ ОКНА НАСТРОЕК ПОД ШЕСТЕРЕНКУ */
-.settings-sidebar {
-    top: 64px !important;
-    right: 16px !important;
-}
-
-/* ВЫРАВНИВАНИЕ МЕНЮ УВЕДОМЛЕНИЙ ПОД КОЛОКОЛЬЧИК */
-.notifications-dropdown {
-    top: 64px !important;
-    right: 60px !important;
-}
-/* КРУЧЕНИЕ КОЛОКОЛЬЧИКА ПРИ НАВЕДЕНИИ */
-.notification-bell:hover svg {
-    transform: rotate(20deg) !important;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
-.notification-bell svg {
-    transition: transform 0.2s ease !important;
-}
-
-/* ЭФФЕКТЫ ДЛЯ ЗАЯВКИ В ДРУЗЬЯ (ГАЛОЧКА И КРЕСТИК) */
 .notif-actions {
     display: flex;
     gap: 10px;
@@ -494,44 +476,6 @@ html, body {
     justify-content: flex-end;
 }
 
-.notif-action-btn {
-    background-color: rgba(43, 45, 49, 0.6) !important; /* Одноцветный полупрозрачный фон */
-    backdrop-filter: blur(5px) !important; /* Блюр на фоне */
-    border: none !important;
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center;
-    font-size: 11px;
-    color: #b5bac1 !important; /* Одноцветные серые значки */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important; /* Мини тень */
-    
-    /* Плавное появление */
-    opacity: 0;
-    transform: scale(0.8);
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* Разная задержка для плавного поочередного появления */
-.notif-action-btn.accept-btn { animation-delay: 0.1s; }
-.notif-action-btn.decline-btn { animation-delay: 0.2s; }
-
-@keyframes popIn {
-    to { opacity: 1; transform: scale(1); }
-}
-
-/* Ховер эффекты (наведение) */
-.notif-action-btn:hover {
-    color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
-}
-.notif-action-btn.accept-btn:hover { color: #23a55a !important; }
-.notif-action-btn.decline-btn:hover { color: #f23f43 !important; }
-/* ОДНОЦВЕТНЫЕ СЕРЫЕ КНОПКИ ЗАЯВКИ */
 .notif-action-btn {
     background-color: #2b2d31 !important;
     border: none !important;
@@ -543,42 +487,44 @@ html, body {
     align-items: center !important;
     justify-content: center !important;
     font-size: 11px;
-    color: #b5bac1 !important; /* Строго серые значки по умолчанию */
+    color: #b5bac1 !important;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+    opacity: 0;
+    transform: scale(0.8);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     transition: all 0.2s ease !important;
 }
 
-/* Ховер эффект кручения и подсветки */
+.notif-action-btn.accept-btn { animation-delay: 0.1s; }
+.notif-action-btn.decline-btn { animation-delay: 0.2s; }
+
 .notif-action-btn:hover {
-    transform: rotate(360deg) scale(1.1);
+    transform: rotate(360deg) scale(1.1) !important;
     color: #ffffff !important;
     background-color: #383a40 !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
 }
+.notif-action-btn.accept-btn:hover { color: #23a55a !important; }
+.notif-action-btn.decline-btn:hover { color: #f23f43; }
 
-/* КОНТЕЙНЕР ДЛЯ БЛЮРА И ПОДТВЕРЖДЕНИЯ ВНУТРИ УВЕДОМЛЕНИЯ */
-.notification-item {
-    position: relative;
-    overflow: hidden;
-}
-
-/* Этот класс будет вешаться на текст заявки при клике на крест */
 .notif-blur-target {
     transition: filter 0.2s ease, opacity 0.2s ease;
 }
 .notif-blur-target.blurred {
-    filter: blur(4px);
-    opacity: 0.3;
-    pointer-events: none; /* Отключаем клики по заблюренным кнопкам */
+    filter: blur(0.8px) !important;
+    opacity: 0.7 !important;
+    background-color: #111214 !important;
+    border-radius: 4px;
+    pointer-events: none;
 }
 
-/* ПЛАТФОРМА ПОДТВЕРЖДЕНИЯ ПОВЕРХ БЛЮРА */
 .confirm-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(49, 51, 56, 0.85); /* Полупрозрачный фон окна */
+    background-color: rgba(30, 31, 34, 0.93) !important;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -586,6 +532,7 @@ html, body {
     gap: 8px;
     padding: 10px;
     z-index: 10;
+    border-radius: 4px;
     animation: fadeIn 0.15s ease;
 }
 
@@ -597,10 +544,7 @@ html, body {
     line-height: 1.3;
 }
 
-.confirm-buttons {
-    display: flex;
-    gap: 12px;
-}
+.confirm-buttons { display: flex; gap: 12px; }
 
 .confirm-btn {
     border: none;
@@ -611,72 +555,69 @@ html, body {
     cursor: pointer;
     transition: background-color 0.15s;
 }
-.confirm-btn.yes-btn {
-    background-color: #f23f43;
-    color: #ffffff;
-}
+.confirm-btn.yes-btn { background-color: #f23f43; color: #ffffff; }
 .confirm-btn.yes-btn:hover { background-color: #da373c; }
 
-.confirm-btn.no-btn {
-    background-color: #4e5058;
-    color: #dbdee1;
-}
+.confirm-btn.no-btn { background-color: #4e5058; color: #dbdee1; }
 .confirm-btn.no-btn:hover { background-color: #6d6f78; }
-/* 1. ПЛАВНОЕ ОТКРЫТИЕ ОКНА УВЕДОМЛЕНИЙ СВЕРХУ */
-.notifications-dropdown {
-    display: block !important;
+
+/* ==========================================
+   10. КАСТОМНЫЕ СЕЛЕКТЫ И ВЫБОР ЦВЕТА
+   ========================================== */
+.custom-select-container { position: relative; margin-bottom: 20px; width: 100%; }
+
+.custom-select-trigger {
+    background-color: #1e1f22 !important;
+    color: #dbdee1 !important;
+    padding: 12px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #111214;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-select-options {
+    position: absolute;
+    top: 100% !important;
+    left: 0;
+    right: 0;
+    background-color: #111214 !important;
+    border-radius: 4px;
+    margin-top: 5px !important;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-12px) scale(0.97);
-    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
-                opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
-                visibility 0.25s !important;
+    z-index: 10100;
+    border: 1px solid #232428;
+    overflow: hidden;
+    transform: translateY(-8px);
+    transition: all 0.25s ease;
 }
 
-/* Класс видимости для окна */
-.notifications-dropdown.visible {
+.custom-select-container:hover .custom-select-options {
     opacity: 1 !important;
     visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
+    transform: translateY(0);
 }
 
-/* 2. ПЛАВНОЕ ПОЯВЛЕНИЕ САМИХ УВЕДОМЛЕНИЙ В СПИСКЕ */
-.notification-item {
-    animation: fadeInNotifItem 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-}
-
-@keyframes fadeInNotifItem {
-    from {
-        opacity: 0;
-        transform: translateY(-6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-/* МЯГКОЕ СЛАБОЕ РАЗМЫТИЕ С ТЕМНОЙ МАСКОЙ */
-.notif-blur-target.blurred {
-    filter: blur(0.8px) !important; /* СЛАБОЕ МЯГКОЕ РАЗМЫТИЕ */
-    opacity: 0.7 !important; /* Приглушаем яркость текста сзади */
-    background-color: #111214 !important; /* Черно-серая подложка, чтобы убрать светлые контуры */
-    border-radius: 4px;
-}
-
-/* ОКНО ПОДТВЕРЖДЕНИЯ С ЧЕРНО-СЕРЫМ ТЕМНЫМ ЗАДНИМ ФОНОМ */
-.confirm-overlay {
-    background-color: rgba(30, 31, 34, 0.93) !important; /* Плотный черно-серый матовый фон */
-    border-radius: 4px;
-}
-/* ПЛАВНЫЙ ПОВОРОТ СТРЕЛОЧКИ ПРИ НАВЕДЕНИИ МЫШИ */
-.action-btn.arrow-btn:hover {
-    transform: rotate(90deg) !important;
-    color: #ffffff !important;
-}
-
-/* ЭФФЕКТ ПЛАВНОГО РАСТВОРЕНИЯ СООБЩЕНИЯ ПРИ УДАЛЕНИИ */
-.message.deleting {
+.custom-select-container.hide-options .custom-select-options {
     opacity: 0 !important;
-    transform: translateX(20px) !important;
-    transition: opacity 0.2s ease, transform 0.2s ease !important;
+    visibility: hidden !important;
+    transform: translateY(-8px) !important;
 }
+
+.custom-option { padding: 10px 16px; color: #b5bac1 !important; font-size: 14px; cursor: pointer; }
+.custom-option:hover { background-color: #5865f2 !important; color: #ffffff !important; }
+
+.color-picker-wrapper { position: relative; width: 48px; height: 48px; cursor: pointer; margin: 15px auto 0 auto; display: block; }
+.color-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
+.color-picker-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background-color: #313338; transition: transform 0.2s; }
+.color-picker-wrapper:hover .color-picker-circle { transform: scale(1.08); }
+
+.menu-nav-btn { width: 100%; background-color: #383a40; color: #dbdee1; border: none; padding: 10px 14px; border-radius: 4px; cursor: pointer; text-align: left; font-size: 14px; transition: all 0.15s; }
+.menu-nav-btn:hover { background-color: #4e5058; color: #ffffff; }
+
+.back-menu-btn { background: none; border: none; color: #b5bac1; font-size: 12px; cursor: pointer; margin-bottom: 5px; }
+.back-menu-btn:hover { color: #ffffff; }
