@@ -9,7 +9,7 @@
 </head>
 <body>
 
-   <!-- 1. ПАНЕЛЬ С СЕРВЕРАМИ -->
+  <!-- 1. ПАНЕЛЬ С СЕРВЕРАМИ -->
   <div class="guilds-sidebar" id="guildsSidebar">
     <!-- Иконка личных сообщений (ЛС) -->
     <div class="guild-icon active" id="dmServerBtn" data-type="dm">DM</div>
@@ -30,51 +30,56 @@
     <!-- Контейнер для Общего сервера (изначально скрыт) -->
     <div id="serverChannelsSection" style="display: none;">
       <div class="sidebar-header">ТЕКСТОВЫЕ КАНАЛЫ</div>
-      <div class="user-item active" data-channel="general-chat">
+      <div class="custom-user-item active" data-channel="general-chat">
         <div class="user-avatar" style="background-color: #5865f2;">#</div>
         <span>general-chat</span>
       </div>
     </div>
-    </div>
-</div> <!-- 38 строка: закрыли блок serverChannelsSection -->
+  </div> <!-- Закрываем только channels-sidebar -->
 
-<div class="user-profile-block">
-    <div class="user-avatar" id="headerProfileAvatar" style="background-color: #5865f2;">U</div>
-    <span class="user-name">User</span>
-    <button class="settings-gear-trigger" id="openFullProfileBtn">Настройки профиля</button>
-</div>
+  <!-- 3. ОБЛАСТЬ ЧАТА (CHAT AREA) -->
+  <div class="chat-area" id="chatArea">
+    <div class="chat-header">
+      <div class="header-left">
+        <span class="hashtag">#</span>
+        <h3 id="chatTitle">general-chat</h3>
+      </div>
+      
+      <!-- БЛОК ПРОФИЛЯ В ШАПКЕ (НИК И АВАТАРКА СЛЕВА ОТ ИКОНОК) -->
+      <div class="user-profile-header-block">
+          <span class="user-name-header">User</span>
+          <div class="user-avatar-header" id="openFullProfileBtn" style="background-color: #5865f2;">U</div>
+      </div>
+    </div> <!-- Закрываем chat-header -->
 
-</div> <!-- Перенесли тег сюда: теперь он закрывает всю панель channels-sidebar -->
+    <!-- Парящее окно настроек (лежит отдельно от шапки) -->
+    <div class="settings-sidebar" id="settingsSidebar">
+      <h2 class="modal-title">Настройки</h2>
 
-      <!-- Парящее окно настроек -->
-      <div class="settings-sidebar" id="settingsSidebar">
-        <h2 class="modal-title">Настройки</h2>
-        
-        <div class="modal-screen active-screen" id="mainSettingsScreen">
-            <button class="menu-nav-btn" id="goToZonesBtn">Настройка зон</button>
-        </div>
-        
-        <div class="modal-screen" id="zoneSettingsScreen">
-            <button class="back-menu-btn" id="backToMenuBtn">← Назад</button>
-            <div class="custom-select-container">
-                <div class="custom-select-trigger" id="zoneSelectTrigger">Выберите зону <span class="select-arrow">▼</span></div>
-                <div class="custom-select-options" id="zoneSelectOptions">
-                    <div class="custom-option" data-value="chatArea">Central Chat</div>
-                    <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
-                    <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
-                    <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
-                </div>
-            </div>
-            <div class="color-picker-wrapper">
-                <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
-                <div class="color-picker-circle" id="colorPreviewCircle"></div>
-            </div>
-            <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 20px; text-align: center;">Применить</button>
-        </div>
+      <div class="modal-screen active-screen" id="mainSettingsScreen">
+          <button class="menu-nav-btn" id="goToZonesBtn">Настройка зон</button>
       </div>
 
-    </div> <!-- Закрываем chat-header -->
-    
+      <div class="modal-screen" id="zoneSettingsScreen">
+          <button class="back-menu-nav-btn" id="backToMenuBtn">← Назад</button>
+          <div class="custom-select-container">
+              <div class="custom-select-trigger" id="zoneSelectTrigger">Выберите зону <span class="select-arrow">▼</span></div>
+              <div class="custom-select-options" id="zoneSelectOptions">
+                  <div class="custom-option" data-value="chatArea">Central Chat</div>
+                  <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
+                  <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
+                  <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
+              </div>
+          </div>
+
+          <div class="color-picker-wrapper">
+              <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
+              <div class="color-picker-circle" id="colorPreviewCircle"></div>
+          </div>
+          <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 20px; text-align: center;">Применить</button>
+      </div>
+    </div> <!-- Закрываем settings-sidebar -->
+
     <!-- Контейнер для сообщений чата -->
     <div class="messages-container" id="messagesContainer"></div>
 
@@ -83,46 +88,47 @@
       <div class="input-wrapper">
         <input type="text" class="message-input" id="messageInput" placeholder="Send a message..." autocomplete="off">
         <button class="send-btn" id="sendBtn" title="Send">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path></svg>
         </button>
       </div>
     </div>
-
   </div> <!-- Закрываем chat-area -->
 
   <!-- БОЛЬШОЕ МОДАЛЬНОЕ ОКНО НАСТРОЕК ПРОФИЛЯ (Изначально скрыто) -->
   <div class="profile-modal-overlay" id="profileModalOverlay">
-      <div class="profile-modal-window">
-          <button class="profile-modal-close" id="closeProfileModalBtn">×</button>
-          <h2 class="profile-modal-title">Настройки аккаунта</h2>
-          <div class="profile-modal-content">
-              <div class="profile-edit-section">
-                  <label class="profile-label">Ваш никнейм</label>
-                  <input type="text" class="profile-input-field" id="profileNicknameInput" placeholder="Введите новый ник">
-              </div>
-              <div class="profile-edit-section">
-                  <label class="profile-label">Цвет аватара</label>
-                  <div class="profile-color-row">
-                      <div class="avatar-color-circle" data-color="#5865f2" style="background-color: #5865f2;"></div>
-                      <div class="avatar-color-circle" data-color="#23a55a" style="background-color: #23a55a;"></div>
-                      <div class="avatar-color-circle" data-color="#f23f43" style="background-color: #f23f43;"></div>
-                      <div class="avatar-color-circle" data-color="#eb459e" style="background-color: #eb459e;"></div>
-                      <div class="avatar-color-circle" data-color="#f47fff" style="background-color: #f47fff;"></div>
-                  </div>
-              </div>
-                         <!-- НОВЫЙ БЛОК ДЛЯ ЗАГРУЗКИ КАРТИНКИ С УСТРОЙСТВА -->
-              <div class="profile-edit-section" style="margin-top: 20px;">
-                  <label class="profile-label">Загрузить фото профиля</label>
-                  <div style="display: flex; gap: 12px; align-items: center;">
-                      <input type="file" id="profileImageFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" style="display: none;">
-                      <button type="button" class="menu-nav-btn" id="uploadAvatarFileBtn" style="text-align: center; width: auto; padding: 10px 18px;">Выбрать файл</button>
-                      <button type="button" class="confirm-btn no-btn" id="resetAvatarFileBtn" style="display: none; padding: 10px 14px;">Удалить фото</button>
-                  </div>
-              </div>
+    <div class="profile-modal-window">
+        <button class="profile-modal-close" id="closeProfileModalBtn">×</button>
+        <h2 class="profile-modal-title">Настройки аккаунта</h2>
+        <div class="profile-modal-content">
+            <div class="profile-edit-section">
+                <label class="profile-label">Ваш никнейм</label>
+                <input type="text" class="profile-input-field" id="profileNicknameInput" placeholder="Введите новый ник">
+            </div>
+            
+            <div class="profile-edit-section">
+                <label class="profile-label">Цвет аватара</label>
+                <div class="profile-color-row">
+                    <div class="avatar-color-circle" data-color="#5865f2" style="background-color: #5865f2;"></div>
+                    <div class="avatar-color-circle" data-color="#23a55a" style="background-color: #23a55a;"></div>
+                    <div class="avatar-color-circle" data-color="#f23f43" style="background-color: #f23f43;"></div>
+                    <div class="avatar-color-circle" data-color="#eb459e" style="background-color: #eb459e;"></div>
+                    <div class="avatar-color-circle" data-color="#f47fff" style="background-color: #f47fff;"></div>
+                </div>
+            </div>
 
-              <button class="profile-save-global-btn" id="saveProfileChangesBtn">Сохранить изменения</button>
-          </div>
-      </div>
+            <!-- НОВЫЙ БЛОК ДЛЯ ЗАГРУЗКИ КАРТИНКИ С УСТРОЙСТВА -->
+            <div class="profile-edit-section" style="margin-top: 20px;">
+                <label class="profile-label">Загрузить фото профиля</label>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <input type="file" id="profileImageFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" style="display: none;">
+                    <button type="button" class="menu-nav-btn" id="uploadAvatarFileBtn" style="text-align: center; width: auto; padding: 10px 18px;">Выбрать файл</button>
+                    <button type="button" class="confirm-btn no-btn" id="resetAvatarFileBtn" style="display: none; padding: 10px 14px;">Удалить фото</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="profile-save-global-btn" id="saveProfileChangesBtn">Сохранить изменения</button>
+    </div>
   </div>
 
   <!-- Подключение скриптов -->
