@@ -730,4 +730,11 @@ html, body {
 /* Эффект при наведении */
 .user-profile-block a:hover {
     opacity: 1;
+}.profile-mini-menu {
+    position: absolute !important;
+    display: none;
+}
+
+.profile-avatar-trigger:hover .profile-mini-menu {
+    display: block !important;
 }
