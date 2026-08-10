@@ -30,139 +30,6 @@ const zones = {
 };
 let activeZoneKey = '';
 
-// Функция вывода сообщений в чат
-function appendMessage(sender, text) {
-    if (!messagesContainer) return;
-    
-    // Сравниваем ник отправителя с твоим ником, чтобы понять, твое ли сообщение
-    const isMyMessage = (sender === myName);
-    
-    const messageElement = document.createElement('div');
-    messageElement.className = 'message';
-    
-    // Корзину создаем только если это твое личное сообщение
-    const deleteBtnHtml = isMyMessage 
-        ? `<button class="action-btn delete-btn" title="Удалить">🗑️</button>` 
-        : '';
-
-    messageElement.innerHTML = `
-        <div class="message-content">
-            <strong>${sender}</strong>
-            <span class="message-text">${text}</span>
-        </div>
-        <div class="message-actions">
-            <button class="action-btn edit-btn" title="Редактировать">✏️</button>
-            ${deleteBtnHtml}
-            <button class="action-btn arrow-btn" title="Еще">></button>
-        </div>
-    `;
-    messagesContainer.appendChild(messageElement);
-    // --- ЛОГИКА РЕДАКТИРОВАНИЯ ---
-    const editBtn = messageElement.querySelector('.edit-btn');
-    if (editBtn) {
-        editBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            
-            // Если уже редактируем, не открываем форму повторно
-            if (messageElement.classList.contains('editing-mode')) return;
-            
-            const messageContent = messageElement.querySelector('.message-content');
-            const messageTextSpan = messageElement.querySelector('.message-text');
-            const oldText = messageTextSpan.textContent;
-
-            messageElement.classList.add('editing-mode');
-
-            // Создаем форму редактирования
-            const editForm = document.createElement('div');
-            editForm.className = 'message-edit-form';
-            editForm.innerHTML = `
-                <input type="text" class="message-edit-input" value="${oldText}" autocomplete="off">
-                <div class="edit-form-buttons">
-                    <button class="edit-save-btn">Сохранить</button>
-                    <button class="edit-cancel-btn">Отмена</button>
-                </div>
-            `;
-
-            messageTextSpan.style.display = 'none';
-            messageContent.appendChild(editForm);
-
-            const editInput = editForm.querySelector('.message-edit-input');
-            editInput.focus();
-            editInput.setSelectionRange(editInput.value.length, editInput.value.length);
-
-            const saveChanges = () => {
-                const newText = editInput.value.trim();
-                if (newText !== '') {
-                    messageTextSpan.textContent = newText;
-                }
-                closeEditForm();
-            };
-
-            const closeEditForm = () => {
-                editForm.remove();
-                messageTextSpan.style.display = 'block';
-                messageElement.classList.remove('editing-mode');
-            };
-
-            editForm.querySelector('.edit-save-btn').addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                saveChanges();
-            });
-
-            editForm.querySelector('.edit-cancel-btn').addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                closeEditForm();
-            });
-
-            editInput.addEventListener('keydown', (ev) => {
-                if (ev.key === 'Enter') {
-                    ev.preventDefault();
-                    saveChanges();
-                } else if (ev.key === 'Escape') {
-                    closeEditForm();
-                }
-            });
-        });
-    }
-
-    // Логика удаления (только для твоих сообщений)
-    const deleteBtn = messageElement.querySelector('.delete-btn');
-    if (deleteBtn) {
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            messageElement.classList.add('deleting');
-            setTimeout(() => {
-                messageElement.remove();
-            }, 200); // 200мс — анимация растворения из style.css
-        });
-    }
-
-    // Дополнительное контекстное меню по клику на стрелочку
-    const arrowBtn = messageElement.querySelector('.arrow-btn');
-    if (arrowBtn) {
-        arrowBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            let userMenu = messageElement.querySelector('.user-action-menu');
-            if (!userMenu) {
-                userMenu = document.createElement('div');
-                userMenu.className = 'user-action-menu';
-                userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
-                messageElement.appendChild(userMenu);
-                
-                userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
-                    eClick.stopPropagation();
-                    addNotification('friend', `${sender} отправил вам запрос в друзья.`);
-                    userMenu.classList.remove('visible');
-                });
-            }
-            arrowBtn.classList.toggle('open');
-            userMenu.classList.toggle('visible');
-        });
-    }
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
-// Отправка сообщений из инпута
 function handleSendMessage() {
     if (!messageInput) return;
     const text = messageInput.value.trim();
@@ -178,7 +45,106 @@ if (messageInput) {
         if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); }
     });
 }
-// Парящее окно настроек
+function appendMessage(sender, text) {
+    if (!messagesContainer) return;
+    const isMyMessage = (sender === myName);
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message';
+    
+    const actionsHtml = isMyMessage 
+        ? `<button class="action-btn edit-btn" title="Редактировать">✏️</button>
+           <button class="action-btn delete-btn" title="Удалить">🗑️</button>`
+        : '';
+
+    messageElement.innerHTML = `
+        <div class="message-content">
+            <strong>${sender}</strong>
+            <span class="message-text">${text}</span>
+        </div>
+        <div class="message-actions">
+            ${actionsHtml}
+            <button class="action-btn arrow-btn" title="Еще">></button>
+        </div>
+    `;
+    messagesContainer.appendChild(messageElement);
+
+    const editBtn = messageElement.querySelector('.edit-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (messageElement.classList.contains('editing-mode')) return;
+            const messageContent = messageElement.querySelector('.message-content');
+            const messageTextSpan = messageElement.querySelector('.message-text');
+            const oldText = messageTextSpan.textContent;
+            messageElement.classList.add('editing-mode');
+
+            const editForm = document.createElement('div');
+            editForm.className = 'message-edit-form';
+            editForm.innerHTML = `
+                <input type="text" class="message-edit-input" value="${oldText}" autocomplete="off">
+                <div class="edit-form-buttons">
+                    <button class="edit-save-btn">Сохранить</button>
+                    <button class="edit-cancel-btn">Отмена</button>
+                </div>
+            `;
+            messageTextSpan.style.display = 'none';
+            messageContent.appendChild(editForm);
+
+            const editInput = editForm.querySelector('.message-edit-input');
+            editInput.focus();
+            editInput.setSelectionRange(editInput.value.length, editInput.value.length);
+
+            const saveChanges = () => {
+                const newText = editInput.value.trim();
+                if (newText !== '') messageTextSpan.textContent = newText;
+                closeEditForm();
+            };
+            const closeEditForm = () => {
+                editForm.remove();
+                messageTextSpan.style.display = 'block';
+                messageElement.classList.remove('editing-mode');
+            };
+
+            editForm.querySelector('.edit-save-btn').addEventListener('click', (ev) => { ev.stopPropagation(); saveChanges(); });
+            editForm.querySelector('.edit-cancel-btn').addEventListener('click', (ev) => { ev.stopPropagation(); closeEditForm(); });
+            editInput.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter') { ev.preventDefault(); saveChanges(); }
+                else if (ev.key === 'Escape') { closeEditForm(); }
+            });
+        });
+    }
+
+    const deleteBtn = messageElement.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            messageElement.classList.add('deleting');
+            setTimeout(() => { messageElement.remove(); }, 200);
+        });
+    }
+
+    const arrowBtn = messageElement.querySelector('.arrow-btn');
+    if (arrowBtn) {
+        arrowBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let userMenu = messageElement.querySelector('.user-action-menu');
+            if (!userMenu) {
+                userMenu = document.createElement('div');
+                userMenu.className = 'user-action-menu';
+                userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
+                messageElement.appendChild(userMenu);
+                userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
+                    eClick.stopPropagation();
+                    addNotification('friend', `${sender} отправил вам запрос в друзья.`);
+                    userMenu.classList.remove('visible');
+                });
+            }
+            arrowBtn.classList.toggle('open');
+            userMenu.classList.toggle('visible');
+        });
+    }
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
 if (settingTrigger && settingsSidebar) {
     settingTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -187,7 +153,6 @@ if (settingTrigger && settingsSidebar) {
     });
 }
 
-// Выпадающий список уведомлений
 if (notificationBell && notificationsDropdown) {
     notificationBell.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -198,18 +163,15 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-// Защита от закрытия при кликах внутри самих окон
 if (settingsSidebar) { settingsSidebar.addEventListener('click', (e) => { e.stopPropagation(); }); }
 if (notificationsDropdown) { notificationsDropdown.addEventListener('click', (e) => { e.stopPropagation(); }); }
 
-// Проверка на пустоту списка уведомлений
 function checkEmptyNotifications() {
     if (notifList && notifList.children.length === 0 && notifEmptyText) {
         notifEmptyText.style.display = 'block';
     }
 }
 
-// Модуль создания уведомлений и запросов в друзья
 function addNotification(type, text) {
     if (!notifList || !bellBadge || !notifEmptyText) return;
     notificationsCount++;
@@ -219,22 +181,9 @@ function addNotification(type, text) {
     const notifItem = document.createElement('div');
     notifItem.className = 'notification-item';
     let titleText = type === 'system' ? 'Системное обеспечение' : 'ЗАПРОС В ДРУЗЬЯ';
-    
-    let actionsHtml = type === 'friend' ? `
-        <div class="notif-actions">
-            <button class="notif-action-btn accept-btn" title="Принять">✔️</button>
-            <button class="notif-action-btn decline-btn" title="Отклонить">❌</button>
-        </div>
-    ` : '';
+    let actionsHtml = type === 'friend' ? `<div class="notif-actions"><button class="notif-action-btn accept-btn">✔️</button><button class="notif-action-btn decline-btn">❌</button></div>` : '';
 
-    // Разделяем текстовый блок для блюра и блок с кнопками действий
-    notifItem.innerHTML = `
-        <div class="notif-blur-target">
-            <div class="notif-title">${titleText}</div>
-            <div class="notif-text">${text}</div>
-        </div>
-        ${actionsHtml}
-    `;
+    notifItem.innerHTML = `<div class="notif-blur-target"><div class="notif-title">${titleText}</div><div class="notif-text">${text}</div></div>${actionsHtml}`;
     
     if (type === 'friend') {
         const acceptBtn = notifItem.querySelector('.accept-btn');
@@ -242,41 +191,31 @@ function addNotification(type, text) {
         const blurTarget = notifItem.querySelector('.notif-blur-target');
         const actionsContainer = notifItem.querySelector('.notif-actions');
 
-        // Принять дружбу
         acceptBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (actionsContainer) actionsContainer.remove(); // Удаляем кнопки
-            blurTarget.innerHTML = `<div class="notif-status-text accepted" style="color: #23a55a; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">✔️ Запрос в друзья принят</div>`;
+            if (actionsContainer) actionsContainer.remove();
+            blurTarget.innerHTML = `<div style="color: #23a55a; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">✔️ Запрос в друзья принят</div>`;
             setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
         });
 
-        // Отклонить дружбу
         declineBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             blurTarget.classList.add('blurred');
-            if (actionsContainer) actionsContainer.style.opacity = '0'; // Прячем кнопки под оверлей
+            if (actionsContainer) actionsContainer.style.opacity = '0';
 
             const overlay = document.createElement('div');
             overlay.className = 'confirm-overlay';
-            overlay.innerHTML = `
-                <div class="confirm-title">Вы точно хотите отклонить запрос в друзья?</div>
-                <div class="confirm-buttons">
-                    <button class="confirm-btn yes-btn">Да</button>
-                    <button class="confirm-btn no-btn">Нет</button>
-                </div>
-            `;
+            overlay.innerHTML = `<div class="confirm-title">Вы точно хотите отклонить запрос в друзья?</div><div class="confirm-buttons"><button class="confirm-btn yes-btn">Да</button><button class="confirm-btn no-btn">Нет</button></div>`;
             notifItem.appendChild(overlay);
 
-            // Подтверждение
             overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
                 eClick.stopPropagation();
                 overlay.remove();
                 if (actionsContainer) actionsContainer.remove();
-                blurTarget.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">❌ Запрос в друзья отклонён</div>`;
+                blurTarget.innerHTML = `<div style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">❌ Запрос в друзья отклонён</div>`;
                 setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
             });
 
-            // Отмена
             overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
                 eClick.stopPropagation();
                 overlay.remove();
@@ -285,79 +224,9 @@ function addNotification(type, text) {
             });
         });
     }
-
-    // Добавляем новые уведомления наверх списка
     notifList.insertBefore(notifItem, notifList.firstChild);
 }
 
-    `;
-    
-    if (type === 'friend') {
-        const acceptBtn = notifItem.querySelector('.accept-btn');
-        const declineBtn = notifItem.querySelector('.decline-btn');
-        const blurTarget = notifItem.querySelector('.notif-blur-target');
-
-        // Принять дружбу
-        acceptBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            blurTarget.style.display = 'none';
-            notifItem.innerHTML = `<div class="notif-status-text accepted" style="color: #23a55a; font-size:13px; text-align:center; font-weight:500; padding: 10px 0;">✔️ Запрос в друзья принят</div>`;
-            setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
-        });
-        // Отклонить дружбу с оверлеем подтверждения
-        declineBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            blurTarget.classList.add('blurred');
-
-            const overlay = document.createElement('div');
-            overlay.className = 'confirm-overlay';
-            overlay.innerHTML = `
-                <div class="confirm-title">Вы точно хотите отклонить запрос в друзья?</div>
-                <div class="confirm-buttons">
-                    <button class="confirm-btn yes-btn">Да</button>
-                    <button class="confirm-btn no-btn">Нет</button>
-                </div>
-            `;
-            notifItem.appendChild(overlay);
-
-            overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
-                eClick.stopPropagation();
-                overlay.remove();
-                blurTarget.style.display = 'none';
-                notifItem.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 10px 0;">❌ Запрос в друзья отклонён</div>`;
-                setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
-            });
-
-            overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
-                eClick.stopPropagation();
-                overlay.remove();
-                blurTarget.classList.remove('blurred');
-            });
-        });
-
-            notifItem.appendChild(overlay);
-
-            // Подтверждение удаления
-            overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
-                eClick.stopPropagation();
-                overlay.remove();
-                blurTarget.style.display = 'none';
-                notifItem.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 10px 0;">❌ Запрос в друзья отклонён</div>`;
-                setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
-            });
-
-                // Отмена удаления
-    overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
-        eClick.stopPropagation();
-        overlay.remove();
-        blurTarget.classList.remove('blurred');
-    });
-}
-
-    // Добавляем новые уведомления в самое начало списка (сверху)
-    notifList.insertBefore(notifItem, notifList.firstChild);
-}
-// Навигация по экранам меню кастомизации
 if (goToZonesBtn) {
     goToZonesBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -377,7 +246,6 @@ if (backToMenuBtn) {
     });
 }
 
-// Открытие селекта зон
 if (zoneSelectTrigger) {
     zoneSelectTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -385,9 +253,7 @@ if (zoneSelectTrigger) {
     });
 }
 
-// Подсветка элементов интерфейса при наведении на пункты селекта
 document.querySelectorAll('.custom-option').forEach(option => {
-    // 1. Клик по пункту (Фиксирует и считывает цвет зоны)
     option.addEventListener('click', (e) => {
         e.stopPropagation();
         if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
@@ -406,31 +272,23 @@ document.querySelectorAll('.custom-option').forEach(option => {
         }
     });
 
-    // 2. Наведение мышки (Временная подсветка зоны)
     option.addEventListener('mouseenter', () => {
         const hoverZoneKey = option.getAttribute('data-value');
-        if (zones[hoverZoneKey]) {
-            zones[hoverZoneKey].classList.add('zone-highlight');
-        }
+        if (zones[hoverZoneKey]) zones[hoverZoneKey].classList.add('zone-highlight');
     });
 
-    // 3. Увод мышки (Удаление временной подсветки)
     option.addEventListener('mouseleave', () => {
         const hoverZoneKey = option.getAttribute('data-value');
-        if (zones[hoverZoneKey] && hoverZoneKey !== activeZoneKey) {
-            zones[hoverZoneKey].classList.remove('zone-highlight');
-        }
+        if (zones[hoverZoneKey] && hoverZoneKey !== activeZoneKey) zones[hoverZoneKey].classList.remove('zone-highlight');
     });
 });
 
-// Синхронизация инпута палитры с кружком-превью
 if (customColorInput) {
     customColorInput.addEventListener('input', (e) => {
         if (colorPreviewCircle) colorPreviewCircle.style.backgroundColor = e.target.value;
     });
 }
 
-// Применение и сохранение выбранного цвета в локальную базу данных
 if (applyColorBtn) {
     applyColorBtn.addEventListener('click', () => {
         if (!activeZoneKey || !zones[activeZoneKey]) { alert('Сначала выберите зону!'); return; }
@@ -438,14 +296,12 @@ if (applyColorBtn) {
         zones[activeZoneKey].style.backgroundColor = chosenColor;
         localStorage.setItem('chat_bg_' + activeZoneKey, chosenColor);
         zones[activeZoneKey].classList.remove('zone-highlight');
-        
         activeZoneKey = '';
         if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
         alert('Цвет успешно применен!');
     });
 }
 
-// Утилита конвертации RGB/RGBA от браузера в чистый HEX (#ffffff)
 function rgbToHex(rgb) {
     if (!rgb || typeof rgb !== 'string') return '#313338';
     if (rgb.startsWith('#')) return rgb;
@@ -457,7 +313,6 @@ function rgbToHex(rgb) {
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
-// Сброс и закрытие всех активных окон по клику на любую пустую область экрана
 document.addEventListener('click', () => {
     if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
     if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
@@ -466,13 +321,11 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
 });
 
-// Загрузка кастомных сохраненных тем при обновлении страницы и тестовые уведомления
 window.addEventListener('DOMContentLoaded', () => {
     Object.keys(zones).forEach(zoneKey => {
         const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
         if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
     });
-
     setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
     setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
 });
