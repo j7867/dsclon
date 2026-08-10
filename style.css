@@ -835,9 +835,7 @@ html, body {
     font-weight: bold !important;
     cursor: pointer !important;
 }
-
-/* Стили для кнопок-иконок в шапке */
-.chat-header button {
+.header-right-group button {
     background: none !important;
     border: none !important;
     color: #b5bac1 !important;
@@ -845,7 +843,21 @@ html, body {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 4px !important;
+    padding: 6px !important;
+    margin: 0 !important;
+    border-radius: 4px !important;
+    transition: color 0.2s ease, background-color 0.2s ease !important;
+}
+
+.header-right-group button:hover {
+    color: #dbdee1 !important;
+    background-color: rgba(78, 80, 88, 0.3) !important;
+}
+
+.header-right-group button svg {
+    width: 20px !important;
+    height: 20px !important;
+    display: block !important;
 }
 
 .chat-header button:hover {
