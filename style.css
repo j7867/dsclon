@@ -676,3 +676,13 @@ html, body {
 .message.editing-mode .message-actions {
     display: none !important;
 }
+/* ==========================================
+   13. СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ ВНУТРИ АВАТАРОК
+   ========================================== */
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Фото заполняет кружок пропорционально, без искажений */
+    border-radius: 50%;
+    display: block;
+}
