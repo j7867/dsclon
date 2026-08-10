@@ -731,17 +731,3 @@ html, body {
 .user-profile-block a:hover {
     opacity: 1;
 }
-
-.profile-mini-menu {
-    position: absolute !important;
-    display: none;
-}
-
-.profile-avatar-trigger:hover .profile-mini-menu {
-    display: block !important;
-}
-/* Задаем контекст позиционирования для аватарки */
-.profile-avatar-trigger {
-    position: relative !important;
-    display: inline-block;
-}
