@@ -392,8 +392,9 @@ document.addEventListener('click', (e) => {
         profileModalOverlay.classList.remove('active');
     }
 });
+
 // ==========================================
-/* 12. ЛОГИКА НАСТРОЕК ПРОФИЛЯ И КАСКАДНЫХ ТЕНЕЙ */
+/* 12. ЛОГИКА НАСТРОЕК ПРОФИЛЯ, КАСКАДНЫХ ТЕНЕЙ И ЗАГРУЗКИ ФОТО */
 // ==========================================
 const profileTrigger = document.getElementById('profileTrigger');
 const profileMiniMenu = document.getElementById('profileMiniMenu');
@@ -407,26 +408,90 @@ const headerProfileAvatar = document.getElementById('headerProfileAvatar');
 const miniMenuAvatar = document.getElementById('miniMenuAvatar');
 const miniMenuUsername = document.getElementById('miniMenuUsername');
 
+// Элементы для работы с файлами с устройства
+const profileImageFileInput = document.getElementById('profileImageFileInput');
+const uploadAvatarFileBtn = document.getElementById('uploadAvatarFileBtn');
+const resetAvatarFileBtn = document.getElementById('resetAvatarFileBtn');
+
 let selectedAvatarColor = localStorage.getItem('chat_avatar_color') || '#5865f2';
+let uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image') || ''; // Переменная для фото
 
 // Функция обновления визуального состояния аватарок на странице
 function updateProfileUI() {
     myName = localStorage.getItem('chat_nickname') || 'User';
     selectedAvatarColor = localStorage.getItem('chat_avatar_color') || '#5865f2';
+    uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image') || '';
 
     if (miniMenuUsername) miniMenuUsername.textContent = myName;
+
+    const firstLetter = myName.charAt(0).toUpperCase();
+
+    // Отрисовка аватарки в шапке чата
     if (headerProfileAvatar) {
-        headerProfileAvatar.textContent = myName.charAt(0).toUpperCase();
-        headerProfileAvatar.style.backgroundColor = selectedAvatarColor;
+        if (uploadedAvatarDataUrl) {
+            headerProfileAvatar.innerHTML = `<img src="${uploadedAvatarDataUrl}" alt="avatar">`;
+            headerProfileAvatar.style.backgroundColor = 'transparent';
+        } else {
+            headerProfileAvatar.textContent = firstLetter;
+            headerProfileAvatar.style.backgroundColor = selectedAvatarColor;
+        }
     }
+
+    // Отрисовка аватарки в парящем мини-меню
     if (miniMenuAvatar) {
-        miniMenuAvatar.textContent = myName.charAt(0).toUpperCase();
-        miniMenuAvatar.style.backgroundColor = selectedAvatarColor;
+        if (uploadedAvatarDataUrl) {
+            miniMenuAvatar.innerHTML = `<img src="${uploadedAvatarDataUrl}" alt="avatar">`;
+            miniMenuAvatar.style.backgroundColor = 'transparent';
+        } else {
+            miniMenuAvatar.textContent = firstLetter;
+            miniMenuAvatar.style.backgroundColor = selectedAvatarColor;
+        }
     }
+
     if (profileNicknameInput) profileNicknameInput.value = myName;
+    if (resetAvatarFileBtn) {
+        resetAvatarFileBtn.style.display = uploadedAvatarDataUrl ? 'block' : 'none';
+    }
 }
 
-// Открытие большого окна настроек
+// Перенаправление клика с красивой кнопки на системный инпут выбора файлов
+if (uploadAvatarFileBtn && profileImageFileInput) {
+    uploadAvatarFileBtn.addEventListener('click', () => profileImageFileInput.click());
+}
+
+// Считывание картинки с устройства и перевод в Base64 для localStorage
+if (profileImageFileInput) {
+    profileImageFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Ограничение размера файла до 1.5МБ, чтобы localStorage не переполнялся
+        if (file.size > 1.5 * 1024 * 1024) {
+            alert('Файл слишком большой! Выберите картинку размером до 1.5 МБ.');
+            profileImageFileInput.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            uploadedAvatarDataUrl = event.target.result; // Сохраняем текстовую строку картинки
+            if (resetAvatarFileBtn) resetAvatarFileBtn.style.display = 'block';
+            alert('Фото успешно выбрано! Нажмите "Сохранить изменения" для применения.');
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Удаление загруженного фото и возврат к обычной цветной аватарке с буквой
+if (resetAvatarFileBtn) {
+    resetAvatarFileBtn.addEventListener('click', () => {
+        uploadedAvatarDataUrl = '';
+        if (profileImageFileInput) profileImageFileInput.value = '';
+        resetAvatarFileBtn.style.display = 'none';
+    });
+}
+
+// Открытие большого окна настроек аккаунта
 if (openFullProfileBtn && profileModalOverlay) {
     openFullProfileBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -442,14 +507,14 @@ if (openFullProfileBtn && profileModalOverlay) {
     });
 }
 
-// Закрытие большого окна настроек по крестику
+// Закрытие настроек профиля по крестику
 if (closeProfileModalBtn && profileModalOverlay) {
     closeProfileModalBtn.addEventListener('click', () => {
         profileModalOverlay.classList.remove('active');
     });
 }
 
-// Выбор цвета в модальном окне
+// Выбор фонового цвета аватара в модальном окне
 document.querySelectorAll('.avatar-color-circle').forEach(circle => {
     circle.addEventListener('click', () => {
         document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected'));
@@ -458,7 +523,7 @@ document.querySelectorAll('.avatar-color-circle').forEach(circle => {
     });
 });
 
-// Сохранение изменений профиля
+// Сохранение всех изменений профиля
 if (saveProfileChangesBtn) {
     saveProfileChangesBtn.addEventListener('click', () => {
         const newNick = profileNicknameInput.value.trim();
@@ -466,6 +531,13 @@ if (saveProfileChangesBtn) {
         
         localStorage.setItem('chat_nickname', newNick);
         localStorage.setItem('chat_avatar_color', selectedAvatarColor);
+        
+        // Сохраняем или удаляем изображение в базе данных
+        if (uploadedAvatarDataUrl) {
+            localStorage.setItem('chat_avatar_image', uploadedAvatarDataUrl);
+        } else {
+            localStorage.removeItem('chat_avatar_image');
+        }
         
         updateProfileUI();
         profileModalOverlay.classList.remove('active');
