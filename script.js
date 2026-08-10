@@ -556,3 +556,11 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
     setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.', 'Влад'); }, 5000);
 });
+const closeBtn = document.getElementById('closeModalBtn');
+const modalOverlay = document.getElementById('profileModalOverlay');
+
+closeBtn.addEventListener('click', () => {
+    // Возвращаем исходные стили скрытия, которые мы меняли в CSS
+    modalOverlay.style.opacity = '0';
+    modalOverlay.style.visibility = 'hidden';
+});
