@@ -544,7 +544,7 @@ if (saveProfileChangesBtn) {
     });
 }
 
-// ГЛОБАЛЬНОЕ СОБЫТИЕ ЗАГРУЗКИ СТРАНИЦЫ (ТЕПЕРЬ СТРОГО В САМОМ КОНЦЕ ФАЙЛА)
+// ГЛОБАЛЬНОЕ СОБЫТИЕ ЗАГРУЗКИ СТРАНИЦЫ
 window.addEventListener('DOMContentLoaded', () => {
     updateProfileUI(); // Запускаем инициализацию профиля
 
@@ -555,12 +555,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
     setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.', 'Влад'); }, 5000);
-});
-const closeBtn = document.getElementById('closeModalBtn');
-const modalOverlay = document.getElementById('profileModalOverlay');
+    
+    // НАХОДИМ КНОПКИ (внутри события, когда HTML уже загружен)
+    const closeBtn = document.getElementById('closeModalBtn');
+    const modalOverlay = document.getElementById('profileModalOverlay');
+    const openBtn = document.getElementById('openProfileModalBtn'); // Проверьте ID кнопки открытия в HTML!
 
-closeBtn.addEventListener('click', () => {
-    // Возвращаем исходные стили скрытия, которые мы меняли в CSS
-    modalOverlay.style.opacity = '0';
-    modalOverlay.style.visibility = 'hidden';
-});
+    // НАВЕШИВАЕМ КЛИКИ С ПРОВЕРКОЙ
+    if (openBtn && modalOverlay) {
+        openBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+    }
+
+    if (closeBtn && modalOverlay) {
+        closeBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+    }
+}); // Вот эта скобка закрывает window.addEventListener
