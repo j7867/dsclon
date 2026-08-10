@@ -897,4 +897,31 @@ html, body {
 #openSettingsBtn {
     margin-right: 8px !important;
 }
+/* Возвращаем оригинальную текстуру (круглый серый фон) для кнопок */
+.header-right-group button {
+    background-color: #383a40 !important; /* Серый цвет подложки */
+    border: none !important;
+    color: #dbdee1 !important; /* Светло-серый цвет самой иконки */
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;  /* Делаем кнопку квадратной */
+    height: 32px !important; /* Делаем кнопку квадратной */
+    border-radius: 50% !important; /* Скругляем в идеальный круг */
+    padding: 0 !important;
+    margin: 0 !important;
+}
 
+/* Эффект при наведении на подложку */
+.header-right-group button:hover {
+    background-color: #4e5058 !important; /* Чуть светлее при ховере */
+    color: #ffffff !important;
+}
+
+/* Точный размер SVG-иконки внутри этой текстуры */
+.header-right-group button svg {
+    width: 18px !important;
+    height: 18px !important;
+    display: block !important;
+}
