@@ -289,14 +289,13 @@ function addNotification(type, text) {
                 setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
             });
 
-            // Отмена удаления
-            overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
-                eClick.stopPropagation();
-                overlay.remove();
-                blurTarget.classList.remove('blurred');
-            });
-        });
-    }
+                // Отмена удаления
+    overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
+        eClick.stopPropagation();
+        overlay.remove();
+        blurTarget.classList.remove('blurred');
+    });
+}
 
     // Добавляем новые уведомления в самое начало списка (сверху)
     notifList.insertBefore(notifItem, notifList.firstChild);
