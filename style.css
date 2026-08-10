@@ -731,10 +731,3 @@ html, body {
 .user-profile-block a:hover {
     opacity: 1;
 }
-/* Этот код должен быть только в CSS файле! */
-.profile-avatar-trigger .user-avatar {
-    width: 18px !important;
-    height: 18px !important;
-    border-radius: 50%;
-    cursor: pointer;
-}
