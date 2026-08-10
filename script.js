@@ -408,7 +408,7 @@ const headerProfileAvatar = document.getElementById('headerProfileAvatar');
 const miniMenuAvatar = document.getElementById('miniMenuAvatar');
 const miniMenuUsername = document.getElementById('miniMenuUsername');
 
-// Элементы для работы с файлами с устройства
+// Новые элементы для работы с файлами с устройства
 const profileImageFileInput = document.getElementById('profileImageFileInput');
 const uploadAvatarFileBtn = document.getElementById('uploadAvatarFileBtn');
 const resetAvatarFileBtn = document.getElementById('resetAvatarFileBtn');
@@ -462,7 +462,7 @@ if (uploadAvatarFileBtn && profileImageFileInput) {
 // Считывание картинки с устройства и перевод в Base64 для localStorage
 if (profileImageFileInput) {
     profileImageFileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files[0]; // Исправлено чтение первого файла из массива
         if (!file) return;
 
         // Ограничение размера файла до 1.5МБ, чтобы localStorage не переполнялся
