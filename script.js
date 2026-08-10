@@ -227,12 +227,69 @@ function addNotification(type, text) {
         </div>
     ` : '';
 
+    // Разделяем текстовый блок для блюра и блок с кнопками действий
     notifItem.innerHTML = `
         <div class="notif-blur-target">
             <div class="notif-title">${titleText}</div>
             <div class="notif-text">${text}</div>
-            ${actionsHtml}
         </div>
+        ${actionsHtml}
+    `;
+    
+    if (type === 'friend') {
+        const acceptBtn = notifItem.querySelector('.accept-btn');
+        const declineBtn = notifItem.querySelector('.decline-btn');
+        const blurTarget = notifItem.querySelector('.notif-blur-target');
+        const actionsContainer = notifItem.querySelector('.notif-actions');
+
+        // Принять дружбу
+        acceptBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (actionsContainer) actionsContainer.remove(); // Удаляем кнопки
+            blurTarget.innerHTML = `<div class="notif-status-text accepted" style="color: #23a55a; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">✔️ Запрос в друзья принят</div>`;
+            setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+        });
+
+        // Отклонить дружбу
+        declineBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            blurTarget.classList.add('blurred');
+            if (actionsContainer) actionsContainer.style.opacity = '0'; // Прячем кнопки под оверлей
+
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            overlay.innerHTML = `
+                <div class="confirm-title">Вы точно хотите отклонить запрос в друзья?</div>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn yes-btn">Да</button>
+                    <button class="confirm-btn no-btn">Нет</button>
+                </div>
+            `;
+            notifItem.appendChild(overlay);
+
+            // Подтверждение
+            overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
+                eClick.stopPropagation();
+                overlay.remove();
+                if (actionsContainer) actionsContainer.remove();
+                blurTarget.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 5px 0;">❌ Запрос в друзья отклонён</div>`;
+                setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+            });
+
+            // Отмена
+            overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
+                eClick.stopPropagation();
+                overlay.remove();
+                blurTarget.classList.remove('blurred');
+                if (actionsContainer) actionsContainer.style.opacity = '1';
+            });
+        });
+    }
+
+    // Добавляем новые уведомления наверх списка
+    notifList.insertBefore(notifItem, notifList.firstChild);
+}
+
     `;
     
     if (type === 'friend') {
