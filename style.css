@@ -698,7 +698,7 @@ html, body {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    opacity: 0;
-    visibility: hidden;
+    opacity: 1;
+    visibility: visible;
     transition: opacity 0.25s ease, visibility 0.25s ease;
 }
