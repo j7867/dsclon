@@ -688,17 +688,25 @@ html, body {
 }
 /* ОВЕРЛЕЙ БОЛЬШОГО МОДАЛЬНОГО ОКНА С ТЕМНЕЮЩЕЙ К ЦЕНТРУ ТЕНЬЮ */
 .profile-modal-overlay {
-    position: fixed !important; /* Меняем на fixed, чтобы зафиксировать поверх всего экрана */
+    position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background-color: rgba(0, 0, 0, 0.75); /* Плотный темный фон сзади */
-    z-index: 99999 !important; /* Поднимаем слой выше шапки и всех парящих окон */
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 99999 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    opacity: 1;
-    visibility: visible;
+    /* 1. В исходном состоянии окно должно быть СКРЫТО */
+    opacity: 0;
+    visibility: hidden;
     transition: opacity 0.25s ease, visibility 0.25s ease;
 }
+
+/* 2. Этот класс будет добавляться через JS только при КЛИКЕ */
+.profile-modal-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
