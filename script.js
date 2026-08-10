@@ -380,22 +380,17 @@ function rgbToHex(rgb) {
     let b = Math.max(0, Math.min(255, parseInt(rgbValues[2])));
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
-
-document.addEventListener('click', () => {
+document.addEventListener('click', (e) => {
     if (zoneSelectTrigger) zoneSelectTrigger.parentElement.classList.add('hide-options');
     if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
     if (settingsSidebar) settingsSidebar.classList.remove('active');
     document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-    Object.keys(zones).forEach(zoneKey => {
-        const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
-        if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
-    });
-    setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
-    setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.'); }, 5000);
+    
+    // Новая проверка: Закрываем модалку профиля, только если кликнули по самому серому оверлею вокруг окна
+    if (e.target === profileModalOverlay) {
+        profileModalOverlay.classList.remove('active');
+    }
 });
 // ==========================================
 /* 12. ЛОГИКА НАСТРОЕК ПРОФИЛЯ И КАСКАДНЫХ ТЕНЕЙ */
@@ -431,13 +426,12 @@ function updateProfileUI() {
     if (profileNicknameInput) profileNicknameInput.value = myName;
 }
 
-// Открытие большого окна настроек аккаунта
+// Открытие большого окна настроек
 if (openFullProfileBtn && profileModalOverlay) {
     openFullProfileBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         profileModalOverlay.classList.add('active');
         
-        // Подсвечиваем сохраненный цвет в палитре кружков
         document.querySelectorAll('.avatar-color-circle').forEach(circle => {
             if (circle.getAttribute('data-color') === selectedAvatarColor) {
                 circle.classList.add('selected');
@@ -448,14 +442,14 @@ if (openFullProfileBtn && profileModalOverlay) {
     });
 }
 
-// Закрытие окна настроек профиля по крестику
+// Закрытие большого окна настроек по крестику
 if (closeProfileModalBtn && profileModalOverlay) {
     closeProfileModalBtn.addEventListener('click', () => {
         profileModalOverlay.classList.remove('active');
     });
 }
 
-// Выбор цвета аватара в модальном окне
+// Выбор цвета в модальном окне
 document.querySelectorAll('.avatar-color-circle').forEach(circle => {
     circle.addEventListener('click', () => {
         document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected'));
@@ -464,7 +458,7 @@ document.querySelectorAll('.avatar-color-circle').forEach(circle => {
     });
 });
 
-// Сохранение изменений профиля глобально
+// Сохранение изменений профиля
 if (saveProfileChangesBtn) {
     saveProfileChangesBtn.addEventListener('click', () => {
         const newNick = profileNicknameInput.value.trim();
@@ -477,3 +471,16 @@ if (saveProfileChangesBtn) {
         profileModalOverlay.classList.remove('active');
     });
 }
+
+// ГЛОБАЛЬНОЕ СОБЫТИЕ ЗАГРУЗКИ СТРАНИЦЫ (ТЕПЕРЬ СТРОГО В САМОМ КОНЦЕ ФАЙЛА)
+window.addEventListener('DOMContentLoaded', () => {
+    updateProfileUI(); // Запускаем инициализацию профиля
+
+    Object.keys(zones).forEach(zoneKey => {
+        const savedColor = localStorage.getItem('chat_bg_' + zoneKey);
+        if (savedColor && zones[zoneKey]) zones[zoneKey].style.backgroundColor = savedColor;
+    });
+
+    setTimeout(() => { addNotification('system', 'Обновите site для применения изменений.'); }, 2000);
+    setTimeout(() => { addNotification('friend', 'Влад отправил вам запрос в друзья.', 'Влад'); }, 5000);
+});
