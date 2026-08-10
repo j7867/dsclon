@@ -253,7 +253,7 @@ html, body {
     border: none !important;
     width: 36px !important;
     height: 36px !important;
-    border-radius: 50% !important;
+     border-radius: 50% !important;
     cursor: pointer !important;
     display: flex !important;
     justify-content: center !important;
@@ -264,13 +264,13 @@ html, body {
     transition: background-color 0.2s, color 0.2s, transform 0.2s ease !important;
 }
 
-.settings-gear-trigger { right: 16px !important; }
-.notification-bell { right: 60px !important; }
+.settings-gear-trigger { right: auto !important; position: relative !important; top: auto !important; }
+.notification-bell { right: auto !important; position: relative !important; top: auto !important; }
 
 .settings-gear-trigger:hover, .notification-bell:hover {
     color: #ffffff !important;
     background-color: #35373c !important;
-    transform: scale(1.05);
+    transform: scale(1.05) !important;
 }
 
 .settings-gear-trigger svg, .notification-bell svg {
@@ -282,7 +282,6 @@ html, body {
 
 .settings-gear-trigger:hover svg { transform: rotate(90deg) !important; }
 .notification-bell:hover svg { transform: rotate(20deg) !important; }
-
 .bell-badge {
     position: absolute;
     top: 4px;
