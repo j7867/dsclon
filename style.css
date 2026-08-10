@@ -866,3 +866,35 @@ html, body {
     justify-content: space-between !important;
     align-items: center !important;
 }
+/* Выравниваем всю правую группу (ник, аватарку и кнопки) строго по центру */
+.header-right-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important; /* Делаем красивый шаг между всеми элементами */
+}
+
+/* Возвращаем оригинальный крупный размер и белый цвет кнопкам-иконкам */
+.header-right-group button {
+    background: none !important;
+    border: none !important;
+    color: #ffffff !important; /* Чистый белый цвет, как на скрине */
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important; /* Убираем лишние внутренние отступы */
+    margin: 0 !important;
+}
+
+/* Четко задаем размер для самих SVG-картинок внутри кнопок */
+.header-right-group button svg {
+    width: 24px !important; /* Делаем их крупнее, как в оригинале */
+    height: 24px !important;
+    display: block !important;
+}
+
+/* Ограничиваем отступ справа у самой последней кнопки (шестеренки) */
+#openSettingsBtn {
+    margin-right: 8px !important;
+}
+
