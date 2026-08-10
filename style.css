@@ -804,3 +804,18 @@ html, body {
 .chat-header button:hover {
     color: #dbdee1 !important;
 }
+/* Задаем правильную сетку для всей области чата */
+.chat-area {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Принудительно растягиваем шапку на всю доступную ширину */
+.chat-header {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
