@@ -731,26 +731,73 @@ html, body {
 .user-profile-block a:hover {
     opacity: 1;
 }
-/* Включаем флексбокс для колонки с каналами */
-.channels-sidebar {
+
+/* Настройка сетки для всей области чата */
+.chat-area {
     display: flex !important;
     flex-direction: column !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Правильное распределение элементов по углам шапки */
+.chat-header {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
     justify-content: space-between !important;
-    height: 100vh !important; /* Растягиваем колонку на всю высоту экрана */
+    padding: 0 16px !important;
+    height: 48px !important;
+    background-color: #313338 !important; 
+    border-bottom: 1px solid #1f2023 !important;
     box-sizing: border-box;
 }
 
-/* Стили для самого блока профиля, чтобы он красиво встал внизу */
-.user-profile-block {
-    margin-top: auto !important; /* Выталкивает блок в самый низ */
-    background-color: #232428 !important; /* Темный фон для панельки профиля */
-    padding: 8px 12px !important;
+/* Контейнер для правой группы элементов */
+.header-right-group {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
-    width: 100%;
-    box-sizing: border-box;
+    gap: 16px !important; 
 }
+
+/* Текст имени */
+.user-name-header {
+    font-size: 14px !important;
+    color: #f2f3f5 !important;
+    font-weight: 500 !important;
+}
+
+/* Идеально круглая аватарка */
+.user-avatar-header {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+}
+
+/* Стилизация кнопок уведомлений и шестеренки */
+.header-right-group button {
+    background: none !important;
+    border: none !important;
+    color: #b5bac1 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 4px !important;
+    transition: color 0.2s ease !important;
+}
+
+.header-right-group button:hover {
+    color: #dbdee1 !important;
+}
+
 /* Делаем шапку полноценным контейнером */
 .chat-header {
     display: flex !important;
