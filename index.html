@@ -9,17 +9,31 @@
 </head>
 <body>
 
-  <!-- 1. ПАНЕЛЬ С СЕРВЕРАМИ -->
+   <!-- 1. ПАНЕЛЬ С СЕРВЕРАМИ -->
   <div class="guilds-sidebar" id="guildsSidebar">
-    <div class="guild-icon active">DM</div>
+    <!-- Иконка личных сообщений (ЛС) -->
+    <div class="guild-icon active" id="dmServerBtn" data-type="dm">DM</div>
+    <!-- Иконка общего сервера -->
+    <div class="guild-icon" id="publicServerBtn" data-type="server">🌐</div>
   </div>
 
   <!-- 2. ПАНЕЛЬ С КАНАЛАМИ -->
   <div class="channels-sidebar" id="channelsSidebar">
-    <div class="sidebar-header">CHANNELS</div>
-    <div class="user-item active">
-      <div class="user-avatar" style="background-color: #5865f2;">*</div>
-      <span>general-chat</span>
+    <!-- Контейнер для Личных сообщений (отображается по умолчанию) -->
+    <div id="dmChannelsSection">
+      <div class="sidebar-header">ЛИЧНЫЕ СООБЩЕНИЯ</div>
+      <div class="channels-list" id="dmChannelsList">
+        <!-- Сюда JS будет добавлять новых друзей при принятии заявки -->
+      </div>
+    </div>
+
+    <!-- Контейнер для Общего сервера (изначально скрыт) -->
+    <div id="serverChannelsSection" style="display: none;">
+      <div class="sidebar-header">ТЕКСТОВЫЕ КАНАЛЫ</div>
+      <div class="user-item active" data-channel="general-chat">
+        <div class="user-avatar" style="background-color: #5865f2;">#</div>
+        <span>general-chat</span>
+      </div>
     </div>
   </div>
 
