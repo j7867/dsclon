@@ -709,4 +709,25 @@ html, body {
     opacity: 1 !important;
     visibility: visible !important;
 }
+/* Находим контейнер, в котором лежат аватарка, имя и настройки */
+.user-profile-block { 
+    display: flex;
+    flex-direction: column; /* Выстраиваем элементы в столбик */
+    gap: 8px; /* Задаем красивый отступ между ними */
+    padding: 16px;
+}
 
+/* Стили для ссылки "Настройки профиля" */
+.user-profile-block a, 
+.user-profile-block button {
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+/* Эффект при наведении */
+.user-profile-block a:hover {
+    opacity: 1;
+}
