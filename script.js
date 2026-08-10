@@ -12,6 +12,70 @@ const zoneSelectOptions = document.getElementById('zoneSelectOptions');
 const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
+const dmServerBtn = document.getElementById('dmServerBtn');
+const publicServerBtn = document.getElementById('publicServerBtn');
+const dmChannelsSection = document.getElementById('dmChannelsSection');
+const serverChannelsSection = document.getElementById('serverChannelsSection');
+const dmChannelsList = document.getElementById('dmChannelsList');
+
+// Переключение на вкладку Личных Сообщений (DM)
+if (dmServerBtn) {
+    dmServerBtn.addEventListener('click', () => {
+        if (publicServerBtn) publicServerBtn.classList.remove('active');
+        dmServerBtn.classList.add('active');
+        if (serverChannelsSection) serverChannelsSection.style.display = 'none';
+        if (dmChannelsSection) dmChannelsSection.style.display = 'block';
+    });
+}
+
+// Переключение на вкладку Общего Сервера
+if (publicServerBtn) {
+    publicServerBtn.addEventListener('click', () => {
+        if (dmServerBtn) dmServerBtn.classList.remove('active');
+        publicServerBtn.classList.add('active');
+        if (dmChannelsSection) dmChannelsSection.style.display = 'none';
+        if (serverChannelsSection) serverChannelsSection.style.display = 'block';
+        
+        // Меняем шапку при переходе на общий сервер
+        const chatHeaderSpan = document.querySelector('.chat-header span');
+        if (chatHeaderSpan) chatHeaderSpan.textContent = '# general-chat';
+    });
+}
+
+// Функция динамического добавления друга в список ЛС
+function createDirectMessageItem(username) {
+    if (!dmChannelsList) return;
+    
+    // Проверяем, нет ли уже этого пользователя в списке ЛС
+    const exists = Array.from(dmChannelsList.querySelectorAll('span')).some(span => span.textContent === username);
+    if (exists) return;
+
+    const userItem = document.createElement('div');
+    userItem.className = 'user-item';
+    
+    // Генерируем случайный цвет для аватара друга
+    const randomColor = ['#5865f2', '#23a55a', '#f23f43', '#eb459e', '#f47fff'][Math.floor(Math.random() * 5)];
+    
+    userItem.innerHTML = `
+        <div class="user-avatar" style="background-color: ${randomColor};">${username.charAt(0).toUpperCase()}</div>
+        <span>${username}</span>
+    `;
+
+    // Клик по другу меняет шапку чата на общение с ним
+    userItem.addEventListener('click', () => {
+        dmChannelsList.querySelectorAll('.user-item').forEach(item => item.classList.remove('active'));
+        userItem.classList.add('active');
+        
+        const chatHeaderSpan = document.querySelector('.chat-header span');
+        if (chatHeaderSpan) chatHeaderSpan.textContent = `@ ${username}`;
+        
+        // Очищаем контейнер сообщений для имитации приватного чата
+        if (messagesContainer) messagesContainer.innerHTML = '';
+        appendMessage('Система', `Вы открыли приватный диалог с пользователем ${username}`);
+    });
+
+    dmChannelsList.appendChild(userItem);
+}
 
 const notificationBell = document.getElementById('notificationBell');
 const notificationsDropdown = document.getElementById('notificationsDropdown');
