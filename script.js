@@ -57,6 +57,73 @@ function appendMessage(sender, text) {
         </div>
     `;
     messagesContainer.appendChild(messageElement);
+    // --- ЛОГИКА РЕДАКТИРОВАНИЯ ---
+    const editBtn = messageElement.querySelector('.edit-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Если уже редактируем, не открываем форму повторно
+            if (messageElement.classList.contains('editing-mode')) return;
+            
+            const messageContent = messageElement.querySelector('.message-content');
+            const messageTextSpan = messageElement.querySelector('.message-text');
+            const oldText = messageTextSpan.textContent;
+
+            messageElement.classList.add('editing-mode');
+
+            // Создаем форму редактирования
+            const editForm = document.createElement('div');
+            editForm.className = 'message-edit-form';
+            editForm.innerHTML = `
+                <input type="text" class="message-edit-input" value="${oldText}" autocomplete="off">
+                <div class="edit-form-buttons">
+                    <button class="edit-save-btn">Сохранить</button>
+                    <button class="edit-cancel-btn">Отмена</button>
+                </div>
+            `;
+
+            messageTextSpan.style.display = 'none';
+            messageContent.appendChild(editForm);
+
+            const editInput = editForm.querySelector('.message-edit-input');
+            editInput.focus();
+            editInput.setSelectionRange(editInput.value.length, editInput.value.length);
+
+            const saveChanges = () => {
+                const newText = editInput.value.trim();
+                if (newText !== '') {
+                    messageTextSpan.textContent = newText;
+                }
+                closeEditForm();
+            };
+
+            const closeEditForm = () => {
+                editForm.remove();
+                messageTextSpan.style.display = 'block';
+                messageElement.classList.remove('editing-mode');
+            };
+
+            editForm.querySelector('.edit-save-btn').addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                saveChanges();
+            });
+
+            editForm.querySelector('.edit-cancel-btn').addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                closeEditForm();
+            });
+
+            editInput.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter') {
+                    ev.preventDefault();
+                    saveChanges();
+                } else if (ev.key === 'Escape') {
+                    closeEditForm();
+                }
+            });
+        });
+    }
 
     // Логика удаления (только для твоих сообщений)
     const deleteBtn = messageElement.querySelector('.delete-btn');
@@ -180,7 +247,6 @@ function addNotification(type, text) {
             notifItem.innerHTML = `<div class="notif-status-text accepted" style="color: #23a55a; font-size:13px; text-align:center; font-weight:500; padding: 10px 0;">✔️ Запрос в друзья принят</div>`;
             setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
         });
-
         // Отклонить дружбу с оверлеем подтверждения
         declineBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -195,6 +261,23 @@ function addNotification(type, text) {
                     <button class="confirm-btn no-btn">Нет</button>
                 </div>
             `;
+            notifItem.appendChild(overlay);
+
+            overlay.querySelector('.yes-btn').addEventListener('click', (eClick) => {
+                eClick.stopPropagation();
+                overlay.remove();
+                blurTarget.style.display = 'none';
+                notifItem.innerHTML = `<div class="notif-status-text declined" style="color: #f23f43; font-size:13px; text-align:center; font-weight:500; padding: 10px 0;">❌ Запрос в друзья отклонён</div>`;
+                setTimeout(() => { notifItem.remove(); checkEmptyNotifications(); }, 2000);
+            });
+
+            overlay.querySelector('.no-btn').addEventListener('click', (eClick) => {
+                eClick.stopPropagation();
+                overlay.remove();
+                blurTarget.classList.remove('blurred');
+            });
+        });
+
             notifItem.appendChild(overlay);
 
             // Подтверждение удаления
