@@ -1,22 +1,58 @@
 const messagesContainer = document.getElementById('messagesContainer');
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
-const settingTrigger = document.getElementById('settingTrigger');
+
+// ИСПРАВЛЕНО: Теперь JS ищет кнопки по вашим новым CSS-классам кругов
+const dmServerBtn = document.getElementById('dmServerBtn');
+const publicServerBtn = document.getElementById('publicServerBtn');
+const openSettingsBtn = document.querySelector('.settings-gear-trigger'); 
+const notificationBell = document.querySelector('.notification-bell');
+
 const settingsSidebar = document.getElementById('settingsSidebar');
+const notificationsDropdown = document.getElementById('notificationsDropdown');
+const bellBadge = document.querySelector('.bell-badge');
+
 const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
 const mainSettingsScreen = document.getElementById('mainSettingsScreen');
 const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
+
 const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
 const zoneSelectOptions = document.getElementById('zoneSelectOptions');
 const customColorInput = document.getElementById('customColorInput');
 const colorPreviewCircle = document.getElementById('colorPreviewCircle');
 const applyColorBtn = document.getElementById('applyColorBtn');
-const dmServerBtn = document.getElementById('dmServerBtn');
-const publicServerBtn = document.getElementById('publicServerBtn');
+
 const dmChannelsSection = document.getElementById('dmChannelsSection');
 const serverChannelsSection = document.getElementById('serverChannelsSection');
 const dmChannelsList = document.getElementById('dmChannelsList');
+
+// Переменные для модалки профиля
+const openFullProfileBtn = document.getElementById('openFullProfileBtn'); 
+const profileModalOverlay = document.getElementById('profileModalOverlay');
+const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
+const profileNicknameInput = document.getElementById('profileNicknameInput');
+const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
+const profileImageFileInput = document.getElementById('profileImageFileInput');
+const uploadAvatarFileBtn = document.getElementById('uploadAvatarFileBtn');
+const resetAvatarFileBtn = document.getElementById('resetAvatarFileBtn');
+
+const userHeaderName = document.querySelector('.user-name-header');
+const miniMenuAvatar = document.getElementById('miniMenuAvatar');
+const miniMenuUsername = document.getElementById('miniMenuUsername');
+
+const zones = {
+    chatArea: document.getElementById('chatArea'),
+    channelsSidebar: document.getElementById('channelsSidebar'),
+    guildsSidebar: document.getElementById('guildsSidebar'),
+    settingsSidebar: document.getElementById('settingsSidebar')
+};
+let activeZoneKey = '';
+let myName = localStorage.getItem('chat_nickname') || 'User';
+let selectedAvatarColor = localStorage.getItem('chat_avatar_color') || '#5865f2';
+let uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image') || '';
+let notificationsCount = 0;
+
 
 // Переключение на вкладку Личных Сообщений (DM)
 if (dmServerBtn) {
@@ -209,14 +245,16 @@ function appendMessage(sender, text) {
     }
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
-if (settingTrigger && settingsSidebar) {
-    settingTrigger.addEventListener('click', (e) => {
+// Показ/скрытие панели настроек по клику на шестеренку
+if (openSettingsBtn && settingsSidebar) {
+    openSettingsBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
         settingsSidebar.classList.toggle('active');
     });
 }
 
+// Показ/скрытие выпадающего списка уведомлений по клику на колокольчик
 if (notificationBell && notificationsDropdown) {
     notificationBell.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -227,8 +265,15 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-if (settingsSidebar) { settingsSidebar.addEventListener('click', (e) => { e.stopPropagation(); }); }
-if (notificationsDropdown) { notificationsDropdown.addEventListener('click', (e) => { e.stopPropagation(); }); }
+// Глобальный клик по документу для закрытия панелей, если кликнули мимо
+document.addEventListener('click', (e) => {
+    if (settingsSidebar && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
+        settingsSidebar.classList.remove('active');
+    }
+    if (notificationsDropdown && !notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
+        notificationsDropdown.classList.remove('visible');
+    }
+});
 
 function checkEmptyNotifications() {
     if (notifList && notifList.children.length === 0 && notifEmptyText) {
