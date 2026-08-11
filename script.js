@@ -220,20 +220,20 @@ function appendMessage(sender, text) {
                 userMenu.className = 'user-action-menu';
                 userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
                 messageElement.appendChild(userMenu);
-                          userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
-                eClick.stopPropagation();
+                            userMenu.querySelector('.add-friend').addEventListener('click', (eclick) => {
+                eclick.stopPropagation();
                 addNotification('friend', sender);
                 userMenu.classList.remove('visible');
-                arrowBtn.classList.remove('open'); // ДОБАВЬТЕ ЭТУ СТРОКУ СЮДА
+                arrowBtn.classList.remove('open');
             });
+        }
 
-            }
-            arrowBtn.classList.toggle('open');
-            userMenu.classList.toggle('visible');
-        });
-    }
+        arrowBtn.classList.toggle('open');
+        userMenu.classList.toggle('visible');
+    });
+}
 
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 // Показ/скрытие панели настроек по клику на шестеренку
@@ -269,23 +269,22 @@ document.addEventListener('click', (e) => {
         }
     }
     
-    // Закрываем уведомления, только если элементы существуют на странице
+        // Закрываем уведомления, только если элементы существуют на странице
     if (notificationsDropdown && notificationBell) {
         if (!notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
-            notificationsDropdown.classList.remove('visible');
+           notificationsDropdown.classList.remove('visible');
         }
     }
-});
-
+    
     // Закрытие контекстных меню сообщений
     document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
     document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
     
-    // Новая проверка: Закрываем модалку профиля, только если кликнули по самому оверлею вокруг окна
-    if (profileModalOverlay && e.target === profileModalOverlay) {
+    // Новая проверка: Закрываем модалку профиля
+   if (profileModalOverlay && e.target === profileModalOverlay) {
         profileModalOverlay.classList.remove('active');
     }
-});
+ }); // ВОТ ЭТА ЕДИНСТВЕННАЯ СКОБКА ЗАКРЫВАЕТ ВЕСЬ КЛИК ПО ДОКУМЕНТУ
 
 
 function checkEmptyNotifications() {
