@@ -1,4 +1,6 @@
 // === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
+// === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
+// === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
 import { initializeApp } from "https://gstatic.com";
 import { 
     getFirestore, doc, setDoc, getDoc, collection, updateDoc, onSnapshot 
