@@ -424,23 +424,6 @@ document.addEventListener('click', (e) => {
 // ==========================================
 /* 12. ЛОГИКА НАСТРОЕК ПРОФИЛЯ, КАСКАДНЫХ ТЕНЕЙ И ЗАГРУЗКИ ФОТО */
 // ==========================================
-const profileTrigger = document.getElementById('profileTrigger');
-const profileMiniMenu = document.getElementById('profileMiniMenu');
-const openFullProfileBtn = document.getElementById('openFullProfileBtn');
-const profileModalOverlay = document.getElementById('profileModalOverlay');
-const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
-const profileNicknameInput = document.getElementById('profileNicknameInput');
-const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
-
-const headerProfileAvatar = document.getElementById('headerProfileAvatar');
-const miniMenuAvatar = document.getElementById('miniMenuAvatar');
-const miniMenuUsername = document.getElementById('miniMenuUsername');
-
-// Новые элементы для работы с файлами с устройства
-const profileImageFileInput = document.getElementById('profileImageFileInput');
-const uploadAvatarFileBtn = document.getElementById('uploadAvatarFileBtn');
-const resetAvatarFileBtn = document.getElementById('resetAvatarFileBtn');
-
 let selectedAvatarColor = localStorage.getItem('chat_avatar_color') || '#5865f2';
 let uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image') || ''; // Переменная для фото
 
