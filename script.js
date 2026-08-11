@@ -421,26 +421,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Глобальное закрытие менюшек по клику на документ
-    document.addEventListener('click', (e) => {
-        const selectOptions = document.getElementById('zoneSelectOptions');
-        if (selectOptions) selectOptions.classList.remove('active');
-        if (settingsSidebar && openSettingsBtn && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
+    // Показ/скрытие панели настроек по клику на шестеренку
+if (openSettingsBtn && settingsSidebar) {
+    openSettingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Останавливаем всплытие, чтобы глобальный клик не закрывал панель
+        if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
+        settingsSidebar.classList.toggle('active');
+    });
+}
+
+// Показ/скрытие выпадающего списка уведомлений по клику на колокольчик
+if (notificationBell && notificationsDropdown) {
+    notificationBell.addEventListener('click', (e) => {
+        e.stopPropagation(); // Останавливаем всплытие, чтобы глобальный клик не закрывал панель
+        if (settingsSidebar) settingsSidebar.classList.remove('active');
+        notificationsDropdown.classList.toggle('visible');
+        if (bellBadge) bellBadge.classList.remove('active');
+    });
+}
+
+// Глобальный клик по документу для закрытия панелей, если кликнули МИМО них
+document.addEventListener('click', (e) => {
+    // Безопасное закрытие селектора зон
+    const selectOptions = document.getElementById('zoneSelectOptions');
+    if (selectOptions) selectOptions.classList.remove('active');
+    
+    // Закрываем настройки, ТОЛЬКО если кликнули вне панели И вне самой кнопки шестеренки
+    if (settingsSidebar && openSettingsBtn) {
+        if (!settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
             settingsSidebar.classList.remove('active');
         }
-        if (notificationsDropdown && notificationBell && !notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
+    }
+    
+    // Закрываем уведомления, ТОЛЬКО если кликнули вне списка И вне самого колокольчика
+    if (notificationsDropdown && notificationBell) {
+        if (!notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
             notificationsDropdown.classList.remove('visible');
         }
-        if (profileModalOverlay && e.target === profileModalOverlay) {
-            profileModalOverlay.classList.remove('active');
-        }
-    });
+    }
 
-    // Загрузка сообщений и инициализация интерфейса
-    loadSavedMessages(); 
-    if (userHeaderName) userHeaderName.textContent = myName;
-    if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
-
-    // Симуляция системных писем
-    setTimeout(() => { addNotification('system', 'Добро пожаловать в создатель-мод чата.'); }, 2000);
+    // Закрываем модалку профиля при клике на темный оверлей вокруг нее
+    if (profileModalOverlay && e.target === profileModalOverlay) {
+        profileModalOverlay.classList.remove('active');
+    }
 });
