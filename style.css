@@ -798,4 +798,23 @@ html, body {
 .send-btn:hover svg {
     animation: planeFlyOut 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
 }
+/* ==========================================
+   ФИКС ВРАЩЕНИЯ ИКОНОК ШАПКИ ПРИ НАВЕДЕНИИ
+   ========================================== */
+.settings-gear-trigger, .notification-bell {
+    transition: background-color 0.2s ease, transform 0.2s ease !important;
+}
 
+.settings-gear-trigger svg, .notification-bell svg {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* Проворачиваем шестеренку на 75 градусов по часовой стрелке */
+.settings-gear-trigger:hover svg {
+    transform: rotate(75deg) !important;
+}
+
+/* Проворачиваем колокольчик на 17 градусов по часовой стрелке */
+.notification-bell:hover svg {
+    transform: rotate(17deg) !important;
+}
