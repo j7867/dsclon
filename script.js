@@ -1,3 +1,23 @@
+// === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
+import { initializeApp } from "https://gstatic.com";
+import { 
+    getFirestore, doc, setDoc, getDoc, collection, updateDoc, onSnapshot 
+} from "https://gstatic.com";
+
+// Ваши уникальные ключи конфигурации Firebase со скриншота
+const firebaseConfig = {
+  apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
+  authDomain: "://firebaseapp.com",
+  projectId: "ds-chat78",
+  storageBucket: "://appspot.com",
+  messagingSenderId: "1084561649631",
+  appId: "1:1084561649631:web:5361cf4ae5540104e09e6a"
+};
+
+// Запуск облачного приложения и базы данных
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // === 1. БАЗОВЫЕ ЭЛЕМЕНТЫ И ШАПКА ЧАТА ===
@@ -23,8 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
     const zoneSelectOptions = document.getElementById('zoneSelectOptions');
     const customColorInput = document.getElementById('customColorInput');
-    const colorPreviewCircle = document.getElementById('colorPreviewCircle');
     const applyColorBtn = document.getElementById('applyColorBtn');
+
+    // === 4. АДМИНКА ЗАЯВОК (НОВЫЙ ПУНКТ) ===
+    const goToAdminRequestsBtn = document.getElementById('goToAdminRequestsBtn');
+    const adminRequestsScreen = document.getElementById('adminRequestsScreen');
+    const backToMenuFromAdminBtn = document.getElementById('backToMenuFromAdminBtn');
+    const adminRequestsList = document.getElementById('adminRequestsList');
+    const requestsCountBadge = document.getElementById('requestsCountBadge');
+    const noRequestsText = document.getElementById('noRequestsText');
 
     const zones = {
         chatArea: document.getElementById('chatArea'),
@@ -34,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     let activeZoneKey = '';
 
-    // === 4. СЕРВЕРЫ И КАНАЛЫ (ДИНАМИКА) ===
+    // === 5. СЕРВЕРЫ И КАНАЛЫ ===
     const guildsSidebar = document.getElementById('guildsSidebar');
     const dmServerBtn = document.getElementById('dmServerBtn');
     const publicServerBtn = document.getElementById('publicServerBtn');
@@ -54,30 +81,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const newServerNameInput = document.getElementById('newServerNameInput');
     const newChannelNameInput = document.getElementById('newChannelNameInput');
 
-    // === 5. МОДАЛКА ПРОФИЛЯ И АККАУНТОВ ===
+    // === 6. МОДАЛКА ПРОФИЛЯ И АВТОРИЗАЦИИ ===
     const openFullProfileBtn = document.getElementById('openFullProfileBtn') || document.querySelector('.user-avatar-header'); 
     const profileModalOverlay = document.getElementById('profileModalOverlay');
-    const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
-    const profileNicknameInput = document.getElementById('profileNicknameInput');
-    const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
-
     const authModalOverlay = document.getElementById('authModalOverlay');
     const authLoginInput = document.getElementById('authLoginInput');
     const authPasswordInput = document.getElementById('authPasswordInput');
     const authSubmitBtn = document.getElementById('authSubmitBtn');
 
-    // СОСТОЯНИЕ СЕССИИ И ПРАВА СОЗДАТЕЛЯ
+    // СОСТОЯНИЕ ТЕКУЩЕЙ СЕССИИ ЧАТА
     let myName = localStorage.getItem('chat_active_user') || '';
     let selectedAvatarColor = localStorage.getItem('chat_avatar_color_' + myName) || '#5865f2';
     let uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image_' + myName) || '';
-    let notificationsCount = 0;
     
     let currentServerContext = 'dm'; 
     let currentChannelContext = 'friends-list';
-    const IS_CREATOR = true; 
-
+    
+    // Жестко фиксируем ник создателя для вывода админки заявок
+    const CREATOR_NICKNAME = 'AdminCreator';
     // ==========================================
-    // ЛОГИКА СИСТЕМЫ АККАУНТОВ (ВХОД / ПАРОЛЬ)
+    // СИСТЕМА ОБЛАЧНЫХ АККАУНТОВ И МОДЕРАЦИИ
     // ==========================================
     function checkUserSession() {
         if (!myName) {
@@ -89,39 +112,133 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (authSubmitBtn) {
-        authSubmitBtn.addEventListener('click', () => {
+        authSubmitBtn.addEventListener('click', async () => {
             const login = authLoginInput.value.trim();
             const password = authPasswordInput.value.trim();
 
-            if (!login || !password) {
-                alert('Пожалуйста, заполните все поля!');
-                return;
-            }
+            if (!login || !password) { alert('Заполните все поля!'); return; }
 
-            const savedPassword = localStorage.getItem('user_pass_' + login);
-            if (savedPassword) {
-                if (savedPassword !== password) {
-                    alert('Неверный пароль для данного никнейма!');
-                    return;
+            try {
+                const userRef = doc(db, "users", login);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    if (userData.password !== password) {
+                        alert('Неверный пароль для этого никнейма!');
+                        return;
+                    }
+                    if (userData.status === 'pending') {
+                        alert('Ваш аккаунт всё ещё ожидает подтверждения администратором!');
+                        return;
+                    }
+                } else {
+                    // Автоматическая заявка на регистрацию в Firebase
+                    const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
+                    await setDoc(userRef, {
+                        username: login,
+                        password: password,
+                        status: initialStatus
+                    });
+                    
+                    if (initialStatus === 'pending') {
+                        alert('Заявка на создание аккаунта успешно отправлена! Дождитесь одобрения администратора.');
+                        return;
+                    }
                 }
-            } else {
-                localStorage.setItem('user_pass_' + login, password);
-                alert('Новый аккаунт успешно создан и зарегистрирован!');
-            }
 
-            localStorage.setItem('chat_active_user', login);
-            myName = login;
-            if (authModalOverlay) authModalOverlay.classList.remove('active');
-            initChatAfterAuth();
+                localStorage.setItem('chat_active_user', login);
+                myName = login;
+                if (authModalOverlay) authModalOverlay.classList.remove('active');
+                initChatAfterAuth();
+            } catch (err) {
+                console.error("Ошибка Firebase Auth: ", err);
+                alert('Ошибка подключения к базе данных!');
+            }
         });
     }
 
     function initChatAfterAuth() {
         if (userHeaderName) userHeaderName.textContent = myName;
         if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
-        selectedAvatarColor = localStorage.getItem('chat_avatar_color_' + myName) || '#5865f2';
-        uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image_' + myName) || '';
+        
+        // Показываем секретную кнопку заявок только Создателю
+        if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
+            goToAdminRequestsBtn.style.display = 'block';
+            listenToPendingRequests(); // Запуск онлайн-отслеживания заявок
+        }
+        
         loadSavedMessages();
+    }
+
+    // Живой стрим заявок из Firebase Firestore для AdminCreator
+    function listenToPendingRequests() {
+        if (!adminRequestsList || !requestsCountBadge || !noRequestsText) return;
+
+        // Слушаем изменения в коллекции пользователей в реальном времени
+        onSnapshot(collection(db, "users"), (snapshot) => {
+            adminRequestsList.innerHTML = '';
+            let count = 0;
+
+            snapshot.forEach((docSnap) => {
+                const user = docSnap.data();
+                if (user.status === 'pending') {
+                    count++;
+                    const card = document.createElement('div');
+                    card.className = 'request-card';
+                    card.innerHTML = `
+                        <div class="request-info">
+                            <div class="request-user-name">Логин: ${user.username}</div>
+                            <div class="request-user-pass">Пароль: ${user.password}</div>
+                        </div>
+                        <div class="request-actions-row">
+                            <button class="request-btn request-approve-btn" data-user="${user.username}">✔️ Одобрить</button>
+                            <button class="request-btn request-decline-btn" data-user="${user.username}">❌ Отклонить</button>
+                        </div>
+                    `;
+
+                    // Событие Одобрить
+                    card.querySelector('.request-approve-btn').addEventListener('click', async () => {
+                        await updateDoc(doc(db, "users", user.username), { status: 'approved' });
+                    });
+
+                    // Событие Отклонить
+                    card.querySelector('.request-decline-btn').addEventListener('click', async () => {
+                        await updateDoc(doc(db, "users", user.username), { status: 'declined' });
+                    });
+
+                    adminRequestsList.appendChild(card);
+                }
+            });
+
+            requestsCountBadge.textContent = count;
+            noRequestsText.style.display = (count === 0) ? 'block' : 'none';
+        });
+    }
+
+    // Смена экранов в админке
+    if (goToAdminRequestsBtn && mainSettingsScreen && adminRequestsScreen) {
+        goToAdminRequestsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mainSettingsScreen.style.display = 'none';
+            adminRequestsScreen.style.display = 'block';
+        });
+    }
+    if (backToMenuFromAdminBtn && mainSettingsScreen && adminRequestsScreen) {
+        backToMenuFromAdminBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            adminRequestsScreen.style.display = 'none';
+            mainSettingsScreen.style.display = 'block';
+        });
+    }
+
+    // Выход из аккаунта
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('chat_active_user');
+            window.location.reload();
+        });
     }
 
     // ==========================================
@@ -146,9 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         messagesContainer.innerHTML = ''; 
         if (saved) {
             const messagesData = JSON.parse(saved);
-            messagesData.forEach(data => {
-                appendMessage(data.author, data.text, true); 
-            });
+            messagesData.forEach(data => { appendMessage(data.author, data.text, true); });
         }
     }
     // ==========================================
@@ -157,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function appendMessage(sender, text, isHistory = false) {
         if (!messagesContainer) return;
         
-        const canDelete = IS_CREATOR || (sender === myName);
+        const canDelete = (myName === CREATOR_NICKNAME) || (sender === myName);
         const canEdit = (sender === myName); 
 
         const messageElement = document.createElement('div');
@@ -187,7 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
         messageElement.querySelector('.message-text').textContent = text;
         messagesContainer.appendChild(messageElement);
 
-        // Обработчик кнопки редактирования (Пункт 2)
         const editBtn = messageElement.querySelector('.edit-btn');
         if (editBtn) {
             editBtn.addEventListener('click', (e) => {
@@ -232,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Обработчик анимированного удаления (Пункт 4)
         const deleteBtn = messageElement.querySelector('.delete-btn');
         if (deleteBtn) {
             deleteBtn.addEventListener('click', (e) => {
@@ -245,13 +358,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Стрелочка меню (Запрос в друзья + запрет самого себя)
         const arrowBtn = messageElement.querySelector('.arrow-btn');
         if (arrowBtn) {
             arrowBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                
-                // ЗАПРЕТ ДОБАВЛЕНИЯ САМОГО СЕБЯ (Пункт 9)
                 if (sender === myName) {
                     alert('Вы не можете отправить запрос в друзья самому себе!');
                     return;
@@ -278,46 +388,203 @@ document.addEventListener('DOMContentLoaded', () => {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         if (!isHistory) saveMessagesToStorage();
     }
-    // === НАВИГАЦИЯ КАСТОМНЫХ ЗОН ===
+    function handleSendMessage() {
+        if (!messageInput) return;
+        const text = messageInput.value.trim();
+        if (text === '') return;
+        appendMessage(myName, text);
+        messageInput.value = '';
+    }
+
+    if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
+    if (messageInput) {
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
+    }
+
+    if (openSettingsBtn && settingsSidebar) {
+        openSettingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
+            settingsSidebar.classList.toggle('active');
+        });
+    }
+
+    if (notificationBell && notificationsDropdown) {
+        notificationBell.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (settingsSidebar) settingsSidebar.classList.remove('active');
+            notificationsDropdown.classList.toggle('visible');
+            if (bellBadge) bellBadge.classList.remove('active');
+        });
+    }
+
+    if (guildsSidebar) {
+        guildsSidebar.addEventListener('click', (e) => {
+            if (e.target === guildsSidebar && addServerBtnTrigger) {
+                addServerBtnTrigger.classList.add('spawned');
+            }
+        });
+    }
+
+    if (addServerBtnTrigger && serverModalOverlay) {
+        addServerBtnTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            serverModalOverlay.classList.add('active');
+            if (newServerNameInput) { newServerNameInput.value = ''; newServerNameInput.focus(); }
+        });
+    }
+
+    if (openCreateChannelBtn && channelModalOverlay) {
+        openCreateChannelBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            channelModalOverlay.classList.add('active');
+            if (newChannelNameInput) { newChannelNameInput.value = ''; newChannelNameInput.focus(); }
+        });
+    }
+
+    if (closeServerModalBtn && serverModalOverlay) {
+        closeServerModalBtn.addEventListener('click', () => serverModalOverlay.classList.remove('active'));
+    }
+    if (closeChannelModalBtn && channelModalOverlay) {
+        closeChannelModalBtn.addEventListener('click', () => channelModalOverlay.classList.remove('active'));
+    }
+
+    if (submitCreateServerBtn && serverModalOverlay && newServerNameInput && guildsSidebar) {
+        submitCreateServerBtn.addEventListener('click', () => {
+            const name = newServerNameInput.value.trim();
+            if (!name) { alert('Введите имя сервера!'); return; }
+
+            const serverId = 'custom_server_' + Date.now();
+            const newServerBtn = document.createElement('div');
+            newServerBtn.className = 'guild-icon';
+            newServerBtn.id = serverId;
+            newServerBtn.textContent = name.charAt(0).toUpperCase();
+            newServerBtn.title = name;
+
+            newServerBtn.addEventListener('click', () => {
+                document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
+                newServerBtn.classList.add('active');
+                currentServerContext = serverId; currentChannelContext = 'general-chat';
+                if (chatTitle) chatTitle.textContent = 'general-chat';
+                if (hashtag) hashtag.textContent = '#';
+                if (dmChannelsSection) dmChannelsSection.style.display = 'none';
+                if (serverChannelsSection) serverChannelsSection.style.display = 'block';
+                renderServerChannelsList(serverId); loadSavedMessages();
+            });
+
+            guildsSidebar.insertBefore(newServerBtn, addServerBtnTrigger);
+            serverModalOverlay.classList.remove('active');
+            
+            const savedServers = JSON.parse(localStorage.getItem('chat_custom_servers') || '[]');
+            savedServers.push({ id: serverId, name: name });
+            localStorage.setItem('chat_custom_servers', JSON.stringify(savedServers));
+        });
+    }
+
+    if (submitCreateChannelBtn && channelModalOverlay && newChannelNameInput) {
+        submitCreateChannelBtn.addEventListener('click', () => {
+            const name = newChannelNameInput.value.trim().toLowerCase().replace(/\s+/g, '-');
+            if (!name) { alert('Введите имя канала!'); return; }
+
+            const channelId = 'channel_' + Date.now();
+            const storageKey = 'channels_for_' + currentServerContext;
+            const savedChannels = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            savedChannels.push({ id: channelId, name: name });
+            localStorage.setItem(storageKey, JSON.stringify(savedChannels));
+
+            channelModalOverlay.classList.remove('active');
+            renderServerChannelsList(currentServerContext); 
+        });
+    }
+
+    function renderServerChannelsList(serverId) {
+        if (!serverChannelsList) return;
+        serverChannelsList.innerHTML = ''; 
+
+        const defaultChannel = document.createElement('div');
+        defaultChannel.className = 'custom-user-item' + (currentChannelContext === 'general-chat' ? ' active' : '');
+        defaultChannel.innerHTML = `<div class="user-avatar" style="background-color: #5865f2;">#</div><span>general-chat</span>`;
+        defaultChannel.addEventListener('click', () => {
+            serverChannelsList.querySelectorAll('.custom-user-item').forEach(i => i.classList.remove('active'));
+            defaultChannel.classList.add('active'); currentChannelContext = 'general-chat';
+            if (chatTitle) chatTitle.textContent = 'general-chat';
+            loadSavedMessages();
+        });
+        serverChannelsList.appendChild(defaultChannel);
+
+        const storageKey = 'channels_for_' + serverId;
+        const savedChannels = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        savedChannels.forEach(ch => {
+            const channelItem = document.createElement('div');
+            channelItem.className = 'custom-user-item' + (currentChannelContext === ch.id ? ' active' : '');
+            channelItem.innerHTML = `<div class="user-avatar" style="background-color: #383a40;">#</div><span>${ch.name}</span>`;
+            channelItem.addEventListener('click', () => {
+                serverChannelsList.querySelectorAll('.custom-user-item').forEach(i => i.classList.remove('active'));
+                channelItem.classList.add('active'); currentChannelContext = ch.id;
+                if (chatTitle) chatTitle.textContent = ch.name;
+                loadSavedMessages();
+            });
+            serverChannelsList.appendChild(channelItem);
+        });
+    }
+
+    function loadSavedServersFromMemory() {
+        if (!guildsSidebar || !addServerBtnTrigger) return;
+        const savedServers = JSON.parse(localStorage.getItem('chat_custom_servers') || '[]');
+        savedServers.forEach(srv => {
+            const btn = document.createElement('div');
+            btn.className = 'guild-icon'; btn.id = srv.id;
+            btn.textContent = srv.name.charAt(0).toUpperCase(); btn.title = srv.name;
+
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
+                btn.classList.add('active'); currentServerContext = srv.id; currentChannelContext = 'general-chat';
+                if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#';
+                if (dmChannelsSection) dmChannelsSection.style.display = 'none';
+                if (serverChannelsSection) serverChannelsSection.style.display = 'block';
+                renderServerChannelsList(srv.id); loadSavedMessages();
+            });
+            guildsSidebar.insertBefore(btn, addServerBtnTrigger);
+        });
+    }
+
+    if (dmServerBtn) {
+        dmServerBtn.addEventListener('click', () => {
+            document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
+            dmServerBtn.classList.add('active'); currentServerContext = 'dm'; currentChannelContext = 'friends-list';
+            if (chatTitle) chatTitle.textContent = 'Личные сообщения'; if (hashtag) hashtag.textContent = '@';
+            if (serverChannelsSection) serverChannelsSection.style.display = 'none';
+            if (dmChannelsSection) dmChannelsSection.style.display = 'block';
+            loadSavedMessages();
+        });
+    }
+
+    if (publicServerBtn) {
+        publicServerBtn.addEventListener('click', () => {
+            document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
+            publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat';
+            if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#';
+            if (dmChannelsSection) dmChannelsSection.style.display = 'none';
+            if (serverChannelsSection) serverChannelsSection.style.display = 'block';
+            renderServerChannelsList('public'); loadSavedMessages();
+        });
+    }
+
+    // Навигация зон кастомизации
     const zonesTriggerBtn = document.getElementById('goToZonesBtn');
     const returnToMenuBtn = document.getElementById('backToMenuBtn');
-
     if (zonesTriggerBtn && mainSettingsScreen && zoneSettingsScreen) {
         zonesTriggerBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            mainSettingsScreen.style.display = 'none';
-            zoneSettingsScreen.style.display = 'block';
+            e.stopPropagation(); mainSettingsScreen.style.display = 'none'; zoneSettingsScreen.style.display = 'block';
         });
     }
-
     if (returnToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
         returnToMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            zoneSettingsScreen.style.display = 'none';
-            mainSettingsScreen.style.display = 'block';
+            e.stopPropagation(); zoneSettingsScreen.style.display = 'none'; mainSettingsScreen.style.display = 'block';
             if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
             activeZoneKey = '';
-            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
-        });
-    }
-
-    if (zoneSelectTrigger && zoneSelectOptions) {
-        zoneSelectTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            zoneSelectOptions.classList.toggle('active');
-        });
-    }
-
-    document.querySelectorAll('.custom-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
-            activeZoneKey = option.getAttribute('data-value');
-            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
-            if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
-            
-            if (activeZoneKey && zones[activeZoneKey]) {
-                zones[activeZoneKey].classList.add('zone-highlight');
                 let currentBg = window.getComputedStyle(zones[activeZoneKey]).backgroundColor;
                 if (customColorInput) {
                     let rgbValues = currentBg.match(/\d+/g);
@@ -330,6 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
     if (applyColorBtn) {
         applyColorBtn.addEventListener('click', () => {
             if (!activeZoneKey || !zones[activeZoneKey]) { alert('Выберите зону!'); return; }
@@ -361,10 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (type === 'friend') {
             notifItem.querySelector('.accept-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                createDirectMessageItem(senderName); 
-                notifItem.remove();
-                checkEmptyNotifications();
+                e.stopPropagation(); createDirectMessageItem(senderName); notifItem.remove(); checkEmptyNotifications();
             });
         }
         notifList.insertBefore(notifItem, notifList.firstChild);
@@ -382,7 +647,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dmChannelsList.appendChild(userItem);
     }
 
-    // Глобальное закрытие менюшек по клику на документ
     document.addEventListener('click', (e) => {
         const selectOptions = document.getElementById('zoneSelectOptions');
         if (selectOptions) selectOptions.classList.remove('active');
@@ -395,51 +659,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (serverModalOverlay && e.target === serverModalOverlay) serverModalOverlay.classList.remove('active');
         if (channelModalOverlay && e.target === channelModalOverlay) channelModalOverlay.classList.remove('active');
         if (profileModalOverlay && e.target === profileModalOverlay) profileModalOverlay.classList.remove('active');
-    }
-    // === ВОССТАНОВЛЕНИЕ СЕРВЕРОВ И КАНАЛОВ ИЗ ПАМЯТИ ===
-    function loadSavedServersFromMemory() {
-        if (!guildsSidebar || !addServerBtnTrigger) return;
-        const savedServers = JSON.parse(localStorage.getItem('chat_custom_servers') || '[]');
-        savedServers.forEach(srv => {
-            const btn = document.createElement('div');
-            btn.className = 'guild-icon';
-            btn.id = srv.id;
-            btn.textContent = srv.name.charAt(0).toUpperCase();
-            btn.title = srv.name;
-
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
-                btn.classList.add('active');
-                currentServerContext = srv.id;
-                currentChannelContext = 'general-chat';
-                if (chatTitle) chatTitle.textContent = 'general-chat';
-                if (hashtag) hashtag.textContent = '#';
-                if (dmChannelsSection) dmChannelsSection.style.display = 'none';
-                if (serverChannelsSection) serverChannelsSection.style.display = 'block';
-                renderServerChannelsList(srv.id);
-                loadSavedMessages();
-            });
-            guildsSidebar.insertBefore(btn, addServerBtnTrigger);
-        });
-    }
-
-    // Вспомогательная системная инициализация публичного сервера
-    if (publicServerBtn) {
-        publicServerBtn.addEventListener('click', () => {
-            document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
-            publicServerBtn.classList.add('active');
-            currentServerContext = 'public';
-            currentChannelContext = 'general-chat';
-            if (chatTitle) chatTitle.textContent = 'general-chat';
-            if (hashtag) hashtag.textContent = '#';
-            if (dmChannelsSection) dmChannelsSection.style.display = 'none';
-            if (serverChannelsSection) serverChannelsSection.style.display = 'block';
-            renderServerChannelsList('public');
-            loadSavedMessages();
-        });
     });
 
-    // Запуск сессии и проверка памяти при старте
     checkUserSession();
     loadSavedServersFromMemory();
 });
