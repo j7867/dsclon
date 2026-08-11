@@ -18,10 +18,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Старт интерфейса чата (ИСПРАВЛЕНО: Буква L в addEventListener теперь большая!)
 document.addEventListener('DOMContentLoaded', () => {
 
-    // === 1. БАЗОВЫЕ ЭЛЕМЕНТЫ И ШАПКА ЧАТА ===
     const messagesContainer = document.getElementById('messagesContainer');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
@@ -29,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const hashtag = document.querySelector('.hashtag');
     const userHeaderName = document.querySelector('.user-name-header');
 
-    // === 2. КНОПКИ И ПАНЕЛИ ШАПКИ ===
     const openSettingsBtn = document.querySelector('.settings-gear-trigger') || document.getElementById('openSettingsBtn'); 
     const notificationBell = document.querySelector('.notification-bell') || document.getElementById('notificationBell');
     const settingsSidebar = document.getElementById('settingsSidebar');
@@ -38,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const notifList = document.getElementById('notifList');
     const notifEmptyText = document.getElementById('notifEmptyText');
 
-    // === 3. НАСТРОЙКИ ЗОН ===
     const mainSettingsScreen = document.getElementById('mainSettingsScreen');
     const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
     const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
@@ -46,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const customColorInput = document.getElementById('customColorInput');
     const applyColorBtn = document.getElementById('applyColorBtn');
 
-    // === 4. АДМИНКА ЗАЯВОК (НОВЫЙ ПУНКТ) ===
     const goToAdminRequestsBtn = document.getElementById('goToAdminRequestsBtn');
     const adminRequestsScreen = document.getElementById('adminRequestsScreen');
     const backToMenuFromAdminBtn = document.getElementById('backToMenuFromAdminBtn');
@@ -62,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     let activeZoneKey = '';
 
-    // === 5. СЕРВЕРЫ И КАНАЛЫ ===
     const guildsSidebar = document.getElementById('guildsSidebar');
     const dmServerBtn = document.getElementById('dmServerBtn');
     const publicServerBtn = document.getElementById('publicServerBtn');
@@ -82,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const newServerNameInput = document.getElementById('newServerNameInput');
     const newChannelNameInput = document.getElementById('newChannelNameInput');
 
-    // === 6. МОДАЛКА ПРОФИЛЯ И АВТОРИЗАЦИИ ===
     const openFullProfileBtn = document.getElementById('openFullProfileBtn') || document.querySelector('.user-avatar-header'); 
     const profileModalOverlay = document.getElementById('profileModalOverlay');
     const authModalOverlay = document.getElementById('authModalOverlay');
@@ -90,19 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const authPasswordInput = document.getElementById('authPasswordInput');
     const authSubmitBtn = document.getElementById('authSubmitBtn');
 
-    // СОСТОЯНИЕ ТЕКУЩЕЙ СЕССИИ ЧАТА
     let myName = localStorage.getItem('chat_active_user') || '';
     let selectedAvatarColor = localStorage.getItem('chat_avatar_color_' + myName) || '#5865f2';
     let uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image_' + myName) || '';
     
     let currentServerContext = 'dm'; 
     let currentChannelContext = 'friends-list';
-    
-    // Жестко фиксируем ник создателя для вывода админки заявок
     const CREATOR_NICKNAME = 'AdminCreator';
-    // ==========================================
-    // СИСТЕМА ОБЛАЧНЫХ АККАУНТОВ И МОДЕРАЦИИ
-    // ==========================================
+
     function checkUserSession() {
         if (!myName) {
             if (authModalOverlay) authModalOverlay.classList.add('active');
@@ -116,71 +104,41 @@ document.addEventListener('DOMContentLoaded', () => {
         authSubmitBtn.addEventListener('click', async () => {
             const login = authLoginInput.value.trim();
             const password = authPasswordInput.value.trim();
-
             if (!login || !password) { alert('Заполните все поля!'); return; }
-
             try {
                 const userRef = doc(db, "users", login);
                 const userSnap = await getDoc(userRef);
-
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
-                    if (userData.password !== password) {
-                        alert('Неверный пароль для этого никнейма!');
-                        return;
-                    }
-                    if (userData.status === 'pending') {
-                        alert('Ваш аккаунт всё ещё ожидает подтверждения администратором!');
-                        return;
-                    }
+                    if (userData.password !== password) { alert('Неверный пароль!'); return; }
+                    if (userData.status === 'pending') { alert('Аккаунт ожидает подтверждения админом!'); return; }
                 } else {
-                    // Автоматическая заявка на регистрацию в Firebase
                     const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
-                    await setDoc(userRef, {
-                        username: login,
-                        password: password,
-                        status: initialStatus
-                    });
-                    
-                    if (initialStatus === 'pending') {
-                        alert('Заявка на создание аккаунта успешно отправлена! Дождитесь одобрения администратора.');
-                        return;
-                    }
+                    await setDoc(userRef, { username: login, password: password, status: initialStatus });
+                    if (initialStatus === 'pending') { alert('Заявка отправлена администратору!'); return; }
                 }
-
                 localStorage.setItem('chat_active_user', login);
                 myName = login;
                 if (authModalOverlay) authModalOverlay.classList.remove('active');
                 initChatAfterAuth();
-            } catch (err) {
-                console.error("Ошибка Firebase Auth: ", err);
-                alert('Ошибка подключения к базе данных!');
-            }
+            } catch (err) { alert('Ошибка подключения к базе!'); }
         });
     }
 
     function initChatAfterAuth() {
         if (userHeaderName) userHeaderName.textContent = myName;
         if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
-        
-        // Показываем секретную кнопку заявок только Создателю
         if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
             goToAdminRequestsBtn.style.display = 'block';
-            listenToPendingRequests(); // Запуск онлайн-отслеживания заявок
+            listenToPendingRequests();
         }
-        
         loadSavedMessages();
     }
-
-    // Живой стрим заявок из Firebase Firestore для AdminCreator
     function listenToPendingRequests() {
         if (!adminRequestsList || !requestsCountBadge || !noRequestsText) return;
-
-        // Слушаем изменения в коллекции пользователей в реальном времени
         onSnapshot(collection(db, "users"), (snapshot) => {
             adminRequestsList.innerHTML = '';
             let count = 0;
-
             snapshot.forEach((docSnap) => {
                 const user = docSnap.data();
                 if (user.status === 'pending') {
@@ -193,58 +151,42 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="request-user-pass">Пароль: ${user.password}</div>
                         </div>
                         <div class="request-actions-row">
-                            <button class="request-btn request-approve-btn" data-user="${user.username}">✔️ Одобрить</button>
-                            <button class="request-btn request-decline-btn" data-user="${user.username}">❌ Отклонить</button>
+                            <button class="request-btn request-approve-btn">✔️ Одобрить</button>
+                            <button class="request-btn request-decline-btn">❌ Отклонить</button>
                         </div>
                     `;
-
-                    // Событие Одобрить
                     card.querySelector('.request-approve-btn').addEventListener('click', async () => {
                         await updateDoc(doc(db, "users", user.username), { status: 'approved' });
                     });
-
-                    // Событие Отклонить
                     card.querySelector('.request-decline-btn').addEventListener('click', async () => {
                         await updateDoc(doc(db, "users", user.username), { status: 'declined' });
                     });
-
                     adminRequestsList.appendChild(card);
                 }
             });
-
             requestsCountBadge.textContent = count;
             noRequestsText.style.display = (count === 0) ? 'block' : 'none';
         });
     }
 
-    // Смена экранов в админке
     if (goToAdminRequestsBtn && mainSettingsScreen && adminRequestsScreen) {
         goToAdminRequestsBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            mainSettingsScreen.style.display = 'none';
-            adminRequestsScreen.style.display = 'block';
+            e.stopPropagation(); mainSettingsScreen.style.display = 'none'; adminRequestsScreen.style.display = 'block';
         });
     }
     if (backToMenuFromAdminBtn && mainSettingsScreen && adminRequestsScreen) {
         backToMenuFromAdminBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            adminRequestsScreen.style.display = 'none';
-            mainSettingsScreen.style.display = 'block';
+            e.stopPropagation(); adminRequestsScreen.style.display = 'none'; mainSettingsScreen.style.display = 'block';
         });
     }
 
-    // Выход из аккаунта
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('chat_active_user');
-            window.location.reload();
+            localStorage.removeItem('chat_active_user'); window.location.reload();
         });
     }
 
-    // ==========================================
-    // СОХРАНЕНИЕ И ЗАГРУЗКА ИСТОРИИ СООБЩЕНИЙ
-    // ==========================================
     function saveMessagesToStorage() {
         if (!messagesContainer) return;
         const key = `chat_history_${currentServerContext}_${currentChannelContext}`;
@@ -267,22 +209,16 @@ document.addEventListener('DOMContentLoaded', () => {
             messagesData.forEach(data => { appendMessage(data.author, data.text, true); });
         }
     }
-    // ==========================================
-    // РЕНДЕР СООБЩЕНИЙ И АДМИН-УДАЛЕНИЕ
-    // ==========================================
+
     function appendMessage(sender, text, isHistory = false) {
         if (!messagesContainer) return;
-        
         const canDelete = (myName === CREATOR_NICKNAME) || (sender === myName);
         const canEdit = (sender === myName); 
-
         const messageElement = document.createElement('div');
         messageElement.className = 'message';
-        
         let actionsHtml = '';
         if (canEdit) actionsHtml += `<button class="action-btn edit-btn" title="Редактировать">✏️</button>`;
         if (canDelete) actionsHtml += `<button class="action-btn delete-btn" title="Удалить">🗑️</button>`;
-
         const firstLetter = sender.charAt(0).toUpperCase();
         const avatarColor = (sender === myName) ? selectedAvatarColor : '#23a55a';
 
@@ -290,58 +226,30 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="user-avatar" style="background-color: ${avatarColor};">
                 ${uploadedAvatarDataUrl && (sender === myName) ? `<img src="${uploadedAvatarDataUrl}" alt="avatar">` : firstLetter}
             </div>
-            <div class="message-content">
-                <strong>${sender}</strong>
-                <span class="message-text"></span>
-            </div>
-            <div class="message-actions">
-                ${actionsHtml}
-                <button class="action-btn arrow-btn" title="Еще">></button>
-            </div>
+            <div class="message-content"><strong>${sender}</strong><span class="message-text"></span></div>
+            <div class="message-actions">${actionsHtml}<button class="action-btn arrow-btn" title="Еще">></button></div>
         `;
-        
         messageElement.querySelector('.message-text').textContent = text;
         messagesContainer.appendChild(messageElement);
 
         const editBtn = messageElement.querySelector('.edit-btn');
         if (editBtn) {
             editBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (messageElement.classList.contains('editing-mode')) return;
+                e.stopPropagation(); if (messageElement.classList.contains('editing-mode')) return;
                 const messageContent = messageElement.querySelector('.message-content');
                 const messageTextSpan = messageElement.querySelector('.message-text');
                 const oldText = messageTextSpan.textContent;
                 messageElement.classList.add('editing-mode');
-
                 const editForm = document.createElement('div');
                 editForm.className = 'message-edit-form';
-                editForm.innerHTML = `
-                    <input type="text" class="message-edit-input" value="${oldText}" autocomplete="off">
-                    <div class="edit-form-buttons">
-                        <button class="edit-save-btn">Сохранить</button>
-                        <button class="edit-cancel-btn">Отмена</button>
-                    </div>
-                `;
-                messageTextSpan.style.display = 'none';
-                messageContent.appendChild(editForm);
-
-                const editInput = editForm.querySelector('.message-edit-input');
-                editInput.focus();
-
+                editForm.innerHTML = `<input type="text" class="message-edit-input" value="${oldText}"><div class="edit-form-buttons"><button class="edit-save-btn">Сохранить</button><button class="edit-cancel-btn">Отмена</button></div>`;
+                messageTextSpan.style.display = 'none'; messageContent.appendChild(editForm);
+                const editInput = editForm.querySelector('.message-edit-input'); editInput.focus();
                 const saveChanges = () => {
-                    const newText = editInput.value.trim();
-                    if (newText !== '') {
-                        messageTextSpan.textContent = newText;
-                        saveMessagesToStorage(); 
-                    }
-                    closeEditForm();
+                    const newText = editInput.value.trim(); if (newText !== '') messageTextSpan.textContent = newText;
+                    saveMessagesToStorage(); closeEditForm();
                 };
-                const closeEditForm = () => {
-                    editForm.remove();
-                    messageTextSpan.style.display = 'block';
-                    messageElement.classList.remove('editing-mode');
-                };
-
+                const closeEditForm = () => { editForm.remove(); messageTextSpan.style.display = 'block'; messageElement.classList.remove('editing-mode'); };
                 editForm.querySelector('.edit-save-btn').addEventListener('click', saveChanges);
                 editForm.querySelector('.edit-cancel-btn').addEventListener('click', closeEditForm);
             });
@@ -350,126 +258,90 @@ document.addEventListener('DOMContentLoaded', () => {
         const deleteBtn = messageElement.querySelector('.delete-btn');
         if (deleteBtn) {
             deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                messageElement.classList.add('deleting');
-                setTimeout(() => { 
-                    messageElement.remove(); 
-                    saveMessagesToStorage(); 
-                }, 200);
+                e.stopPropagation(); messageElement.classList.add('deleting');
+                setTimeout(() => { messageElement.remove(); saveMessagesToStorage(); }, 200);
             });
         }
 
         const arrowBtn = messageElement.querySelector('.arrow-btn');
         if (arrowBtn) {
             arrowBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (sender === myName) {
-                    alert('Вы не можете отправить запрос в друзья самому себе!');
-                    return;
-                }
-
+                e.stopPropagation(); if (sender === myName) { alert('Нельзя добавлять себя!'); return; }
                 let userMenu = messageElement.querySelector('.user-action-menu');
                 if (!userMenu) {
-                    userMenu = document.createElement('div');
-                    userMenu.className = 'user-action-menu';
+                    userMenu = document.createElement('div'); userMenu.className = 'user-action-menu';
                     userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
                     messageElement.appendChild(userMenu);
                     userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
-                        eClick.stopPropagation();
-                        addNotification('friend', sender);
-                        userMenu.classList.remove('visible');
-                        arrowBtn.classList.remove('open');
+                        eClick.stopPropagation(); addNotification('friend', sender);
+                        userMenu.classList.remove('visible'); arrowBtn.classList.remove('open');
                     });
                 }
-                arrowBtn.classList.toggle('open');
-                userMenu.classList.toggle('visible');
+                arrowBtn.classList.toggle('open'); userMenu.classList.toggle('visible');
             });
         }
-
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         if (!isHistory) saveMessagesToStorage();
     }
     function handleSendMessage() {
         if (!messageInput) return;
-        const text = messageInput.value.trim();
-        if (text === '') return;
-        appendMessage(myName, text);
-        messageInput.value = '';
+        const text = messageInput.value.trim(); if (text === '') return;
+        appendMessage(myName, text); messageInput.value = '';
     }
 
     if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
-    if (messageInput) {
-        messageInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleSendMessage();
-        });
-    }
+    if (messageInput) messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); });
 
     if (openSettingsBtn && settingsSidebar) {
         openSettingsBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
+            e.stopPropagation(); if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
             settingsSidebar.classList.toggle('active');
         });
     }
 
     if (notificationBell && notificationsDropdown) {
         notificationBell.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (settingsSidebar) settingsSidebar.classList.remove('active');
-            notificationsDropdown.classList.toggle('visible');
-            if (bellBadge) bellBadge.classList.remove('active');
+            e.stopPropagation(); if (settingsSidebar) settingsSidebar.classList.remove('active');
+            notificationsDropdown.classList.toggle('visible'); if (bellBadge) bellBadge.classList.remove('active');
         });
     }
 
     if (guildsSidebar) {
         guildsSidebar.addEventListener('click', (e) => {
-            if (e.target === guildsSidebar && addServerBtnTrigger) {
-                addServerBtnTrigger.classList.add('spawned');
-            }
+            if (e.target === guildsSidebar && addServerBtnTrigger) addServerBtnTrigger.classList.add('spawned');
         });
     }
 
     if (addServerBtnTrigger && serverModalOverlay) {
         addServerBtnTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            serverModalOverlay.classList.add('active');
+            e.stopPropagation(); serverModalOverlay.classList.add('active');
             if (newServerNameInput) { newServerNameInput.value = ''; newServerNameInput.focus(); }
         });
     }
 
     if (openCreateChannelBtn && channelModalOverlay) {
         openCreateChannelBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            channelModalOverlay.classList.add('active');
+            e.stopPropagation(); channelModalOverlay.classList.add('active');
             if (newChannelNameInput) { newChannelNameInput.value = ''; newChannelNameInput.focus(); }
         });
     }
 
-    if (closeServerModalBtn && serverModalOverlay) {
-        closeServerModalBtn.addEventListener('click', () => serverModalOverlay.classList.remove('active'));
-    }
-    if (closeChannelModalBtn && channelModalOverlay) {
-        closeChannelModalBtn.addEventListener('click', () => channelModalOverlay.classList.remove('active'));
-    }
+    if (closeServerModalBtn && serverModalOverlay) closeServerModalBtn.addEventListener('click', () => serverModalOverlay.classList.remove('active'));
+    if (closeChannelModalBtn && channelModalOverlay) closeChannelModalBtn.addEventListener('click', () => channelModalOverlay.classList.remove('active'));
 
     if (submitCreateServerBtn && serverModalOverlay && newServerNameInput && guildsSidebar) {
         submitCreateServerBtn.addEventListener('click', () => {
-            const name = newServerNameInput.value.trim();
-            if (!name) { alert('Введите имя сервера!'); return; }
-
+            const name = newServerNameInput.value.trim(); if (!name) { alert('Введите имя сервера!'); return; }
             const serverId = 'custom_server_' + Date.now();
             const newServerBtn = document.createElement('div');
-            newServerBtn.className = 'guild-icon';
-            newServerBtn.id = serverId;
-            newServerBtn.textContent = name.charAt(0).toUpperCase();
-            newServerBtn.title = name;
+            newServerBtn.className = 'guild-icon'; newServerBtn.id = serverId;
+            newServerBtn.textContent = name.charAt(0).toUpperCase(); newServerBtn.title = name;
 
             newServerBtn.addEventListener('click', () => {
                 document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
                 newServerBtn.classList.add('active');
                 currentServerContext = serverId; currentChannelContext = 'general-chat';
-                if (chatTitle) chatTitle.textContent = 'general-chat';
-                if (hashtag) hashtag.textContent = '#';
+                if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#';
                 if (dmChannelsSection) dmChannelsSection.style.display = 'none';
                 if (serverChannelsSection) serverChannelsSection.style.display = 'block';
                 renderServerChannelsList(serverId); loadSavedMessages();
@@ -477,7 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             guildsSidebar.insertBefore(newServerBtn, addServerBtnTrigger);
             serverModalOverlay.classList.remove('active');
-            
             const savedServers = JSON.parse(localStorage.getItem('chat_custom_servers') || '[]');
             savedServers.push({ id: serverId, name: name });
             localStorage.setItem('chat_custom_servers', JSON.stringify(savedServers));
@@ -486,32 +357,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (submitCreateChannelBtn && channelModalOverlay && newChannelNameInput) {
         submitCreateChannelBtn.addEventListener('click', () => {
-            const name = newChannelNameInput.value.trim().toLowerCase().replace(/\s+/g, '-');
-            if (!name) { alert('Введите имя канала!'); return; }
-
+            const name = newChannelNameInput.value.trim().toLowerCase().replace(/\s+/g, '-'); if (!name) { alert('Имя канала!'); return; }
             const channelId = 'channel_' + Date.now();
             const storageKey = 'channels_for_' + currentServerContext;
             const savedChannels = JSON.parse(localStorage.getItem(storageKey) || '[]');
             savedChannels.push({ id: channelId, name: name });
             localStorage.setItem(storageKey, JSON.stringify(savedChannels));
-
-            channelModalOverlay.classList.remove('active');
-            renderServerChannelsList(currentServerContext); 
+            channelModalOverlay.classList.remove('active'); renderServerChannelsList(currentServerContext); 
         });
     }
 
     function renderServerChannelsList(serverId) {
         if (!serverChannelsList) return;
         serverChannelsList.innerHTML = ''; 
-
         const defaultChannel = document.createElement('div');
         defaultChannel.className = 'custom-user-item' + (currentChannelContext === 'general-chat' ? ' active' : '');
         defaultChannel.innerHTML = `<div class="user-avatar" style="background-color: #5865f2;">#</div><span>general-chat</span>`;
         defaultChannel.addEventListener('click', () => {
             serverChannelsList.querySelectorAll('.custom-user-item').forEach(i => i.classList.remove('active'));
             defaultChannel.classList.add('active'); currentChannelContext = 'general-chat';
-            if (chatTitle) chatTitle.textContent = 'general-chat';
-            loadSavedMessages();
+            if (chatTitle) chatTitle.textContent = 'general-chat'; loadSavedMessages();
         });
         serverChannelsList.appendChild(defaultChannel);
 
@@ -524,13 +389,11 @@ document.addEventListener('DOMContentLoaded', () => {
             channelItem.addEventListener('click', () => {
                 serverChannelsList.querySelectorAll('.custom-user-item').forEach(i => i.classList.remove('active'));
                 channelItem.classList.add('active'); currentChannelContext = ch.id;
-                if (chatTitle) chatTitle.textContent = ch.name;
-                loadSavedMessages();
+                if (chatTitle) chatTitle.textContent = ch.name; loadSavedMessages();
             });
             serverChannelsList.appendChild(channelItem);
         });
     }
-
     function loadSavedServersFromMemory() {
         if (!guildsSidebar || !addServerBtnTrigger) return;
         const savedServers = JSON.parse(localStorage.getItem('chat_custom_servers') || '[]');
@@ -538,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.createElement('div');
             btn.className = 'guild-icon'; btn.id = srv.id;
             btn.textContent = srv.name.charAt(0).toUpperCase(); btn.title = srv.name;
-
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
                 btn.classList.add('active'); currentServerContext = srv.id; currentChannelContext = 'general-chat';
@@ -573,52 +435,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-        // === НАВИГАЦИЯ КАСТОМНЫХ ЗОН ===
     const zonesTriggerBtn = document.getElementById('goToZonesBtn');
     const returnToMenuBtn = document.getElementById('backToMenuBtn');
-
     if (zonesTriggerBtn && mainSettingsScreen && zoneSettingsScreen) {
-        zonesTriggerBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            mainSettingsScreen.style.display = 'none';
-            zoneSettingsScreen.style.display = 'block';
-        });
+        zonesTriggerBtn.addEventListener('click', (e) => { e.stopPropagation(); mainSettingsScreen.style.display = 'none'; zoneSettingsScreen.style.display = 'block'; });
     }
-
     if (returnToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
         returnToMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            zoneSettingsScreen.style.display = 'none';
-            mainSettingsScreen.style.display = 'block';
+            e.stopPropagation(); zoneSettingsScreen.style.display = 'none'; mainSettingsScreen.style.display = 'block';
             if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
-            activeZoneKey = '';
-            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
+            activeZoneKey = ''; if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
+        });
+    }
+    if (zoneSelectTrigger && zoneSelectOptions) {
+        zoneSelectTrigger.addEventListener('click', (e) => { e.stopPropagation(); zoneSelectOptions.classList.toggle('active'); });
+    }
+
+    document.querySelectorAll('.custom-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
+            activeZoneKey = option.getAttribute('data-value');
+            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
+            if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
+            if (activeZoneKey && zones[activeZoneKey]) {
+                zones[activeZoneKey].classList.add('zone-highlight');
+                let currentBg = window.getComputedStyle(zones[activeZoneKey]).backgroundColor;
+                if (customColorInput) {
+                    let rgbValues = currentBg.match(/\d+/g);
+                    if (rgbValues && rgbValues.length >= 3) {
+                        let r = parseInt(rgbValues), g = parseInt(rgbValues), b = parseInt(rgbValues);
+                        let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                        customColorInput.value = hex;
+                    }
+                }
+            }
+        });
+    });
+
+    if (applyColorBtn) {
+        applyColorBtn.addEventListener('click', () => {
+            if (!activeZoneKey || !zones[activeZoneKey]) { alert('Выберите зону!'); return; }
+            zones[activeZoneKey].style.backgroundColor = customColorInput.value;
+            zones[activeZoneKey].classList.remove('zone-highlight');
+            activeZoneKey = ''; if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
+            alert('Цвет изменен!');
         });
     }
 
-    if (zoneSelectTrigger && zoneSelectOptions) {
-        zoneSelectTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            zoneSelectOptions.classList.toggle('active');
-        });
-    }
-    function checkEmptyNotifications() {
-        if (notifList && notifList.children.length === 0 && notifEmptyText) notifEmptyText.style.display = 'block';
-    }
+    function checkEmptyNotifications() { if (notifList && notifList.children.length === 0 && notifEmptyText) notifEmptyText.style.display = 'block'; }
 
     function addNotification(type, senderName) {
         if (!notifList || !bellBadge || !notifEmptyText) return;
         if (type === 'friend') bellBadge.classList.add('active');
         notifEmptyText.style.display = 'none';
-
-        const notifItem = document.createElement('div');
-        notifItem.className = 'notification-item';
+        const notifItem = document.createElement('div'); notifItem.className = 'notification-item';
         let titleText = type === 'system' ? 'Системное обеспечение' : 'ЗАПРОС В ДРУЗЬЯ';
-        let mainText = type === 'friend' ? `${senderName} отправил запрос в друзья.` : senderName;
+        let mainText = type === 'friend' ? `${senderName} отправил запрос.` : senderName;
         let actionsHtml = type === 'friend' ? `<div class="notif-actions"><button class="notif-action-btn accept-btn">✔️</button></div>` : '';
-
         notifItem.innerHTML = `<div class="notif-blur-target"><div class="notif-title">${titleText}</div><div class="notif-text">${mainText}</div></div>${actionsHtml}`;
-        
         if (type === 'friend') {
             notifItem.querySelector('.accept-btn').addEventListener('click', (e) => {
                 e.stopPropagation(); createDirectMessageItem(senderName); notifItem.remove(); checkEmptyNotifications();
@@ -629,32 +504,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createDirectMessageItem(username) {
         if (!dmChannelsList) return;
-        const exists = Array.from(dmChannelsList.querySelectorAll('span')).some(span => span.textContent === username);
-        if (exists) return;
-
-        const userItem = document.createElement('div');
-        userItem.className = 'custom-user-item'; 
-        const randomColor = ['#5865f2', '#23a55a', '#f23f43'][Math.floor(Math.random() * 3)];
-        userItem.innerHTML = `<div class="user-avatar" style="background-color: ${randomColor};">${username.charAt(0).toUpperCase()}</div><span>${username}</span>`;
+        if (Array.from(dmChannelsList.querySelectorAll('span')).some(span => span.textContent === username)) return;
+        const userItem = document.createElement('div'); userItem.className = 'custom-user-item'; 
+        userItem.innerHTML = `<div class="user-avatar" style="background-color: #5865f2;">${username.charAt(0).toUpperCase()}</div><span>${username}</span>`;
         dmChannelsList.appendChild(userItem);
     }
 
-    // Глобальное закрытие менюшек по клику на документ
     document.addEventListener('click', (e) => {
         const selectOptions = document.getElementById('zoneSelectOptions');
         if (selectOptions) selectOptions.classList.remove('active');
-        if (settingsSidebar && openSettingsBtn && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
-            settingsSidebar.classList.remove('active');
-        }
-        if (notificationsDropdown && notificationBell && !notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
-            notificationsDropdown.classList.remove('visible');
-        }
+        if (settingsSidebar && openSettingsBtn && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) settingsSidebar.classList.remove('active');
+        if (notificationsDropdown && notificationBell && !notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) notificationsDropdown.classList.remove('visible');
         if (serverModalOverlay && e.target === serverModalOverlay) serverModalOverlay.classList.remove('active');
         if (channelModalOverlay && e.target === channelModalOverlay) channelModalOverlay.classList.remove('active');
         if (profileModalOverlay && e.target === profileModalOverlay) profileModalOverlay.classList.remove('active');
     });
 
-    // Запуск облачной сессии и проверка памяти при старте
-    checkUserSession();
-    loadSavedServersFromMemory();
+    checkUserSession(); loadSavedServersFromMemory();
 });
