@@ -572,42 +572,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Навигация зон кастомизации
+        // === НАВИГАЦИЯ КАСТОМНЫХ ЗОН ===
     const zonesTriggerBtn = document.getElementById('goToZonesBtn');
     const returnToMenuBtn = document.getElementById('backToMenuBtn');
+
     if (zonesTriggerBtn && mainSettingsScreen && zoneSettingsScreen) {
         zonesTriggerBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); mainSettingsScreen.style.display = 'none'; zoneSettingsScreen.style.display = 'block';
+            e.stopPropagation();
+            mainSettingsScreen.style.display = 'none';
+            zoneSettingsScreen.style.display = 'block';
         });
     }
+
     if (returnToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
         returnToMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); zoneSettingsScreen.style.display = 'none'; mainSettingsScreen.style.display = 'block';
+            e.stopPropagation();
+            zoneSettingsScreen.style.display = 'none';
+            mainSettingsScreen.style.display = 'block';
             if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
             activeZoneKey = '';
-                let currentBg = window.getComputedStyle(zones[activeZoneKey]).backgroundColor;
-                if (customColorInput) {
-                    let rgbValues = currentBg.match(/\d+/g);
-                    if (rgbValues && rgbValues.length >= 3) {
-                        let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
-                        let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-                        customColorInput.value = hex;
-            }
-         }
-     }
-
-    if (applyColorBtn) {
-        applyColorBtn.addEventListener('click', () => {
-            if (!activeZoneKey || !zones[activeZoneKey]) { alert('Выберите зону!'); return; }
-            const chosenColor = customColorInput.value;
-            zones[activeZoneKey].style.backgroundColor = chosenColor;
-            zones[activeZoneKey].classList.remove('zone-highlight');
-            activeZoneKey = '';
             if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
-            alert('Цвет изменен!');
         });
     }
 
+    if (zoneSelectTrigger && zoneSelectOptions) {
+        zoneSelectTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            zoneSelectOptions.classList.toggle('active');
+        });
+    }
     function checkEmptyNotifications() {
         if (notifList && notifList.children.length === 0 && notifEmptyText) notifEmptyText.style.display = 'block';
     }
