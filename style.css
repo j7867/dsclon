@@ -383,67 +383,78 @@ html, body {
 
 
 /* ==========================================
-   7. ВСПЛЫВАЮЩИЕ ПАНЕЛИ НАСТРОЕК И УВЕДОМЛЕНИЙ (ФИКС КЛИКА)
+   7. МЕНЮ ДЕЙСТВИЙ НА СООБЩЕНИЯХ И ПОЛЬЗОВАТЕЛЯХ (ФИКС)
    ========================================== */
-.settings-sidebar, .notifications-dropdown {
-    position: fixed !important;
-    top: 64px !important;
-    /* ИСПРАВЛЕНО: Панели сдвинуты так, чтобы не перекрывать кнопки шапки */
-    right: 24px !important; 
-    background-color: #313338 !important;
-    padding: 20px;
-    border-radius: 8px;
-    width: 280px !important;
-    height: auto !important;
-    /* ИСПРАВЛЕНО: z-index панелей сделан выше кнопок, чтобы они открывались ПОВЕРХ чата */
-    z-index: 9999 !important; 
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    border: 1px solid #232428;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-15px) scale(0.95);
-    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
+.message {
+    display: flex !important;
+    gap: 16px !important;
+    align-items: flex-start !important;
+    position: relative !important;
+    padding: 8px 16px !important;
+    border-radius: 4px !important;
+    transition: background-color 0.2s ease !important;
 }
 
-.settings-sidebar.active, .notifications-dropdown.visible {
+.message:hover {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.message-content {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    flex: 1 !important;
+}
+
+/* Скрываем кнопки действий по умолчанию и позиционируем их справа */
+.message-actions {
+    display: flex !important;
+    gap: 4px !important;
+    position: absolute !important;
+    right: 16px !important;
+    top: 8px !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    background-color: #313338 !important; /* Цвет подложки под кнопки */
+    border: 1px solid #1f2023 !important;
+    border-radius: 4px !important;
+    padding: 2px !important;
+    z-index: 5 !important;
+    height: 32px !important;
+}
+
+/* Показываем блок кнопок только при наведении на сообщение */
+.message:hover .message-actions {
     opacity: 1 !important;
     visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
 }
 
-/* Интерфейс редактирования сообщений */
-.message-edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 4px;
-    width: 100%;
+/* Красивые темные кнопки действий в стиле Discord */
+.message-actions .action-btn {
+    background-color: #2b2d31 !important;
+    border: none !important;
+    color: #b5bac1 !important;
+    padding: 0 10px !important;
+    height: 100% !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 3px !important;
+    transition: background-color 0.1s, color 0.1s !important;
+    width: auto !important;
 }
 
-.message-edit-input {
-    width: 100%;
-    background-color: var(--bg-input);
-    border: none;
-    outline: none;
-    border-radius: 4px;
-    padding: 8px 12px;
-    color: var(--text-color);
-    font-size: 15px;
+.message-actions .action-btn:hover {
+    background-color: #35373c !important;
+    color: #ffffff !important;
 }
 
-.edit-form-buttons { display: flex; gap: 8px; }
-.edit-form-buttons button {
-    border: none; padding: 6px 12px; border-radius: 4px;
-    font-size: 12px; font-weight: 600; cursor: pointer;
-    transition: background-color 0.15s ease;
+.message-actions .action-btn.delete-btn:hover {
+    background-color: #f23f43 !important;
+    color: #ffffff !important;
 }
-
-.edit-save-btn { background-color: var(--accent-color); color: #ffffff; }
-.edit-save-btn:hover { background-color: #4752c4; }
-.edit-cancel-btn { background-color: #4e5058; color: #dbdee1; }
-.edit-cancel-btn:hover { background-color: #6d6f78; }
-
-.message.editing-mode .message-actions { display: none !important; }
 
 /* ==========================================
    8. ПАРЯЩЕЕ ОКНО НАСТРОЕК ЗОН И ПАЛИТРА
