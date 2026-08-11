@@ -1,7 +1,3 @@
-// Запуск облачного приложения и базы данных через глобальный Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 // Ваши уникальные ключи конфигурации Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
@@ -12,10 +8,9 @@ const firebaseConfig = {
   appId: "1:1084561649631:web:5361cf4ae5540104e09e6a"
 };
 
-// Запуск облачного приложения и базы данных
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-document.addEventListener('DOMContentLoaded', () => {
+// Запуск облачного приложения и базы данных через глобальный Firebase (СТРОГО ОДИН РАЗ)
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
     const messagesContainer = document.getElementById('messagesContainer');
     const messageInput = document.getElementById('messageInput');
