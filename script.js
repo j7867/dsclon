@@ -18,10 +18,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Запуск облачного приложения и базы данных
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // === 1. БАЗОВЫЕ ЭЛЕМЕНТЫ И ШАПКА ЧАТА ===
