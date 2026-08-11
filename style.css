@@ -818,3 +818,114 @@ html, body {
 .notification-bell:hover svg {
     transform: rotate(17deg) !important;
 }
+/* ==========================================
+   СИСТЕМА АВТОРИЗАЦИИ И СОЗДАНИЯ СЕРВЕРОВ
+   ========================================== */
+
+/* Оверлей для окна логина */
+.auth-modal-overlay {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+    background-color: #1e1f22 !important; /* Полностью темный фон скрывает чат до входа */
+    z-index: 100000 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0;
+    transition: opacity 0.3s ease !important;
+}
+.auth-modal-overlay.active {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+.auth-modal-window {
+    background-color: #313338 !important;
+    padding: 32px !important;
+    border-radius: 8px !important;
+    width: 480px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+    text-align: left;
+    animation: fadeIn 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.auth-title {
+    color: #fff !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    margin-bottom: 8px !important;
+}
+
+.auth-subtitle {
+    color: #b5bac1 !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    margin-bottom: 20px !important;
+}
+
+/* Оверлей для создания сервера */
+.server-modal-overlay {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    z-index: 99999 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0;
+    transition: opacity 0.2s ease !important;
+}
+.server-modal-overlay.active {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+.server-modal-window {
+    background-color: #313338 !important;
+    border: 1px solid #232428 !important;
+    border-radius: 8px !important;
+    width: 440px !important;
+    padding: 24px !important;
+    position: relative !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
+    transform: scale(0.9) !important;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+.server-modal-overlay.active .server-modal-window {
+    transform: scale(1) !important;
+}
+
+/* Кнопка "Добавить сервер" в сайдбаре ДМ */
+.add-server-btn-sidebar {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    background-color: #23a55a !important; /* Зеленая кнопка плюс */
+    color: #fff !important;
+    font-size: 26px !important;
+    font-weight: 300 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    margin-top: 4px !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scale(0.7) !important;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.3s, border-radius 0.2s !important;
+}
+
+/* Когда кнопка активирована кликом по пустому месту */
+.add-server-btn-sidebar.spawned {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1) !important;
+}
+
+.add-server-btn-sidebar:hover {
+    border-radius: 16px !important;
+    background-color: #1a7f43 !important;
+}
