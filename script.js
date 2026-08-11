@@ -113,12 +113,6 @@ function createDirectMessageItem(username) {
     dmChannelsList.appendChild(userItem);
 }
 
-const notificationBell = document.getElementById('notificationBell');
-const notificationsDropdown = document.getElementById('notificationsDropdown');
-const bellBadge = document.getElementById('bellBadge');
-const notifList = document.getElementById('notifList');
-const notifEmptyText = document.getElementById('notifEmptyText');
-
 let notificationsCount = 0;
 let myName = localStorage.getItem('chat_nickname') || 'User';
 
