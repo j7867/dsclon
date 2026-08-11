@@ -592,8 +592,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
                         let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
                         customColorInput.value = hex;
-              }
-    });
+            }
+         }
+     }
 
     if (applyColorBtn) {
         applyColorBtn.addEventListener('click', () => {
