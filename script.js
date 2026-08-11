@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dmChannelsList = document.getElementById('dmChannelsList');
 
     // === 5. МОДАЛКА ПРОФИЛЯ ===
-    const openFullProfileBtn = document.getElementById('openFullProfileBtn'); 
+    const openFullProfileBtn = document.getElementById('openFullProfileBtn') || document.querySelector('.user-avatar-header'); 
     const profileModalOverlay = document.getElementById('profileModalOverlay');
     const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
     const profileNicknameInput = document.getElementById('profileNicknameInput');
