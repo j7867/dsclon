@@ -513,4 +513,4 @@ function createDirectMessageItem(username) {
     });
 
     checkUserSession(); loadSavedServersFromMemory();
-});
+}
