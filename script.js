@@ -424,8 +424,6 @@ document.addEventListener('click', (e) => {
 // ==========================================
 /* 12. ЛОГИКА НАСТРОЕК ПРОФИЛЯ, КАСКАДНЫХ ТЕНЕЙ И ЗАГРУЗКИ ФОТО */
 // ==========================================
-let selectedAvatarColor = localStorage.getItem('chat_avatar_color') || '#5865f2';
-let uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image') || ''; // Переменная для фото
 
 // Функция обновления визуального состояния аватарок на странице
 function updateProfileUI() {
