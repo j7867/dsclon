@@ -29,14 +29,20 @@
       </div>
     </div>
 
-    <!-- Контейнер для Общего сервера (изначально скрыт) -->
-    <div id="serverChannelsSection" style="display: none;">
-      <div class="sidebar-header">ТЕКСТОВЫЕ КАНАЛЫ</div>
-      <div class="custom-user-item active" data-channel="general-chat">
-        <div class="user-avatar" style="background-color: #5865f2;">#</div>
-        <span>general-chat</span>
-      </div>
-    </div>
+          <!-- Контейнер для Общего сервера (изначально скрыт) -->
+        <div id="serverChannelsSection" style="display: none;">
+            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding-right: 8px;">
+                <span>ТЕКСТОВЫЕ КАНАЛЫ</span>
+                <!-- Плюсик для плавного открытия модалки создания каналов -->
+                <span id="openCreateChannelBtn" style="cursor: pointer; font-size: 18px; transition: color 0.15s;" title="Создать канал">+</span>
+            </div>
+            <!-- Сюда JS будет динамически добавлять ваши новые текстовые каналы -->
+            <div id="serverChannelsList">
+                <div class="custom-user-item active" data-channel="general-chat">
+                    <div class="user-avatar" style="background-color: #5865f2;">#</div>
+                    <span>general-chat</span>
+                </div>
+            </div>
   </div> <!-- Закрываем только channels-sidebar -->
 
   <!-- 3. ОБЛАСТЬ ЧАТА (CHAT AREA) -->
