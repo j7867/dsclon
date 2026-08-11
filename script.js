@@ -246,12 +246,12 @@ function appendMessage(sender, text) {
             }
             arrowBtn.classList.toggle('open');
             userMenu.classList.toggle('visible');
-        });
+             });
     }
-      // Автоскролл чата вниз
+
+    // Автоскролл чата вниз
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
-
 // Показ/скрытие панели настроек по клику на шестеренку
 if (openSettingsBtn && settingsSidebar) {
     openSettingsBtn.addEventListener('click', (e) => {
