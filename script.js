@@ -1,27 +1,28 @@
+// === ИСПРАВЛЕННЫЙ ВЕРХНИЙ БЛОК ПЕРЕМЕННЫХ ===
 const messagesContainer = document.getElementById('messagesContainer');
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
 
-// ИСПРАВЛЕНО: Теперь JS ищет кнопки по вашим новым CSS-классам кругов
 const dmServerBtn = document.getElementById('dmServerBtn');
 const publicServerBtn = document.getElementById('publicServerBtn');
+
+// Ищем кнопки-круги по классам
 const openSettingsBtn = document.querySelector('.settings-gear-trigger'); 
 const notificationBell = document.querySelector('.notification-bell');
 
+// ИСПРАВЛЕНО: Находим оверлеи по ID, как прописано в HTML
 const settingsSidebar = document.getElementById('settingsSidebar');
 const notificationsDropdown = document.getElementById('notificationsDropdown');
-const bellBadge = document.querySelector('.bell-badge');
+const bellBadge = document.getElementById('bellBadge');
+
+// ИСПРАВЛЕНО: Находим внутренний список для писем, который находится внутри дропдауна
+const notifList = document.getElementById('notifList') || document.querySelector('.notifications-dropdown');
+const notifEmptyText = document.getElementById('notifEmptyText');
 
 const goToZonesBtn = document.getElementById('goToZonesBtn');
 const backToMenuBtn = document.getElementById('backToMenuBtn');
 const mainSettingsScreen = document.getElementById('mainSettingsScreen');
 const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
-
-const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
-const zoneSelectOptions = document.getElementById('zoneSelectOptions');
-const customColorInput = document.getElementById('customColorInput');
-const colorPreviewCircle = document.getElementById('colorPreviewCircle');
-const applyColorBtn = document.getElementById('applyColorBtn');
 
 const dmChannelsSection = document.getElementById('dmChannelsSection');
 const serverChannelsSection = document.getElementById('serverChannelsSection');
@@ -248,15 +249,35 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-// Глобальный клик по документу для закрытия панелей, если кликнули мимо
+// Глобальный клик по документу для закрытия панелей
 document.addEventListener('click', (e) => {
-    if (settingsSidebar && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
-        settingsSidebar.classList.remove('active');
+    // Безопасное закрытие селектора зон
+    if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
+    
+    // Закрываем настройки, только если элементы существуют на странице
+    if (settingsSidebar && openSettingsBtn) {
+        if (!settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
+            settingsSidebar.classList.remove('active');
+        }
     }
-    if (notificationsDropdown && !notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
-        notificationsDropdown.classList.remove('visible');
+    
+    // Закрываем уведомления, только если элементы существуют на странице
+    if (notificationsDropdown && notificationBell) {
+        if (!notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
+            notificationsDropdown.classList.remove('visible');
+        }
+    }
+
+    // Закрытие контекстных меню сообщений
+    document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
+    document.querySelectorAll('.action-btn.arrow-btn').forEach(btn => btn.classList.remove('open'));
+    
+    // Новая проверка: Закрываем модалку профиля, только если кликнули по самому оверлею вокруг окна
+    if (profileModalOverlay && e.target === profileModalOverlay) {
+        profileModalOverlay.classList.remove('active');
     }
 });
+
 
 function checkEmptyNotifications() {
     if (notifList && notifList.children.length === 0 && notifEmptyText) {
