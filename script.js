@@ -241,22 +241,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // КЛИКИ ШЕСТЕРЕНКИ И КОЛОКОЛЬЧИКА (Пункт 3)
     // ==========================================
-    if (openSettingsBtn && settingsSidebar) {
-        openSettingsBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
-            settingsSidebar.classList.toggle('active');
-        });
-    }
+   // Показ/скрытие панели настроек по клику на шестеренку
+if (openSettingsBtn && settingsSidebar) {
+    openSettingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
+        settingsSidebar.classList.toggle('active');
+    });
+}
 
-    if (notificationBell && notificationsDropdown) {
-        notificationBell.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (settingsSidebar) settingsSidebar.classList.remove('active');
-            notificationsDropdown.classList.toggle('visible');
-            if (bellBadge) bellBadge.classList.remove('active');
-        });
-    }
+// Показ/скрытие выпадающего списка уведомлений по клику на колокольчик
+if (notificationBell && notificationsDropdown) {
+    notificationBell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (settingsSidebar) settingsSidebar.classList.remove('active');
+        notificationsDropdown.classList.toggle('visible');
+        if (bellBadge) bellBadge.classList.remove('active');
+    });
+}
 
     // ==========================================
     // ЛОГИКА УВЕДОМЛЕНИЙ И ДРУЗЕЙ В ЛС (Пункт 5)
@@ -337,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Глобальное закрытие менюшек по клику на документ
     document.addEventListener('click', (e) => {
-        const selectOptions = document.getElementById('zoneSelectOptions');
+       const selectOptions = document.getElementById('zoneSelectOptions');
         if (selectOptions) selectOptions.classList.remove('active');
         if (settingsSidebar && openSettingsBtn && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
             settingsSidebar.classList.remove('active');
@@ -350,18 +352,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Инициализация кастомных зон
+     // === НАВИГАЦИЯ МЕЖДУ ЭКРАНАМИ НАСТРОЕК (ПЕРЕКЛЮЧЕНИЕ ЗОН) ===
+    const zonesTriggerBtn = document.getElementById('goToZonesBtn');
+    const returnToMenuBtn = document.getElementById('backToMenuBtn');
+
+    if (zonesTriggerBtn && mainSettingsScreen && zoneSettingsScreen) {
+        zonesTriggerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mainSettingsScreen.style.display = 'none';
+            zoneSettingsScreen.style.display = 'block';
+        });
+    }
+
+  if (returnToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
+    returnToMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        zoneSettingsScreen.style.display = 'none';
+        mainSettingsScreen.style.display = 'block';
+        
+        if (activeZoneKey && zones[activeZoneKey]) {
+            zones[activeZoneKey].classList.remove('zone-highlight');
+        }
+        activeZoneKey = '';
+        if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
+    });
+}
+
+    // === УВЕДОМЛЕНИЯ И СЕЛЕКТОР ЗОН ===
     if (zoneSelectTrigger && zoneSelectOptions) {
         zoneSelectTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             zoneSelectOptions.classList.toggle('active');
         });
     }
+
     document.querySelectorAll('.custom-option').forEach(option => {
-        option.addEventListener('click', () => {
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (activeZoneKey && zones[activeZoneKey]) zones[activeZoneKey].classList.remove('zone-highlight');
             activeZoneKey = option.getAttribute('data-value');
-            zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
-            zoneSelectOptions.classList.remove('active');
+            
+            if (zoneSelectTrigger) {
+                zoneSelectTrigger.innerHTML = option.textContent + ' <span class="select-arrow">▼</span>';
+            }
+            if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
+            
+            if (activeZoneKey && zones[activeZoneKey]) {
+                zones[activeZoneKey].classList.add('zone-highlight');
+                let currentBg = window.getComputedStyle(zones[activeZoneKey]).backgroundColor;
+                if (customColorInput) {
+                    let rgbValues = currentBg.match(/\d+/g);
+                    if (rgbValues && rgbValues.length >= 3) {
+                      let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
+let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                        customColorInput.value = hex;
+                        if (colorPreviewCircle) colorPreviewCircle.style.backgroundColor = hex;
+                    }
+                }
+            }
+        });
+
+        option.addEventListener('mouseenter', () => {
+            const hoverZoneKey = option.getAttribute('data-value');
+            if (zones[hoverZoneKey]) zones[hoverZoneKey].classList.add('zone-highlight');
+        });
+
+        option.addEventListener('mouseleave', () => {
+            const hoverZoneKey = option.getAttribute('data-value');
+            if (zones[hoverZoneKey] && hoverZoneKey !== activeZoneKey) {
+                zones[hoverZoneKey].classList.remove('zone-highlight');
+            }
         });
     });
 
