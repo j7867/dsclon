@@ -254,22 +254,11 @@ if (notificationBell && notificationsDropdown) {
     });
 }
 
-
-// Показ/скрытие выпадающего списка уведомлений по клику на колокольчик
-if (notificationBell && notificationsDropdown) {
-    notificationBell.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (settingsSidebar) settingsSidebar.classList.remove('active');
-        notificationsDropdown.classList.toggle('visible');
-        notificationsCount = 0;
-        if (bellBadge) bellBadge.classList.remove('active');
-    });
-}
-
 // Глобальный клик по документу для закрытия панелей
 document.addEventListener('click', (e) => {
-    // Безопасное закрытие селектора зон
-    if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
+    // Безопасное закрытие селектора зон (ищем элемент прямо в клике)
+    const selectOptions = document.getElementById('zoneSelectOptions');
+    if (selectOptions) selectOptions.classList.remove('active');
     
     // Закрываем настройки, только если элементы существуют на странице
     if (settingsSidebar && openSettingsBtn) {
@@ -284,6 +273,7 @@ document.addEventListener('click', (e) => {
             notificationsDropdown.classList.remove('visible');
         }
     }
+});
 
     // Закрытие контекстных меню сообщений
     document.querySelectorAll('.user-action-menu').forEach(menu => menu.classList.remove('visible'));
