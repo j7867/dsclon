@@ -407,14 +407,15 @@ if (notificationBell && notificationsDropdown) {
         let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
         customColorInput.value = hex;
      }
- } // Конец проверки if (rgbValues...)
+} // Конец проверки if (rgbValues...)
 
-
- option.addEventListener('mouseenter', () => {
-    const hoverZoneKey = option.getAttribute('data-value');
-
+        // Обработчик ховера: подсвечиваем зону при наведении мыши на пункт меню
+        option.addEventListener('mouseenter', () => {
+            const hoverZoneKey = option.getAttribute('data-value');
+            if (zones[hoverZoneKey]) zones[hoverZoneKey].classList.add('zone-highlight');
         });
 
+        // Убираем подсветку зоны, когда мышь уходит с пункта меню
         option.addEventListener('mouseleave', () => {
             const hoverZoneKey = option.getAttribute('data-value');
             if (zones[hoverZoneKey] && hoverZoneKey !== activeZoneKey) {
@@ -423,7 +424,26 @@ if (notificationBell && notificationsDropdown) {
         });
     });
 
-    // Загрузка сообщений и инициализация интерфейса
+    // ==========================================
+    // КНОПКА «ПРИМЕНИТЬ ЦВЕТ» И ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА
+    // ==========================================
+    if (applyColorBtn) {
+        applyColorBtn.addEventListener('click', () => {
+            if (!activeZoneKey || !zones[activeZoneKey]) { 
+                alert('Сначала выберите зону!'); 
+                return; 
+            }
+            const chosenColor = customColorInput.value;
+            zones[activeZoneKey].style.backgroundColor = chosenColor;
+            localStorage.setItem('chat_bg_' + activeZoneKey, chosenColor); 
+            zones[activeZoneKey].classList.remove('zone-highlight');
+            activeZoneKey = '';
+            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
+            alert('Цвет успешно применен!');
+        });
+    }
+
+    // Загрузка сообщений и инициализация интерфейса при старте
     loadSavedMessages(); 
     if (userHeaderName) userHeaderName.textContent = myName;
     if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
