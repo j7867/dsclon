@@ -432,21 +432,22 @@ function updateProfileUI() {
     uploadedAvatarDataUrl = localStorage.getItem('chat_avatar_image') || '';
 
     if (miniMenuUsername) miniMenuUsername.textContent = myName;
+    if (userHeaderName) userHeaderName.textContent = myName;
 
     const firstLetter = myName.charAt(0).toUpperCase();
 
-    // Отрисовка аватарки в шапке чата
-    if (headerProfileAvatar) {
+    // ИСПРАВЛЕНО: Обновляем аватарку в шапке чата через правильную переменную openFullProfileBtn
+    if (openFullProfileBtn) {
         if (uploadedAvatarDataUrl) {
-            headerProfileAvatar.innerHTML = `<img src="${uploadedAvatarDataUrl}" alt="avatar">`;
-            headerProfileAvatar.style.backgroundColor = 'transparent';
+            openFullProfileBtn.innerHTML = `<img src="${uploadedAvatarDataUrl}" alt="avatar">`;
+            openFullProfileBtn.style.backgroundColor = 'transparent';
         } else {
-            headerProfileAvatar.textContent = firstLetter;
-            headerProfileAvatar.style.backgroundColor = selectedAvatarColor;
+            openFullProfileBtn.textContent = firstLetter;
+            openFullProfileBtn.style.backgroundColor = selectedAvatarColor;
         }
     }
 
-    // Отрисовка аватарки в парящем мини-меню
+    // Обновляем аватарку в мини-меню профиля (если оно есть)
     if (miniMenuAvatar) {
         if (uploadedAvatarDataUrl) {
             miniMenuAvatar.innerHTML = `<img src="${uploadedAvatarDataUrl}" alt="avatar">`;
@@ -456,6 +457,7 @@ function updateProfileUI() {
             miniMenuAvatar.style.backgroundColor = selectedAvatarColor;
         }
     }
+}
 
     if (profileNicknameInput) profileNicknameInput.value = myName;
     if (resetAvatarFileBtn) {
