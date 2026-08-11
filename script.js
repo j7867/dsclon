@@ -238,9 +238,9 @@ function appendMessage(sender, text) {
                 userMenu.className = 'user-action-menu';
                 userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
                 messageElement.appendChild(userMenu);
-                userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
+                               userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
                     eClick.stopPropagation();
-                    addNotification('friend', `${sender} отправил вам запрос в друзья.`);
+                    addNotification('friend', sender);
                     userMenu.classList.remove('visible');
                 });
             }
@@ -248,6 +248,8 @@ function appendMessage(sender, text) {
             userMenu.classList.toggle('visible');
         });
     }
+
+    // Автоскролл чата вниз
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 // Показ/скрытие панели настроек по клику на шестеренку
