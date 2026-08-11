@@ -383,7 +383,7 @@ html, body {
 
 
 /* ==========================================
-   7. МЕНЮ ДЕЙСТВИЙ НА СООБЩЕНИЯХ И ПОЛЬЗОВАТЕЛЯХ (ФИКС)
+   7. МЕНЮ ДЕЙСТВИЙ НА СООБЩЕНИЯХ И ПОЛЬЗОВАТЕЛЯХ
    ========================================== */
 .message {
     display: flex !important;
@@ -392,11 +392,20 @@ html, body {
     position: relative !important;
     padding: 8px 16px !important;
     border-radius: 4px !important;
-    transition: background-color 0.2s ease !important;
+    /* Настраиваем плавность для фона и рамки одновременно */
+    border: 1px solid transparent !important;
+    transition: background-color 0.25s ease, border-color 0.25s ease !important;
 }
 
+/* Эффект при наведении: фон темнеет, появляется аккуратная белая рамка */
 .message:hover {
-    background-color: rgba(0, 0, 0, 0.08) !important;
+    background-color: rgba(0, 0, 0, 0.25) !important; /* Затемнение фона */
+    border-color: rgba(255, 255, 255, 0.15) !important; /* Мягкая белая рамка как на скрине */
+}
+
+.message.deleting {
+    opacity: 0 !important;
+    transform: translateX(20px) !important;
 }
 
 .message-content {
@@ -406,35 +415,36 @@ html, body {
     flex: 1 !important;
 }
 
-/* Скрываем кнопки действий по умолчанию и позиционируем их справа */
+/* Контейнер кнопок действий (аккуратная темная плашка) */
 .message-actions {
     display: flex !important;
     gap: 4px !important;
     position: absolute !important;
     right: 16px !important;
-    top: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     opacity: 0 !important;
     visibility: hidden !important;
-    background-color: #313338 !important; /* Цвет подложки под кнопки */
-    border: 1px solid #1f2023 !important;
+    background-color: #2b2d31 !important; /* Фирменная темная подложка */
+    border: 1px solid #111214 !important;
     border-radius: 4px !important;
     padding: 2px !important;
     z-index: 5 !important;
     height: 32px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Показываем блок кнопок только при наведении на сообщение */
 .message:hover .message-actions {
     opacity: 1 !important;
     visibility: visible !important;
 }
 
-/* Красивые темные кнопки действий в стиле Discord */
+/* Базовые стили для кнопок действий */
 .message-actions .action-btn {
-    background-color: #2b2d31 !important;
+    background: none !important;
     border: none !important;
     color: #b5bac1 !important;
-    padding: 0 10px !important;
+    padding: 0 8px !important;
     height: 100% !important;
     cursor: pointer !important;
     font-size: 14px !important;
@@ -442,17 +452,36 @@ html, body {
     align-items: center !important;
     justify-content: center !important;
     border-radius: 3px !important;
-    transition: background-color 0.1s, color 0.1s !important;
+    /* Плавность для анимаций поворота и цвета */
+    transition: color 0.2s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
     width: auto !important;
 }
 
+/* Ховер для обычных кнопок */
 .message-actions .action-btn:hover {
-    background-color: #35373c !important;
     color: #ffffff !important;
 }
 
-.message-actions .action-btn.delete-btn:hover {
-    background-color: #f23f43 !important;
+/* ПОВОРОТ: Карандаш при наведении крутится на 17 градусов */
+.message-actions .edit-btn:hover {
+    color: #ffffff !important;
+    transform: rotate(17deg) !important;
+}
+
+/* ПОВОРОТ: Мусорка при наведении крутится на 17 градусов и краснеет */
+.message-actions .delete-btn:hover {
+    color: #f23f43 !important;
+    transform: rotate(17deg) !important;
+}
+
+/* РОТАТЕ ДЛЯ СТРЕЛОЧКИ: Базовое состояние */
+.message-actions .action-btn.arrow-btn {
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s ease !important;
+}
+
+/* Когда на стрелочку НАЖАЛИ (JS вешает класс .open) — она плавно разворачивается вниз */
+.message-actions .action-btn.arrow-btn.open {
+    transform: rotate(90deg) !important; /* Разворот по часовой, чтобы смотреть вниз */
     color: #ffffff !important;
 }
 
