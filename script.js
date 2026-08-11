@@ -1,8 +1,6 @@
-// === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
-import { initializeApp } from "https://gstatic.com";
-import { 
-    getFirestore, doc, setDoc, getDoc, collection, updateDoc, onSnapshot 
-} from "https://gstatic.com";
+// Запуск облачного приложения и базы данных через глобальный Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // Ваши уникальные ключи конфигурации Firebase
 const firebaseConfig = {
