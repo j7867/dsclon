@@ -1,12 +1,10 @@
 // === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
-// === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
-// === ПОДКЛЮЧЕНИЕ ОБЛАЧНЫХ МОДУЛЕЙ FIREBASE (SDK) ===
 import { initializeApp } from "https://gstatic.com";
 import { 
     getFirestore, doc, setDoc, getDoc, collection, updateDoc, onSnapshot 
 } from "https://gstatic.com";
 
-// Ваши уникальные ключи конфигурации Firebase со скриншота
+// Ваши уникальные ключи конфигурации Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
   authDomain: "://firebaseapp.com",
@@ -15,6 +13,10 @@ const firebaseConfig = {
   messagingSenderId: "1084561649631",
   appId: "1:1084561649631:web:5361cf4ae5540104e09e6a"
 };
+
+// Запуск облачного приложения и базы данных
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // Запуск облачного приложения и базы данных
 const app = initializeApp(firebaseConfig);
