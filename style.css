@@ -20,10 +20,6 @@
     user-select: none;
 }
 
-html {
-    background-color: var(--bg-main);
-}
-
 html, body {
     display: flex;
     height: 100%;
@@ -31,6 +27,22 @@ html, body {
     background-color: var(--bg-main);
     color: var(--text-color);
     overflow: hidden;
+}
+
+/* Кастомный скроллбар в стиле Discord */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e1f22;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #111214;
 }
 
 /* ==========================================
@@ -42,7 +54,8 @@ html, body {
 }
 
 @keyframes popIn {
-    to { opacity: 1; transform: scale(1); }
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
 @keyframes fadeInNotifItem {
@@ -68,6 +81,7 @@ html, body {
     padding-top: 12px;
     gap: 8px;
     border-right: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .guild-icon {
@@ -97,6 +111,7 @@ html, body {
     padding: 12px;
     gap: 2px;
     border-right: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -108,7 +123,7 @@ html, body {
     padding-left: 8px;
 }
 
-.user-item {
+.custom-user-item {
     padding: 8px;
     border-radius: 4px;
     cursor: pointer;
@@ -116,9 +131,10 @@ html, body {
     align-items: center;
     gap: 10px;
     transition: background 0.1s;
+    color: var(--text-muted);
 }
 
-.user-item:hover, .user-item.active {
+.custom-user-item:hover, .custom-user-item.active {
     background-color: rgba(255, 255, 255, 0.06);
     color: var(--text-color);
 }
@@ -133,30 +149,139 @@ html, body {
     justify-content: center;
     font-size: 14px;
     font-weight: bold;
+    color: #fff;
+    flex-shrink: 0;
 }
-/* ==========================================
-   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И СООБЩЕНИЯ
-   ========================================== */
-.chat-area {
-    flex: 1 !important;
-    width: auto !important;
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.user-profile-block { 
     display: flex;
     flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+}
+.user-profile-block a, 
+.user-profile-block button {
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+.user-profile-block a:hover {
+    opacity: 1;
+}
+/* ==========================================
+   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И ШАПКА
+   ========================================== */
+.chat-area {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    flex: 1 !important;
+    width: auto !important;
     background-color: var(--bg-main);
     position: relative;
-    overflow-x: hidden; /* ЗАПРЕЩАЕМ ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ ПРИ АНИМАЦИИ УДАЛЕНИЯ */
 }
 
 .chat-header {
-    height: 48px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    font-weight: bold;
-    font-size: 16px;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 16px !important;
+    height: 48px !important;
+    background-color: #313338 !important; 
+    border-bottom: 1px solid #1f2023 !important;
+    box-sizing: border-box;
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hashtag {
+    color: var(--text-muted);
+    font-size: 20px;
+}
+
+#chatTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.header-right-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important; 
+}
+
+.user-name-header {
+    font-size: 14px !important;
+    color: #f2f3f5 !important;
+    font-weight: 500 !important;
+}
+
+.user-avatar-header {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+}
+
+/* Круглые кнопки в шапке с эффектом поворота */
+.header-right-group button {
+    background-color: #383a40 !important; 
+    border: none !important;
+    color: #dbdee1 !important; 
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;  
+    height: 32px !important; 
+    border-radius: 50% !important; 
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: transform 0.3s ease-in-out, background-color 0.2s ease, color 0.2s ease !important;
+}
+
+.header-right-group button:hover {
+    background-color: #4e5058 !important; 
+    color: #ffffff !important;
+    transform: rotate(45deg) !important;
+}
+
+.header-right-group button svg {
+    width: 18px !important;
+    height: 18px !important;
+    display: block !important;
+}
+
+#openSettingsBtn {
+    margin-right: 8px !important;
+}
+
+/* ==========================================
+   5. СООБЩЕНИЯ ЧАТА И ЭКШЕНЫ
+   ========================================== */
 .messages-container {
     flex: 1;
     padding: 16px;
@@ -202,7 +327,7 @@ html, body {
 }
 
 /* ==========================================
-   5. ФУТЕР И ЗОНА ВВОДА (ФИКС БЕЛОЙ ПОЛОСЫ)
+   6. ФУТЕР И ЗОНА ВВОДА
    ========================================== */
 .input-area {
     padding: 0 16px 24px 16px;
@@ -242,57 +367,6 @@ html, body {
 }
 .send-btn:hover { color: #fff; }
 .send-btn svg { width: 24px; height: 24px; fill: currentColor; }
-
-/* ==========================================
-   6. ОРИГИНАЛЬНЫЕ КРУГЛЫЕ КНОПКИ ШАПКИ
-   ========================================== */
-.settings-gear-trigger, .notification-bell {
-    position: relative !important;
-    background-color: rgba(43, 45, 49, 0.7) !important;
-    backdrop-filter: blur(4px) !important;
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    color: #b5bac1 !important;
-    z-index: 10000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s, color 0.2s, transform 0.2s ease !important;
-}
-
-.settings-gear-trigger:hover, .notification-bell:hover {
-    color: #ffffff !important;
-    background-color: #35373c !important;
-    transform: scale(1.05) !important;
-}
-
-.settings-gear-trigger svg, .notification-bell svg {
-    width: 18px !important;
-    height: 18px !important;
-    fill: currentColor;
-    transition: transform 0.3s ease !important;
-}
-
-.settings-gear-trigger:hover svg { transform: rotate(90deg) !important; }
-.notification-bell:hover svg { transform: rotate(20deg) !important; }
-
-.bell-badge {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 8px;
-    height: 8px;
-    background-color: #f23f43;
-    border-radius: 50%;
-    display: none;
-    border: 2px solid #2b2d31;
-}
-
-.bell-badge.active { display: block; }
 /* ==========================================
    7. МЕНЮ ДЕЙСТВИЙ НА СООБЩЕНИЯХ И ПОЛЬЗОВАТЕЛЯХ
    ========================================== */
@@ -371,8 +445,42 @@ html, body {
 }
 .user-action-menu .menu-item:hover { background-color: #4e5058; color: #ffffff; }
 
+/* Интерфейс редактирования сообщений */
+.message-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+    width: 100%;
+}
+
+.message-edit-input {
+    width: 100%;
+    background-color: var(--bg-input);
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: var(--text-color);
+    font-size: 15px;
+}
+
+.edit-form-buttons { display: flex; gap: 8px; }
+.edit-form-buttons button {
+    border: none; padding: 6px 12px; border-radius: 4px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.edit-save-btn { background-color: var(--accent-color); color: #ffffff; }
+.edit-save-btn:hover { background-color: #4752c4; }
+.edit-cancel-btn { background-color: #4e5058; color: #dbdee1; }
+.edit-cancel-btn:hover { background-color: #6d6f78; }
+
+.message.editing-mode .message-actions { display: none !important; }
+
 /* ==========================================
-   8. ПАРЯЩЕЕ ОКНО НАСТРОЕК
+   8. ПАРЯЩЕЕ ОКНО НАСТРОЕК ЗОН И ПАЛИТРА
    ========================================== */
 .settings-sidebar {
     position: fixed !important;
@@ -405,210 +513,32 @@ html, body {
 }
 .settings-sidebar .modal-screen.active-screen { display: block !important; }
 
-.modal-title {
-    color: #ffffff !important;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-/* ==========================================
-   9. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ И ПОДТВЕРЖДЕНИЯ
-   ========================================== */
-.notifications-dropdown {
-    display: block !important;
-    position: fixed !important;
-    top: 64px !important;
-    right: 60px !important;
-    background-color: #313338;
-    border: 1px solid #232428;
-    border-radius: 8px;
-    width: 280px;
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 9999;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-    padding: 12px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-12px) scale(0.97);
-    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
-                opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
-                visibility 0.25s !important;
-}
-
-.notifications-dropdown.visible {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
-}
-
-.notification-item {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #1e1f22;
-    margin-bottom: 6px;
-    font-size: 13px;
-    text-align: left;
-    animation: fadeInNotifItem 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-}
-
-.notification-item .notif-title {
-    font-weight: bold;
-    font-size: 11px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-.notification-item .notif-text { color: #dbdee1; }
-.notif-empty { color: var(--text-muted); text-align: center; padding: 15px; font-size: 13px; }
-
-.notif-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    justify-content: flex-end;
-}
-
-.notif-action-btn {
-    background-color: #2b2d31 !important;
-    border: none !important;
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 11px;
-    color: #b5bac1 !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
-    opacity: 0;
-    transform: scale(0.8);
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    transition: all 0.2s ease !important;
-}
-
-.notif-action-btn.accept-btn { animation-delay: 0.1s; }
-.notif-action-btn.decline-btn { animation-delay: 0.2s; }
-
-.notif-action-btn:hover {
-    transform: rotate(360deg) scale(1.1) !important;
-    color: #ffffff !important;
-    background-color: #383a40 !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
-}
-.notif-action-btn.accept-btn:hover { color: #23a55a !important; }
-.notif-action-btn.decline-btn:hover { color: #f23f43; }
-
-.notif-blur-target {
-    transition: filter 0.2s ease, opacity 0.2s ease;
-}
-.notif-blur-target.blurred {
-    filter: blur(0.8px) !important;
-    opacity: 0.7 !important;
-    background-color: #111214 !important;
-    border-radius: 4px;
-    pointer-events: none;
-}
-
-.confirm-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(30, 31, 34, 0.93) !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px;
-    z-index: 10;
-    border-radius: 4px;
-    animation: fadeIn 0.15s ease;
-}
-
-.confirm-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: #dbdee1;
-    text-align: center;
-    line-height: 1.3;
-}
-
-.confirm-buttons { display: flex; gap: 12px; }
-
-.confirm-btn {
-    border: none;
-    padding: 4px 12px;
-    border-radius: 3px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.15s;
-}
-.confirm-btn.yes-btn { background-color: #f23f43; color: #ffffff; }
-.confirm-btn.yes-btn:hover { background-color: #da373c; }
-
-.confirm-btn.no-btn { background-color: #4e5058; color: #dbdee1; }
-.confirm-btn.no-btn:hover { background-color: #6d6f78; }
-
-/* ==========================================
-   10. КАСТОМНЫЕ СЕЛЕКТЫ И ВЫБОР ЦВЕТА
-   ========================================== */
+.modal-title { color: #ffffff !important; font-size: 16px; font-weight: 600; margin-bottom: 15px; }
 .custom-select-container { position: relative; margin-bottom: 20px; width: 100%; }
 
 .custom-select-trigger {
-    background-color: #1e1f22 !important;
-    color: #dbdee1 !important;
-    padding: 12px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: 1px solid #111214;
-    font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background-color: #1e1f22 !important; color: #dbdee1 !important;
+    padding: 12px 16px; border-radius: 4px; cursor: pointer;
+    border: 1px solid #111214; font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center;
 }
 
 .custom-select-options {
-    position: absolute;
-    top: 100% !important;
-    left: 0;
-    right: 0;
-    background-color: #111214 !important;
-    border-radius: 4px;
-    margin-top: 5px !important;
-    opacity: 0;
-    visibility: hidden;
-    z-index: 10100;
-    border: 1px solid #232428;
-    overflow: hidden;
-    transform: translateY(-8px);
-    transition: all 0.25s ease;
+    position: absolute; top: 100% !important; left: 0; right: 0;
+    background-color: #111214 !important; border-radius: 4px;
+    margin-top: 5px !important; opacity: 0; visibility: hidden; z-index: 10100;
+    border: 1px solid #232428; overflow: hidden;
+    transform: translateY(-8px); transition: all 0.25s ease;
 }
 
-.custom-select-container:hover .custom-select-options {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0);
-}
-
-.custom-select-container.hide-options .custom-select-options {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transform: translateY(-8px) !important;
+.custom-select-options.active {
+    opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important;
 }
 
 .custom-option { padding: 10px 16px; color: #b5bac1 !important; font-size: 14px; cursor: pointer; }
 .custom-option:hover { background-color: #5865f2 !important; color: #ffffff !important; }
 
+/* Обёртка невидимого инпута цвета */
 .color-picker-wrapper { position: relative; width: 48px; height: 48px; cursor: pointer; margin: 15px auto 0 auto; display: block; }
 .color-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
 .color-picker-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background-color: #313338; transition: transform 0.2s; }
@@ -619,318 +549,76 @@ html, body {
 
 .back-menu-btn { background: none; border: none; color: #b5bac1; font-size: 12px; cursor: pointer; margin-bottom: 5px; }
 .back-menu-btn:hover { color: #ffffff; }
+
 /* ==========================================
-   11. ИНТЕРФЕЙС РЕДАКТИРОВАНИЯ СООБЩЕНИЙ
+   9. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ И ПОДТВЕРЖДЕНИЯ
    ========================================== */
-.message-edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 4px;
-    width: 100%;
+.notifications-dropdown {
+    display: block !important; position: fixed !important;
+    top: 64px !important; right: 60px !important;
+    background-color: #313338; border: 1px solid #232428; border-radius: 8px;
+    width: 280px; max-height: 300px; overflow-y: auto; z-index: 9999;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6); padding: 12px; opacity: 0; visibility: hidden;
+    transform: translateY(-12px) scale(0.97);
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.25s !important;
 }
 
-.message-edit-input {
-    width: 100%;
-    background-color: var(--bg-input);
-    border: none;
-    outline: none;
-    border-radius: 4px;
-    padding: 8px 12px;
-    color: var(--text-color);
-    font-size: 15px;
+.notifications-dropdown.visible { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+
+.notification-item {
+    position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 4px; background-color: #1e1f22; margin-bottom: 6px; font-size: 13px; text-align: left;
+    animation: fadeInNotifItem 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
 }
 
-.edit-form-buttons {
-    display: flex;
-    gap: 8px;
-}
+.notification-item .notif-title { font-weight: bold; font-size: 11px; text-transform: uppercase; color: var(--text-muted); }
+.notification-item .notif-text { color: #dbdee1; }
+#notifEmptyText { color: var(--text-muted); text-align: center; padding: 15px; font-size: 13px; }
 
-.edit-form-buttons button {
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.15s ease;
+.notif-actions { display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; }
+.notif-action-btn {
+    background-color: #2b2d31 !important; border: none !important; width: 28px !important; height: 28px !important; border-radius: 50% !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 11px; color: #b5bac1 !important; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important; opacity: 0; transform: scale(0.8);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transition: all 0.2s ease !important;
 }
+.notif-action-btn.accept-btn { animation-delay: 0.1s; }
+.notif-action-btn.decline-btn { animation-delay: 0.2s; }
+.notif-action-btn:hover { transform: rotate(360deg) scale(1.1) !important; color: #ffffff !important; background-color: #383a40 !important; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important; }
+.notif-action-btn.accept-btn:hover { color: #23a55a !important; }
+.notif-action-btn.decline-btn:hover { color: #f23f43; }
 
-.edit-save-btn {
-    background-color: var(--accent-color);
-    color: #ffffff;
-}
-.edit-save-btn:hover {
-    background-color: #4752c4;
-}
+.notif-blur-target { transition: filter 0.2s ease, opacity 0.2s ease; }
+.notif-blur-target.blurred { filter: blur(0.8px) !important; opacity: 0.7 !important; background-color: #111214 !important; border-radius: 4px; pointer-events: none; }
 
-.edit-cancel-btn {
-    background-color: #4e5058;
-    color: #dbdee1;
-}
-.edit-cancel-btn:hover {
-    background-color: #6d6f78;
-}
+.confirm-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(30, 31, 34, 0.93) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; z-index: 10; border-radius: 4px; animation: fadeIn 0.15s ease; }
+.confirm-title { font-size: 12px; font-weight: 600; color: #dbdee1; text-align: center; line-height: 1.3; }
+.confirm-buttons { display: flex; gap: 12px; }
+.confirm-btn { border: none; padding: 4px 12px; border-radius: 3px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background-color 0.15s; }
+.confirm-btn.yes-btn { background-color: #f23f43; color: #ffffff; }
+.confirm-btn.yes-btn:hover { background-color: #da373c; }
+.confirm-btn.no-btn { background-color: #4e5058; color: #dbdee1; }
+.confirm-btn.no-btn:hover { background-color: #6d6f78; }
 
-/* Скрываем всплывающую панель действий во время редактирования, чтобы она не мешала */
-.message.editing-mode .message-actions {
-    display: none !important;
-}
 /* ==========================================
-   13. СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ ВНУТРИ АВАТАРОК
+   10. БОЛЬШОЕ МОДАЛЬНОЕ ОКНО ПРОФИЛЯ
    ========================================== */
-.user-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Фото заполняет кружок пропорционально, без искажений */
-    border-radius: 50%;
-    display: block;
-}
-/* ОВЕРЛЕЙ БОЛЬШОГО МОДАЛЬНОГО ОКНА С ТЕМНЕЮЩЕЙ К ЦЕНТРУ ТЕНЬЮ */
 .profile-modal-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background-color: rgba(0, 0, 0, 0.75);
-    z-index: 99999 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    /* 1. В исходном состоянии окно должно быть СКРЫТО */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.25s ease, visibility 0.25s ease;
+    position: fixed !important; top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+.avatar-color-circle.selected { 
+    outline: 3px solid white; 
 }
 
-/* 2. Этот класс будет добавляться через JS только при КЛИКЕ */
-.profile-modal-overlay.active {
-    opacity: 1 !important;
-    visibility: visible !important;
+.profile-save-global-btn { 
+    width: 100%; 
+    background-color: #23a55a; 
+    color: white; 
+    border: none; 
+    padding: 12px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 15px; 
+    margin-top: 10px; 
 }
-/* Находим контейнер, в котором лежат аватарка, имя и настройки */
-.user-profile-block { 
-    display: flex;
-    flex-direction: column; /* Выстраиваем элементы в столбик */
-    gap: 8px; /* Задаем красивый отступ между ними */
-    padding: 16px;
-}
-
-/* Стили для ссылки "Настройки профиля" */
-.user-profile-block a, 
-.user-profile-block button {
-    font-size: 14px;
-    color: #ffffff;
-    text-decoration: none;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-}
-
-/* Эффект при наведении */
-.user-profile-block a:hover {
-    opacity: 1;
-}
-
-/* Настройка сетки для всей области чата */
-.chat-area {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100vh !important;
-    overflow: hidden !important;
-}
-
-/* Правильное распределение элементов по углам шапки */
-.chat-header {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 0 16px !important;
-    height: 48px !important;
-    background-color: #313338 !important; 
-    border-bottom: 1px solid #1f2023 !important;
-    box-sizing: border-box;
-}
-
-/* Контейнер для правой группы элементов */
-.header-right-group {
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important; 
-}
-
-/* Текст имени */
-.user-name-header {
-    font-size: 14px !important;
-    color: #f2f3f5 !important;
-    font-weight: 500 !important;
-}
-
-/* Идеально круглая аватарка */
-.user-avatar-header {
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 12px !important;
-    color: #ffffff !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-}
-
-/* Стилизация кнопок уведомлений и шестеренки */
-.header-right-group button {
-    background: none !important;
-    border: none !important;
-    color: #b5bac1 !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 4px !important;
-    transition: color 0.2s ease !important;
-}
-
-.header-right-group button:hover {
-    color: #dbdee1 !important;
-}
-
-/* Делаем шапку полноценным контейнером */
-.chat-header {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important; /* Разносит левую и правую часть по углам */
-    padding: 0 16px !important;
-    height: 48px !important;
-    box-sizing: border-box;
-}
-
-/* Группируем элементы в правой части шапки */
-.header-right-group {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important; /* Отступы между ником, авой и кнопками */
-}
-
-/* Оформление ника */
-.user-name-header {
-    font-size: 14px !important;
-    color: #ffffff !important;
-    font-weight: 500 !important;
-}
-
-/* Оформление круглой аватарки-кнопки */
-.user-avatar-header {
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 12px !important;
-    color: #ffffff !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-}
-/* Возвращаем оригинальные стили для иконок в шапке */
-.chat-header button {
-    background: none !important;
-    border: none !important;
-    color: #ffffff !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 4px !important;
-}
-
-.chat-header button:hover {
-    color: #dbdee1 !important;
-}
-
-/* Задаем правильную сетку для всей области чата */
-.chat-area {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100vh !important;
-    overflow: hidden !important;
-}
-
-/* Принудительно растягиваем шапку на всю доступную ширину */
-.chat-header {
-    width: 100% !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-}
-/* Выравниваем всю правую группу (ник, аватарку и кнопки) строго по центру */
-.header-right-group {
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important; /* Делаем красивый шаг между всеми элементами */
-}
-
-/* Возвращаем оригинальный крупный размер и белый цвет кнопкам-иконкам */
-.header-right-group button {
-    background: none !important;
-    border: none !important;
-    color: #ffffff !important; /* Чистый белый цвет, как на скрине */
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important; /* Убираем лишние внутренние отступы */
-    margin: 0 !important;
-}
-
-/* Четко задаем размер для самих SVG-картинок внутри кнопок */
-.header-right-group button svg {
-    width: 24px !important; /* Делаем их крупнее, как в оригинале */
-    height: 24px !important;
-    display: block !important;
-}
-
-/* Ограничиваем отступ справа у самой последней кнопки (шестеренки) */
-#openSettingsBtn {
-    margin-right: 8px !important;
-}
-/* Возвращаем оригинальную текстуру (круглый серый фон) для кнопок */
-.header-right-group button {
-    background-color: #383a40 !important; /* Серый цвет подложки */
-    border: none !important;
-    color: #dbdee1 !important; /* Светло-серый цвет самой иконки */
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 32px !important;  /* Делаем кнопку квадратной */
-    height: 32px !important; /* Делаем кнопку квадратной */
-    border-radius: 50% !important; /* Скругляем в идеальный круг */
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* Эффект при наведении на подложку */
-.header-right-group button:hover {
-    background-color: #4e5058 !important; /* Чуть светлее при ховере */
-    color: #ffffff !important;
-}
-
-/* Точный размер SVG-иконки внутри этой текстуры */
-.header-right-group button svg {
-    width: 18px !important;
-    height: 18px !important;
-    display: block !important;
-}
-/* Добавляем плавность вращения для кнопок при наведении */
-.header-right-group button {
-    transition: transform 0.3s ease-in-out, background-color 0.2s ease, color 0.2s ease !important;
-}
-
-/* При ховере плавно проворачиваем кнопку на 45 градусов по часовой стрелке */
-.header-right-group button:hover {
-    transform: rotate(45deg) !important;
+.profile-save-global-btn:hover { 
+    background-color: #1a7f43; 
 }
