@@ -395,6 +395,48 @@ document.addEventListener('DOMContentLoaded', () => {
         if (serverModalOverlay && e.target === serverModalOverlay) serverModalOverlay.classList.remove('active');
         if (channelModalOverlay && e.target === channelModalOverlay) channelModalOverlay.classList.remove('active');
         if (profileModalOverlay && e.target === profileModalOverlay) profileModalOverlay.classList.remove('active');
+    }
+    // === ВОССТАНОВЛЕНИЕ СЕРВЕРОВ И КАНАЛОВ ИЗ ПАМЯТИ ===
+    function loadSavedServersFromMemory() {
+        if (!guildsSidebar || !addServerBtnTrigger) return;
+        const savedServers = JSON.parse(localStorage.getItem('chat_custom_servers') || '[]');
+        savedServers.forEach(srv => {
+            const btn = document.createElement('div');
+            btn.className = 'guild-icon';
+            btn.id = srv.id;
+            btn.textContent = srv.name.charAt(0).toUpperCase();
+            btn.title = srv.name;
+
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
+                btn.classList.add('active');
+                currentServerContext = srv.id;
+                currentChannelContext = 'general-chat';
+                if (chatTitle) chatTitle.textContent = 'general-chat';
+                if (hashtag) hashtag.textContent = '#';
+                if (dmChannelsSection) dmChannelsSection.style.display = 'none';
+                if (serverChannelsSection) serverChannelsSection.style.display = 'block';
+                renderServerChannelsList(srv.id);
+                loadSavedMessages();
+            });
+            guildsSidebar.insertBefore(btn, addServerBtnTrigger);
+        });
+    }
+
+    // Вспомогательная системная инициализация публичного сервера
+    if (publicServerBtn) {
+        publicServerBtn.addEventListener('click', () => {
+            document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active'));
+            publicServerBtn.classList.add('active');
+            currentServerContext = 'public';
+            currentChannelContext = 'general-chat';
+            if (chatTitle) chatTitle.textContent = 'general-chat';
+            if (hashtag) hashtag.textContent = '#';
+            if (dmChannelsSection) dmChannelsSection.style.display = 'none';
+            if (serverChannelsSection) serverChannelsSection.style.display = 'block';
+            renderServerChannelsList('public');
+            loadSavedMessages();
+        });
     });
 
     // Запуск сессии и проверка памяти при старте
