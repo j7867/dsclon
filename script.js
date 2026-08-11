@@ -18,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Старт интерфейса чата (ИСПРАВЛЕНО: Буква L в addEventListener теперь большая!)
 document.addEventListener('DOMContentLoaded', () => {
 
     // === 1. БАЗОВЫЕ ЭЛЕМЕНТЫ И ШАПКА ЧАТА ===
