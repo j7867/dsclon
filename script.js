@@ -113,17 +113,6 @@ function createDirectMessageItem(username) {
     dmChannelsList.appendChild(userItem);
 }
 
-let notificationsCount = 0;
-let myName = localStorage.getItem('chat_nickname') || 'User';
-
-const zones = {
-    chatArea: document.getElementById('chatArea'),
-    channelsSidebar: document.getElementById('channelsSidebar'),
-    guildsSidebar: document.getElementById('guildsSidebar'),
-    settingsSidebar: document.getElementById('settingsSidebar')
-};
-let activeZoneKey = '';
-
 function handleSendMessage() {
     if (!messageInput) return;
     const text = messageInput.value.trim();
