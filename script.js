@@ -400,21 +400,19 @@ if (notificationBell && notificationsDropdown) {
             if (activeZoneKey && zones[activeZoneKey]) {
                 zones[activeZoneKey].classList.add('zone-highlight');
                 let currentBg = window.getComputedStyle(zones[activeZoneKey]).backgroundColor;
-                if (customColorInput) {
-                    let rgbValues = currentBg.match(/\d+/g);
-                    if (rgbValues && rgbValues.length >= 3) {
-                      let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
-let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-                        customColorInput.value = hex;
-                        if (colorPreviewCircle) colorPreviewCircle.style.backgroundColor = hex;
-                    }
-                }
-            }
-        });
+               if (customColorInput) {
+    let rgbValues = currentBg.match(/\d+/g);
+       if (rgbValues && rgbValues.length >= 3) {
+        let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
+        let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        customColorInput.value = hex;
+     }
+ } // Конец проверки if (rgbValues...)
 
-        option.addEventListener('mouseenter', () => {
-            const hoverZoneKey = option.getAttribute('data-value');
-            if (zones[hoverZoneKey]) zones[hoverZoneKey].classList.add('zone-highlight');
+
+ option.addEventListener('mouseenter', () => {
+    const hoverZoneKey = option.getAttribute('data-value');
+
         });
 
         option.addEventListener('mouseleave', () => {
