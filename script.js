@@ -491,10 +491,10 @@ const db = firebase.firestore();
                 e.stopPropagation(); createDirectMessageItem(senderName); notifItem.remove(); checkEmptyNotifications();
             });
         }
-        notifList.insertBefore(notifItem, notifList.firstChild);
-    }
+        notifList.insertBefore(notifItem, notifList.firstChild)
+  
+function createDirectMessageItem(username) {
 
-    function createDirectMessageItem(username) {
         if (!dmChannelsList) return;
         if (Array.from(dmChannelsList.querySelectorAll('span')).some(span => span.textContent === username)) return;
         const userItem = document.createElement('div'); userItem.className = 'custom-user-item'; 
