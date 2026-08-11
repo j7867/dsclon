@@ -133,25 +133,37 @@ function appendMessage(sender, text) {
     if (!messagesContainer) return;
     const isMyMessage = (sender === myName);
     const messageElement = document.createElement('div');
-    messageElement.className = 'message';
+    messageElement.className = 'message'; // Жесткий класс для ховера и сетки
     
     const actionsHtml = isMyMessage 
         ? `<button class="action-btn edit-btn" title="Редактировать">✏️</button>
            <button class="action-btn delete-btn" title="Удалить">🗑️</button>`
         : '';
 
+    // Получаем первую букву и цвет для генерации аватарки автора в сообщении
+    const firstLetter = sender.charAt(0).toUpperCase();
+    const avatarColor = isMyMessage ? (selectedAvatarColor || '#5865f2') : '#23a55a';
+
+    // Формируем HTML строго под CSS-структуру
     messageElement.innerHTML = `
+        <div class="user-avatar" style="background-color: ${avatarColor};">
+            ${uploadedAvatarDataUrl && isMyMessage ? `<img src="${uploadedAvatarDataUrl}" alt="avatar">` : firstLetter}
+        </div>
         <div class="message-content">
             <strong>${sender}</strong>
-            <span class="message-text">${text}</span>
+            <span class="message-text"></span>
         </div>
         <div class="message-actions">
             ${actionsHtml}
             <button class="action-btn arrow-btn" title="Еще">></button>
         </div>
     `;
+    
+    // Безопасное экранирование текста от XSS
+    messageElement.querySelector('.message-text').textContent = text;
     messagesContainer.appendChild(messageElement);
 
+    // Логика кнопки редактирования
     const editBtn = messageElement.querySelector('.edit-btn');
     if (editBtn) {
         editBtn.addEventListener('click', (e) => {
@@ -176,7 +188,6 @@ function appendMessage(sender, text) {
 
             const editInput = editForm.querySelector('.message-edit-input');
             editInput.focus();
-            editInput.setSelectionRange(editInput.value.length, editInput.value.length);
 
             const saveChanges = () => {
                 const newText = editInput.value.trim();
@@ -189,14 +200,24 @@ function appendMessage(sender, text) {
                 messageElement.classList.remove('editing-mode');
             };
 
-            editForm.querySelector('.edit-save-btn').addEventListener('click', (ev) => { ev.stopPropagation(); saveChanges(); });
-            editForm.querySelector('.edit-cancel-btn').addEventListener('click', (ev) => { ev.stopPropagation(); closeEditForm(); });
-            editInput.addEventListener('keydown', (ev) => {
-                if (ev.key === 'Enter') { ev.preventDefault(); saveChanges(); }
-                else if (ev.key === 'Escape') { closeEditForm(); }
-            });
+            editForm.querySelector('.edit-save-btn').addEventListener('click', saveChanges);
+            editForm.querySelector('.edit-cancel-btn').addEventListener('click', closeEditForm);
         });
     }
+
+    // Логика анимированного удаления
+    const deleteBtn = messageElement.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            messageElement.classList.add('deleting');
+            setTimeout(() => { messageElement.remove(); }, 200);
+        });
+    }
+
+      // Автоскролл чата вниз
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
 
     const deleteBtn = messageElement.querySelector('.delete-btn');
     if (deleteBtn) {
