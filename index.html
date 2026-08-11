@@ -145,3 +145,42 @@
   <script src="script.js"></script>
 </body>
 </html>
+<!-- ==========================================
+   МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ (ЛОГИН / ПАРОЛЬ)
+   ========================================== -->
+<div class="auth-modal-overlay active" id="authModalOverlay">
+    <div class="auth-modal-window">
+        <h2 class="auth-title">С возвращением!</h2>
+        <p class="auth-subtitle">Мы так рады видеть вас снова!</p>
+        
+        <div class="auth-field">
+            <label class="profile-label">Никнейм / Логин *</label>
+            <input type="text" id="authLoginInput" class="profile-input-field" placeholder="Введите ваш никнейм" autocomplete="off">
+        </div>
+        
+        <div class="auth-field" style="margin-top: 16px;">
+            <label class="profile-label">Пароль *</label>
+            <input type="password" id="authPasswordInput" class="profile-input-field" placeholder="Введите ваш пароль">
+        </div>
+        
+        <button class="profile-save-global-btn" id="authSubmitBtn" style="margin-top: 24px;">Вход / Регистрация</button>
+    </div>
+</div>
+
+<!-- ==========================================
+   МОДАЛЬНОЕ ОКНО СОЗДАНИЯ СЕРВЕРА
+   ========================================== -->
+<div class="server-modal-overlay" id="serverModalOverlay">
+    <div class="server-modal-window">
+        <button class="profile-modal-close" id="closeServerModalBtn">×</button>
+        <h2 class="profile-modal-title" style="text-align: center; font-size: 24px;">Создайте свой сервер</h2>
+        <p class="auth-subtitle" style="text-align: center; margin-bottom: 20px;">Отличный сервер — это сервер, где собираются друзья для общения.</p>
+        
+        <div class="profile-edit-section">
+            <label class="profile-label">Имя сервера</label>
+            <input type="text" id="newServerNameInput" class="profile-input-field" placeholder="Сервер Влада" autocomplete="off">
+        </div>
+        
+        <button class="profile-save-global-btn" id="submitCreateServerBtn" style="margin-top: 12px;">Создать</button>
+    </div>
+</div>
