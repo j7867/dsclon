@@ -179,35 +179,35 @@ html, body {
     opacity: 1;
 }
 /* ==========================================
-   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И ШАПКА
+   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И ШАПКА (ФИКС СЕТКИ)
    ========================================== */
 .chat-area {
     display: flex !important;
     flex-direction: column !important;
     height: 100vh !important;
-    overflow: hidden !important;
     flex: 1 !important;
-    width: auto !important;
     background-color: var(--bg-main);
     position: relative;
+    overflow: hidden !important; /* Убираем любые дергания и уезды */
 }
 
 .chat-header {
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    justify-content: space-between !important; /* Разносит название канала и кнопки по углам */
     padding: 0 16px !important;
     height: 48px !important;
+    min-height: 48px !important; /* Жестко фиксируем высоту шапки */
     background-color: #313338 !important; 
     border-bottom: 1px solid #1f2023 !important;
     box-sizing: border-box;
 }
 
 .header-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
 }
 
 .hashtag {
@@ -266,7 +266,14 @@ html, body {
 .header-right-group button:hover {
     background-color: #4e5058 !important; 
     color: #ffffff !important;
-    transform: rotate(45deg) !important;
+}
+
+/* Поворот для шестеренки (75 градусов) и колокольчика (17 градусов) */
+.settings-gear-trigger:hover {
+    transform: rotate(75deg) !important;
+}
+.notification-bell:hover {
+    transform: rotate(17deg) !important;
 }
 
 .header-right-group button svg {
@@ -280,10 +287,10 @@ html, body {
 }
 
 /* ==========================================
-   5. СООБЩЕНИЯ ЧАТА И ЭКШЕНЫ
+   5. СООБЩЕНИЯ ЧАТА И ПОЛЕ ВВОДА (ФИКС ВЕРСТКИ)
    ========================================== */
 .messages-container {
-    flex: 1;
+    flex: 1 !important; /* Заставляет контейнер сообщений занять ВСЁ свободное место */
     padding: 16px;
     overflow-y: auto;
     display: flex;
@@ -291,40 +298,45 @@ html, body {
     gap: 16px;
 }
 
-.message {
-    display: flex;
-    gap: 16px;
-    animation: fadeIn 0.15s ease-out;
+.input-area {
+    padding: 0 16px 24px 16px;
+    background-color: var(--bg-main) !important;
     position: relative;
-    padding: 8px;
-    border-radius: 4px;
-    outline: 1px solid transparent;
-    transition: background-color 0.2s ease, outline-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+    z-index: 2;
+    margin-top: auto; /* Прижимает футер строго к самому низу чата */
 }
 
-.message:hover {
-    background-color: rgba(0, 0, 0, 0.08);
-    outline-color: rgba(255, 255, 255, 0.15);
-}
-
-.message.deleting {
-    opacity: 0 !important;
-    transform: translateX(20px) !important;
-}
-
-.message-content {
+.input-wrapper {
+    background-color: var(--bg-input);
+    border-radius: 8px;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 12px;
 }
 
-.message-text {
+.message-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-color);
     font-size: 15px;
-    color: #dbdee1;
-    word-break: break-word;
-    user-select: text;
 }
+.message-input::placeholder { color: var(--text-muted); }
+
+.send-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.1s;
+}
+.send-btn:hover { color: #fff; }
+.send-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
 /* ==========================================
    6. ОРИГИНАЛЬНЫЕ КРУГЛЫЕ КНОПКИ ШАПКИ (ФИКС КЛИКА)
