@@ -463,7 +463,6 @@ function updateProfileUI() {
     if (resetAvatarFileBtn) {
         resetAvatarFileBtn.style.display = uploadedAvatarDataUrl ? 'block' : 'none';
     }
-}
 
 // Перенаправление клика с красивой кнопки на системный инпут выбора файлов
 if (uploadAvatarFileBtn && profileImageFileInput) {
