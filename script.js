@@ -239,19 +239,15 @@ function appendMessage(sender, text) {
                 userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
                 messageElement.appendChild(userMenu);
                                userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
-                    eClick.stopPropagation();
-                    addNotification('friend', sender);
-                    userMenu.classList.remove('visible');
-                });
-            }
-            arrowBtn.classList.toggle('open');
+                               arrowBtn.classList.toggle('open');
             userMenu.classList.toggle('visible');
         });
     }
 
-    // Автоскролл чата вниз
+      // Автоскролл чата вниз
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
 // Показ/скрытие панели настроек по клику на шестеренку
 if (openSettingsBtn && settingsSidebar) {
     openSettingsBtn.addEventListener('click', (e) => {
