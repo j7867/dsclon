@@ -17,7 +17,6 @@ const firebaseConfig = {
 // Запуск облачного приложения и базы данных
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const messagesContainer = document.getElementById('messagesContainer');
