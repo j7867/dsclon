@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isHistory) saveMessagesToStorage();
     }
 
-    function handleSendMessage() {
+       function handleSendMessage() {
         if (!messageInput) return;
         const text = messageInput.value.trim();
         if (text === '') return;
@@ -239,29 +239,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // КЛИКИ ШЕСТЕРЕНКИ И КОЛОКОЛЬЧИКА (Пункт 3)
+    // КЛИКИ ШЕСТЕРЕНКИ И КОЛОКОЛЬЧИКА
     // ==========================================
-   // Показ/скрытие панели настроек по клику на шестеренку
-if (openSettingsBtn && settingsSidebar) {
-    openSettingsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
-        settingsSidebar.classList.toggle('active');
-    });
-}
+    if (openSettingsBtn && settingsSidebar) {
+        openSettingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (notificationsDropdown) notificationsDropdown.classList.remove('visible');
+            settingsSidebar.classList.toggle('active');
+        });
+    }
 
-// Показ/скрытие выпадающего списка уведомлений по клику на колокольчик
-if (notificationBell && notificationsDropdown) {
-    notificationBell.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (settingsSidebar) settingsSidebar.classList.remove('active');
-        notificationsDropdown.classList.toggle('visible');
-        if (bellBadge) bellBadge.classList.remove('active');
-    });
-}
+    if (notificationBell && notificationsDropdown) {
+        notificationBell.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (settingsSidebar) settingsSidebar.classList.remove('active');
+            notificationsDropdown.classList.toggle('visible');
+            if (bellBadge) bellBadge.classList.remove('active');
+        });
+    }
 
     // ==========================================
-    // ЛОГИКА УВЕДОМЛЕНИЙ И ДРУЗЕЙ В ЛС (Пункт 5)
+    // ЛОГИКА УВЕДОМЛЕНИЙ И ДРУЗЕЙ В ЛС
     // ==========================================
     function checkEmptyNotifications() {
         if (notifList && notifList.children.length === 0 && notifEmptyText) {
@@ -290,10 +288,9 @@ if (notificationBell && notificationsDropdown) {
             const declineBtn = notifItem.querySelector('.decline-btn');
             const blurTarget = notifItem.querySelector('.notif-blur-target');
 
-            // АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ В ЛС ПРИ ПРИНЯТИИ (Пункт 5)
             acceptBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                createDirectMessageItem(senderName); // Передаем имя друга в боковое меню ЛС
+                createDirectMessageItem(senderName); 
                 notifItem.remove();
                 checkEmptyNotifications();
                 alert(`Пользователь ${senderName} успешно добавлен в список ваших личных сообщений!`);
@@ -320,7 +317,6 @@ if (notificationBell && notificationsDropdown) {
         notifList.insertBefore(notifItem, notifList.firstChild);
     }
 
-    // Интерактивное добавление друга в ЛС сайдбара
     function createDirectMessageItem(username) {
         if (!dmChannelsList) return;
         const exists = Array.from(dmChannelsList.querySelectorAll('span')).some(span => span.textContent === username);
@@ -337,22 +333,7 @@ if (notificationBell && notificationsDropdown) {
         dmChannelsList.appendChild(userItem);
     }
 
-    // Глобальное закрытие менюшек по клику на документ
-    document.addEventListener('click', (e) => {
-       const selectOptions = document.getElementById('zoneSelectOptions');
-        if (selectOptions) selectOptions.classList.remove('active');
-        if (settingsSidebar && openSettingsBtn && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
-            settingsSidebar.classList.remove('active');
-        }
-        if (notificationsDropdown && notificationBell && !notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
-            notificationsDropdown.classList.remove('visible');
-        }
-        if (profileModalOverlay && e.target === profileModalOverlay) {
-            profileModalOverlay.classList.remove('active');
-        }
-    });
-
-     // === НАВИГАЦИЯ МЕЖДУ ЭКРАНАМИ НАСТРОЕК (ПЕРЕКЛЮЧЕНИЕ ЗОН) ===
+    // === НАВИГАЦИЯ МЕЖДУ ЭКРАНАМИ НАСТРОЕК (ПЕРЕКЛЮЧЕНИЕ ЗОН) ===
     const zonesTriggerBtn = document.getElementById('goToZonesBtn');
     const returnToMenuBtn = document.getElementById('backToMenuBtn');
 
@@ -364,19 +345,19 @@ if (notificationBell && notificationsDropdown) {
         });
     }
 
-  if (returnToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
-    returnToMenuBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        zoneSettingsScreen.style.display = 'none';
-        mainSettingsScreen.style.display = 'block';
-        
-        if (activeZoneKey && zones[activeZoneKey]) {
-            zones[activeZoneKey].classList.remove('zone-highlight');
-        }
-        activeZoneKey = '';
-        if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
-    });
-}
+    if (returnToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
+        returnToMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            zoneSettingsScreen.style.display = 'none';
+            mainSettingsScreen.style.display = 'block';
+            
+            if (activeZoneKey && zones[activeZoneKey]) {
+                zones[activeZoneKey].classList.remove('zone-highlight');
+            }
+            activeZoneKey = '';
+            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = 'Выберите зону <span class="select-arrow">▼</span>';
+        });
+    }
 
     // === УВЕДОМЛЕНИЯ И СЕЛЕКТОР ЗОН ===
     if (zoneSelectTrigger && zoneSelectOptions) {
@@ -400,22 +381,22 @@ if (notificationBell && notificationsDropdown) {
             if (activeZoneKey && zones[activeZoneKey]) {
                 zones[activeZoneKey].classList.add('zone-highlight');
                 let currentBg = window.getComputedStyle(zones[activeZoneKey]).backgroundColor;
-               if (customColorInput) {
-    let rgbValues = currentBg.match(/\d+/g);
-       if (rgbValues && rgbValues.length >= 3) {
-        let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
-        let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-        customColorInput.value = hex;
-     }
-} // Конец проверки if (rgbValues...)
+                if (customColorInput) {
+                    let rgbValues = currentBg.match(/\d+/g);
+                    if (rgbValues && rgbValues.length >= 3) {
+                        let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
+                        let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                        customColorInput.value = hex;
+                    }
+                }
+            }
+        });
 
-        // Обработчик ховера: подсвечиваем зону при наведении мыши на пункт меню
         option.addEventListener('mouseenter', () => {
             const hoverZoneKey = option.getAttribute('data-value');
             if (zones[hoverZoneKey]) zones[hoverZoneKey].classList.add('zone-highlight');
         });
 
-        // Убираем подсветку зоны, когда мышь уходит с пункта меню
         option.addEventListener('mouseleave', () => {
             const hoverZoneKey = option.getAttribute('data-value');
             if (zones[hoverZoneKey] && hoverZoneKey !== activeZoneKey) {
@@ -424,9 +405,6 @@ if (notificationBell && notificationsDropdown) {
         });
     });
 
-    // ==========================================
-    // КНОПКА «ПРИМЕНИТЬ ЦВЕТ» И ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА
-    // ==========================================
     if (applyColorBtn) {
         applyColorBtn.addEventListener('click', () => {
             if (!activeZoneKey || !zones[activeZoneKey]) { 
@@ -443,7 +421,22 @@ if (notificationBell && notificationsDropdown) {
         });
     }
 
-    // Загрузка сообщений и инициализация интерфейса при старте
+    // Глобальное закрытие менюшек по клику на документ
+    document.addEventListener('click', (e) => {
+        const selectOptions = document.getElementById('zoneSelectOptions');
+        if (selectOptions) selectOptions.classList.remove('active');
+        if (settingsSidebar && openSettingsBtn && !settingsSidebar.contains(e.target) && !openSettingsBtn.contains(e.target)) {
+            settingsSidebar.classList.remove('active');
+        }
+        if (notificationsDropdown && notificationBell && !notificationsDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
+            notificationsDropdown.classList.remove('visible');
+        }
+        if (profileModalOverlay && e.target === profileModalOverlay) {
+            profileModalOverlay.classList.remove('active');
+        }
+    });
+
+    // Загрузка сообщений и инициализация интерфейса
     loadSavedMessages(); 
     if (userHeaderName) userHeaderName.textContent = myName;
     if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
