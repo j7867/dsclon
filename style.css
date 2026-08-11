@@ -327,123 +327,77 @@ html, body {
 }
 
 /* ==========================================
-   6. ФУТЕР И ЗОНА ВВОДА
+   6. ОРИГИНАЛЬНЫЕ КРУГЛЫЕ КНОПКИ ШАПКИ (ФИКС КЛИКА)
    ========================================== */
-.input-area {
-    padding: 0 16px 24px 16px;
-    background-color: var(--bg-main) !important;
-    position: relative;
-    z-index: 2;
+.settings-gear-trigger, .notification-bell {
+    position: relative !important;
+    background-color: rgba(43, 45, 49, 0.7) !important;
+    backdrop-filter: blur(4px) !important;
+    border: none !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: #b5bac1 !important;
+    /* ИСПРАВЛЕНО: z-index понижен, чтобы панели не перекрывали кнопки */
+    z-index: 10 !important; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s, color 0.2s, transform 0.2s ease !important;
 }
 
-.input-wrapper {
-    background-color: var(--bg-input);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    gap: 12px;
+.settings-gear-trigger:hover, .notification-bell:hover {
+    color: #ffffff !important;
+    background-color: #35373c !important;
+    transform: scale(1.05) !important;
 }
 
-.message-input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text-color);
-    font-size: 15px;
+.settings-gear-trigger svg, .notification-bell svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: currentColor;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
-.message-input::placeholder { color: var(--text-muted); }
 
-.send-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.1s;
+/* ИСПРАВЛЕНО: Углы вращения иконок по вашему запросу */
+.settings-gear-trigger:hover svg { 
+    transform: rotate(75deg) !important; 
 }
-.send-btn:hover { color: #fff; }
-.send-btn svg { width: 24px; height: 24px; fill: currentColor; }
+.notification-bell:hover svg { 
+    transform: rotate(17deg) !important; 
+}
+
+
 /* ==========================================
-   7. МЕНЮ ДЕЙСТВИЙ НА СООБЩЕНИЯХ И ПОЛЬЗОВАТЕЛЯХ
+   7. ВСПЛЫВАЮЩИЕ ПАНЕЛИ НАСТРОЕК И УВЕДОМЛЕНИЙ (ФИКС КЛИКА)
    ========================================== */
-.message-actions {
+.settings-sidebar, .notifications-dropdown {
+    position: fixed !important;
+    top: 64px !important;
+    /* ИСПРАВЛЕНО: Панели сдвинуты так, чтобы не перекрывать кнопки шапки */
+    right: 24px !important; 
+    background-color: #313338 !important;
+    padding: 20px;
+    border-radius: 8px;
+    width: 280px !important;
+    height: auto !important;
+    /* ИСПРАВЛЕНО: z-index панелей сделан выше кнопок, чтобы они открывались ПОВЕРХ чата */
+    z-index: 9999 !important; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    border: 1px solid #232428;
     opacity: 0;
     visibility: hidden;
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: var(--bg-sidebar);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    z-index: 5;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    transition: opacity 0.2s, visibility 0.2s;
+    transform: translateY(-15px) scale(0.95);
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
 }
 
-.message:hover .message-actions { opacity: 1; visibility: visible; }
-
-.action-btn {
-    background: none;
-    border: none;
-    padding: 0 10px;
-    height: 100%;
-    cursor: pointer;
-    color: var(--text-muted);
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.1s;
+.settings-sidebar.active, .notifications-dropdown.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
 }
-
-.action-btn:hover { background-color: rgba(255,255,255,0.05); color: #fff; }
-.action-btn.delete-btn:hover { color: #f23f43; }
-
-.action-btn.arrow-btn {
-    background: none !important;
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
-}
-
-.action-btn.arrow-btn:hover, .action-btn.arrow-btn.open {
-    transform: rotate(90deg) !important;
-    color: #ffffff !important;
-}
-
-.user-action-menu {
-    display: none;
-    position: absolute;
-    right: 16px;
-    top: 36px;
-    background-color: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 6px;
-    z-index: 999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-.user-action-menu.visible { display: block; }
-.user-action-menu .menu-item {
-    padding: 8px 14px;
-    color: #b5bac1;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 4px;
-    transition: all 0.15s;
-    white-space: nowrap;
-}
-.user-action-menu .menu-item:hover { background-color: #4e5058; color: #ffffff; }
 
 /* Интерфейс редактирования сообщений */
 .message-edit-form {
