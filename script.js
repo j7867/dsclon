@@ -592,8 +592,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         let r = parseInt(rgbValues[0]), g = parseInt(rgbValues[1]), b = parseInt(rgbValues[2]);
                         let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
                         customColorInput.value = hex;
-        });
-                }
+              }
+    });
+
     if (applyColorBtn) {
         applyColorBtn.addEventListener('click', () => {
             if (!activeZoneKey || !zones[activeZoneKey]) { alert('Выберите зону!'); return; }
@@ -643,6 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dmChannelsList.appendChild(userItem);
     }
 
+    // Глобальное закрытие менюшек по клику на документ
     document.addEventListener('click', (e) => {
         const selectOptions = document.getElementById('zoneSelectOptions');
         if (selectOptions) selectOptions.classList.remove('active');
@@ -657,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (profileModalOverlay && e.target === profileModalOverlay) profileModalOverlay.classList.remove('active');
     });
 
+    // Запуск облачной сессии и проверка памяти при старте
     checkUserSession();
     loadSavedServersFromMemory();
 });
