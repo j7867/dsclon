@@ -726,4 +726,76 @@ html, body {
     height: auto !important;
 }
 .profile-save-global-btn:hover { background-color: #1a7f43 !important; }
+/* ==========================================
+   ФИКС СТИЛЯ РЕДАКТИРОВАНИЯ СООБЩЕНИЙ
+   ========================================== */
+.message-edit-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 8px !important;
+    width: 100% !important;
+    max-width: 400px !important;
+}
+
+.message-edit-input {
+    width: 100% !important;
+    background-color: #1e1f22 !important; /* Родной темный инпут Discord */
+    border: 1px solid #111214 !important;
+    outline: none !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    color: #f2f3f5 !important;
+    font-size: 14px !important;
+}
+
+.edit-form-buttons {
+    display: flex !important;
+    gap: 8px !important;
+}
+
+.edit-form-buttons button {
+    border: none !important;
+    padding: 6px 16px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.edit-save-btn {
+    background-color: #5865f2 !important; /* Синяя кнопка */
+    color: #ffffff !important;
+}
+.edit-save-btn:hover {
+    background-color: #4752c4 !important;
+}
+
+.edit-cancel-btn {
+    background-color: #4e5058 !important; /* Серая кнопка */
+    color: #dbdee1 !important;
+}
+.edit-cancel-btn:hover {
+    background-color: #6d6f78 !important;
+}
+/* ==========================================
+   АНИМАЦИЯ САМОЛЕТИКА НА КНОПКЕ ОТПРАВКИ
+   ========================================== */
+@keyframes planeFlyOut {
+    0% { transform: translate(0, 0); opacity: 1; }
+    45% { transform: translate(40px, -10px) scale(0.8); opacity: 0; }
+    50% { transform: translate(-40px, 10px) scale(0.8); opacity: 0; }
+    100% { transform: translate(0, 0); opacity: 1; }
+}
+
+.send-btn svg {
+    transition: color 0.2s ease !important;
+}
+
+/* При наведении на кнопку ввода или саму кнопку - запускаем полет */
+.input-wrapper:hover .send-btn svg,
+.send-btn:hover svg {
+    animation: planeFlyOut 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+}
 
