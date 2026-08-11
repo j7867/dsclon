@@ -133,18 +133,16 @@ function appendMessage(sender, text) {
     if (!messagesContainer) return;
     const isMyMessage = (sender === myName);
     const messageElement = document.createElement('div');
-    messageElement.className = 'message'; // Жесткий класс для ховера и сетки
+    messageElement.className = 'message';
     
     const actionsHtml = isMyMessage 
         ? `<button class="action-btn edit-btn" title="Редактировать">✏️</button>
            <button class="action-btn delete-btn" title="Удалить">🗑️</button>`
         : '';
 
-    // Получаем первую букву и цвет для генерации аватарки автора в сообщении
     const firstLetter = sender.charAt(0).toUpperCase();
     const avatarColor = isMyMessage ? (selectedAvatarColor || '#5865f2') : '#23a55a';
 
-    // Формируем HTML строго под CSS-структуру
     messageElement.innerHTML = `
         <div class="user-avatar" style="background-color: ${avatarColor};">
             ${uploadedAvatarDataUrl && isMyMessage ? `<img src="${uploadedAvatarDataUrl}" alt="avatar">` : firstLetter}
@@ -159,11 +157,9 @@ function appendMessage(sender, text) {
         </div>
     `;
     
-    // Безопасное экранирование текста от XSS
     messageElement.querySelector('.message-text').textContent = text;
     messagesContainer.appendChild(messageElement);
 
-    // Логика кнопки редактирования
     const editBtn = messageElement.querySelector('.edit-btn');
     if (editBtn) {
         editBtn.addEventListener('click', (e) => {
@@ -205,20 +201,6 @@ function appendMessage(sender, text) {
         });
     }
 
-    // Логика анимированного удаления
-    const deleteBtn = messageElement.querySelector('.delete-btn');
-    if (deleteBtn) {
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            messageElement.classList.add('deleting');
-            setTimeout(() => { messageElement.remove(); }, 200);
-        });
-    }
-
-      // Автоскролл чата вниз
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
     const deleteBtn = messageElement.querySelector('.delete-btn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', (e) => {
@@ -238,7 +220,7 @@ function appendMessage(sender, text) {
                 userMenu.className = 'user-action-menu';
                 userMenu.innerHTML = `<div class="menu-item add-friend">Добавить в друзья</div>`;
                 messageElement.appendChild(userMenu);
-                                           userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
+                userMenu.querySelector('.add-friend').addEventListener('click', (eClick) => {
                     eClick.stopPropagation();
                     addNotification('friend', sender);
                     userMenu.classList.remove('visible');
@@ -246,12 +228,12 @@ function appendMessage(sender, text) {
             }
             arrowBtn.classList.toggle('open');
             userMenu.classList.toggle('visible');
-             });
+        });
     }
 
-    // Автоскролл чата вниз
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
 // Показ/скрытие панели настроек по клику на шестеренку
 if (openSettingsBtn && settingsSidebar) {
     openSettingsBtn.addEventListener('click', (e) => {
@@ -260,6 +242,18 @@ if (openSettingsBtn && settingsSidebar) {
         settingsSidebar.classList.toggle('active');
     });
 }
+
+// Показ/скрытие выпадающего списка уведомлений по клику на колокольчик
+if (notificationBell && notificationsDropdown) {
+    notificationBell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (settingsSidebar) settingsSidebar.classList.remove('active');
+        notificationsDropdown.classList.toggle('visible');
+        notificationsCount = 0;
+        if (bellBadge) bellBadge.classList.remove('active');
+    });
+}
+
 
 // Показ/скрытие выпадающего списка уведомлений по клику на колокольчик
 if (notificationBell && notificationsDropdown) {
