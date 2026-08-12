@@ -81,7 +81,7 @@ const db = firebase.firestore();
     
     let currentServerContext = 'dm'; 
     let currentChannelContext = 'friends-list';
-    const CREATOR_NICKNAME = 'AdminCreator';
+    const CREATOR_NICKNAME = 'dj1ka';
 
     function checkUserSession() {
         if (!myName) {
