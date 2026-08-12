@@ -118,7 +118,10 @@ db.settings({
                 myName = login;
                 if (authModalOverlay) authModalOverlay.classList.remove('active');
                 initChatAfterAuth();
-            } catch (err) { alert('Ошибка подключения к базе!'); }
+            } catch (err) { 
+    console.error("ПОЛНАЯ ОШИБКА АВТОРИЗАЦИИ:", err); 
+    alert('Ошибка подключения к базе! Подробности в консоли (F12)'); 
+             }
         });
     }
 
