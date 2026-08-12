@@ -97,33 +97,48 @@ db.settings({
         }
     }
 
-    if (authSubmitBtn) {
+        if (authSubmitBtn) {
         authSubmitBtn.addEventListener('click', async () => {
             const login = authLoginInput.value.trim();
             const password = authPasswordInput.value.trim();
             if (!login || !password) { alert('Заполните все поля!'); return; }
+            
             try {
-                const userRef = doc(db, "users", login);
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
+                // Правильный синтаксис для compat-версии Firestore
+                const userRef = db.collection("users").doc(login);
+                const userSnap = await userRef.get();
+
+                if (userSnap.exists) {
                     const userData = userSnap.data();
-                    if (userData.password !== password) { alert('Неверный пароль!'); return; }
-                    if (userData.status === 'pending') { alert('Аккаунт ожидает подтверждения админом!'); return; }
+                    if (userData.password !== password) { 
+                        alert('Неверный пароль для этого никнейма!'); 
+                        return; 
+                    }
+                    if (userData.status === 'pending') { 
+                        alert('Ваш аккаунт всё ещё ожидает подтверждения администратором!'); 
+                        return; 
+                    }
                 } else {
                     const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
-                    await setDoc(userRef, { username: login, password: password, status: initialStatus });
-                    if (initialStatus === 'pending') { alert('Заявка отправлена администратору!'); return; }
+                    await userRef.set({ username: login, password: password, status: initialStatus });
+                    
+                    if (initialStatus === 'pending') { 
+                        alert('Заявка на создание аккаунта отправлена администратору!'); 
+                        return; 
+                    }
                 }
+
                 localStorage.setItem('chat_active_user', login);
                 myName = login;
                 if (authModalOverlay) authModalOverlay.classList.remove('active');
                 initChatAfterAuth();
             } catch (err) { 
-    console.error("ПОЛНАЯ ОШИБКА АВТОРИЗАЦИИ:", err); 
-    alert('Ошибка подключения к базе! Подробности в консоли (F12)'); 
-             }
+                console.error("ПОЛНАЯ ОШИБКА АВТОРИЗАЦИИ:", err);
+                alert('Ошибка подключения к базе! Подробности в консоли (F12)'); 
+            }
         });
     }
+
 
     function initChatAfterAuth() {
         if (userHeaderName) userHeaderName.textContent = myName;
