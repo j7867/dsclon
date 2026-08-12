@@ -929,3 +929,8 @@ html, body {
     border-radius: 16px !important;
     background-color: #1a7f43 !important;
 }
+/* Фикс отображения скрытых экранов в боковой панели */
+#zoneSettingsScreen, 
+#adminRequestsScreen {
+    display: none !important;
+}
