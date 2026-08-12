@@ -181,24 +181,11 @@ db.settings({
                         </div>
                     `;
 
-                    // Исправленное одобрение аккаунта в базе
-                    card.querySelector('.request-approve-btn').addEventListener('click', async () => {
-                        await db.collection("users").doc(user.username).update({ status: 'approved' });
-                    });
-
                     // Исправленное отклонение аккаунта в базе
                     card.querySelector('.request-decline-btn').addEventListener('click', async () => {
                         await db.collection("users").doc(user.username).update({ status: 'declined' });
-                    });
-
-                    adminRequestsList.appendChild(card);
-                }
-            });
-            requestsCountBadge.textContent = count;
-            noRequestsText.style.display = (count === 0) ? 'block' : 'none';
-        });
-    }
-                    adminRequestsList.appendChild(card);
+                    
+                      adminRequestsList.appendChild(card);
                 }
             });
             requestsCountBadge.textContent = count;
