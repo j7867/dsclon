@@ -8,9 +8,16 @@ const firebaseConfig = {
   appId: "1:1084561649631:web:5361cf4ae5540104e09e6a"
 };
 
-// Запуск облачного приложения и базы данных через глобальный Firebase (СТРОГО ОДИН РАЗ)
+// Инициализация приложения
 const app = firebase.initializeApp(firebaseConfig);
+
+// Инициализация Firestore с принудительным обходом блокировки CSP GitHub Pages
 const db = firebase.firestore();
+db.settings({
+    experimentalForceLongPolling: true, // Использовать обычные HTTP запросы вместо WebSocket/eval
+    merge: true
+});
+
 
     const messagesContainer = document.getElementById('messagesContainer');
     const messageInput = document.getElementById('messageInput');
