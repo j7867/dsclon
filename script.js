@@ -140,20 +140,30 @@ db.settings({
     }
 
 
-    function initChatAfterAuth() {
+        function initChatAfterAuth() {
         if (userHeaderName) userHeaderName.textContent = myName;
         if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
+        
+        // ВОТ ЭТУ СТРОЧКУ ДОБАВЬ: принудительно включаем отображение области чата
+        const chatArea = document.getElementById('chatArea');
+        if (chatArea) chatArea.style.display = 'flex'; 
+
         if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
             goToAdminRequestsBtn.style.display = 'block';
             listenToPendingRequests();
         }
         loadSavedMessages();
+
     }
-    function listenToPendingRequests() {
+
+       function listenToPendingRequests() {
         if (!adminRequestsList || !requestsCountBadge || !noRequestsText) return;
-        onSnapshot(collection(db, "users"), (snapshot) => {
+        
+        // Правильное онлайн-слушание коллекции users в compat-версии
+        db.collection("users").onSnapshot((snapshot) => {
             adminRequestsList.innerHTML = '';
             let count = 0;
+            
             snapshot.forEach((docSnap) => {
                 const user = docSnap.data();
                 if (user.status === 'pending') {
@@ -170,12 +180,24 @@ db.settings({
                             <button class="request-btn request-decline-btn">❌ Отклонить</button>
                         </div>
                     `;
+
+                    // Исправленное одобрение аккаунта в базе
                     card.querySelector('.request-approve-btn').addEventListener('click', async () => {
-                        await updateDoc(doc(db, "users", user.username), { status: 'approved' });
+                        await db.collection("users").doc(user.username).update({ status: 'approved' });
                     });
+
+                    // Исправленное отклонение аккаунта в базе
                     card.querySelector('.request-decline-btn').addEventListener('click', async () => {
-                        await updateDoc(doc(db, "users", user.username), { status: 'declined' });
+                        await db.collection("users").doc(user.username).update({ status: 'declined' });
                     });
+
+                    adminRequestsList.appendChild(card);
+                }
+            });
+            requestsCountBadge.textContent = count;
+            noRequestsText.style.display = (count === 0) ? 'block' : 'none';
+        });
+    }
                     adminRequestsList.appendChild(card);
                 }
             });
