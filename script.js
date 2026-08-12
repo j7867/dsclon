@@ -1,23 +1,21 @@
 // Ваши уникальные ключи конфигурации Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
-  authDomain: "://firebaseapp.com",
+  authDomain: "ds-chat78.firebaseapp.com",
   projectId: "ds-chat78",
-  storageBucket: "://appspot.com",
+  storageBucket: "ds-chat78.appspot.com",
   messagingSenderId: "1084561649631",
   appId: "1:1084561649631:web:5361cf4ae5540104e09e6a"
 };
 
-// Инициализация приложения
+// Старт приложения
 const app = firebase.initializeApp(firebaseConfig);
 
-// Инициализация Firestore с принудительным обходом блокировки CSP GitHub Pages
+// Правильный запуск Firestore с обходом CSP для GitHub Pages
 const db = firebase.firestore();
 db.settings({
-    experimentalForceLongPolling: true, // Использовать обычные HTTP запросы вместо WebSocket/eval
-    merge: true
+    forceLongPolling: true // В старых/compat версиях пишется именно так, без слова experimental!
 });
-
 
     const messagesContainer = document.getElementById('messagesContainer');
     const messageInput = document.getElementById('messageInput');
