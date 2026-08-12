@@ -139,12 +139,10 @@ db.settings({
         });
     }
 
-
-        function initChatAfterAuth() {
+    function initChatAfterAuth() {
         if (userHeaderName) userHeaderName.textContent = myName;
         if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
         
-        // ВОТ ЭТУ СТРОЧКУ ДОБАВЬ: принудительно включаем отображение области чата
         const chatArea = document.getElementById('chatArea');
         if (chatArea) chatArea.style.display = 'flex'; 
 
@@ -152,8 +150,13 @@ db.settings({
             goToAdminRequestsBtn.style.display = 'block';
             listenToPendingRequests();
         }
-        loadSavedMessages();
-
+        
+        // ВОТ ЭТУ СТРОЧКУ ДОБАВЬ: имитируем клик на главную кнопку публичного сервера при входе
+        if (publicServerBtn) {
+            publicServerBtn.click();
+        } else {
+            loadSavedMessages();
+        }
     }
 
        function listenToPendingRequests() {
