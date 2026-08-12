@@ -230,25 +230,43 @@ db.settings({
         localStorage.setItem(key, JSON.stringify(messagesData));
     }
 
+        // Живое онлайн-слушание сообщений из Firebase Firestore
+    let messagesListener = null;
+
     function loadSavedMessages() {
-    if (!messagesContainer) return;
+        if (!messagesContainer) return;
+        messagesContainer.innerHTML = ''; 
 
-    // Принудительно включаем отображение правого окна чата и поля ввода
-       const chatMainArea = document.getElementById('chatMainArea') || document.querySelector('.chat-area') || document.querySelector('div[style*="flex-direction: column"]');
-    const messageInputContainer = document.querySelector('.message-input-container') || document.querySelector('.chat-input-area') || document.getElementById('messageInput')?.parentElement;
+        // Принудительно включаем отображение правого окна
+        const chatMainArea = document.getElementById('chatMainArea') || document.querySelector('.chat-area') || document.querySelector('div[style*="flex-direction: column"]');
+        const messageInputContainer = document.querySelector('.message-input-container') || document.querySelector('.chat-input-area') || document.getElementById('messageInput')?.parentElement;
+        const chatHeader = document.querySelector('.chat-header') || document.querySelector('.channel-header');
+        
+        if (chatMainArea) chatMainArea.style.display = 'flex';
+        if (messagesContainer) messagesContainer.style.display = 'block';
+        if (messageInputContainer) messageInputContainer.style.display = 'flex';
+        if (chatHeader) chatHeader.style.display = 'flex';
 
-    if (chatMainArea) chatMainArea.style.display = 'flex';
-    if (messagesContainer) messagesContainer.style.display = 'block';
-    if (messageInputContainer) messageInputContainer.style.display = 'flex';
+        // Если уже был запущен прошлый слушатель канала — отключаем его
+        if (messagesListener) messagesListener();
 
-    const key = `chat_history_${currentServerContext}_${currentChannelContext}`;
-    const saved = localStorage.getItem(key);
-    messagesContainer.innerHTML = ''; 
-    if (saved) {
-        const messagesData = JSON.parse(saved);
-        messagesData.forEach(data => { appendMessage(data.author, data.text, true); });
+        // Подписываемся на живой поток сообщений именно этого канала
+        messagesListener = db.collection("messages")
+            .where("server", "==", currentServerContext)
+            .where("channel", "==", currentChannelContext)
+            .orderBy("timestamp", "asc")
+            .onSnapshot((snapshot) => {
+                messagesContainer.innerHTML = ''; // чистим экран перед выводом
+                snapshot.forEach((docSnap) => {
+                    const msg = docSnap.data();
+                    if (msg.author && msg.text) {
+                        appendMessage(msg.author, msg.text, true);
+                    }
+                });
+            }, (error) => {
+                console.error("Ошибка чтения сообщений из Firestore:", error);
+            });
     }
-}
 
     function appendMessage(sender, text, isHistory = false) {
         if (!messagesContainer) return;
@@ -323,11 +341,25 @@ db.settings({
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         if (!isHistory) saveMessagesToStorage();
     }
-    function handleSendMessage() {
+       async function handleSendMessage() {
         if (!messageInput) return;
-        const text = messageInput.value.trim(); if (text === '') return;
-        appendMessage(myName, text); messageInput.value = '';
+        const text = messageInput.value.trim();
+        if (text === '') return;
+
+        try {
+            await db.collection("messages").add({
+                server: currentServerContext,
+                channel: currentChannelContext,
+                author: myName,
+                text: text,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            messageInput.value = '';
+        } catch (err) {
+            console.error("Ошибка отправки в Firebase:", err);
+        }
     }
+
 
     if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); });
