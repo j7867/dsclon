@@ -231,15 +231,24 @@ db.settings({
     }
 
     function loadSavedMessages() {
-        if (!messagesContainer) return;
-        const key = `chat_history_${currentServerContext}_${currentChannelContext}`;
-        const saved = localStorage.getItem(key);
-        messagesContainer.innerHTML = ''; 
-        if (saved) {
-            const messagesData = JSON.parse(saved);
-            messagesData.forEach(data => { appendMessage(data.author, data.text, true); });
-        }
+    if (!messagesContainer) return;
+
+    // Принудительно включаем отображение правого окна чата и поля ввода
+    const chatMainArea = document.getElementById('chatMainArea') || document.querySelector('.chat-main-window');
+    const messageInputContainer = document.querySelector('.message-input-container') || document.getElementById('messageInput')?.parentElement;
+    
+    if (chatMainArea) chatMainArea.style.display = 'flex';
+    if (messagesContainer) messagesContainer.style.display = 'block';
+    if (messageInputContainer) messageInputContainer.style.display = 'flex';
+
+    const key = `chat_history_${currentServerContext}_${currentChannelContext}`;
+    const saved = localStorage.getItem(key);
+    messagesContainer.innerHTML = ''; 
+    if (saved) {
+        const messagesData = JSON.parse(saved);
+        messagesData.forEach(data => { appendMessage(data.author, data.text, true); });
     }
+}
 
     function appendMessage(sender, text, isHistory = false) {
         if (!messagesContainer) return;
