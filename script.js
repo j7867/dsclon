@@ -230,43 +230,28 @@ db.settings({
         localStorage.setItem(key, JSON.stringify(messagesData));
     }
 
-        // Живое онлайн-слушание сообщений из Firebase Firestore
-    let messagesListener = null;
+  function loadSavedMessages() {
+    if (!messagesContainer) return;
+    messagesContainer.innerHTML = ''; 
 
-    function loadSavedMessages() {
-        if (!messagesContainer) return;
-        messagesContainer.innerHTML = ''; 
+    if (messagesListener) messagesListener();
 
-        // Принудительно включаем отображение правого окна
-        const chatMainArea = document.getElementById('chatMainArea') || document.querySelector('.chat-area') || document.querySelector('div[style*="flex-direction: column"]');
-        const messageInputContainer = document.querySelector('.message-input-container') || document.querySelector('.chat-input-area') || document.getElementById('messageInput')?.parentElement;
-        const chatHeader = document.querySelector('.chat-header') || document.querySelector('.channel-header');
-        
-        if (chatMainArea) chatMainArea.style.display = 'flex';
-        if (messagesContainer) messagesContainer.style.display = 'block';
-        if (messageInputContainer) messageInputContainer.style.display = 'flex';
-        if (chatHeader) chatHeader.style.display = 'flex';
-
-        // Если уже был запущен прошлый слушатель канала — отключаем его
-        if (messagesListener) messagesListener();
-
-        // Подписываемся на живой поток сообщений именно этого канала
-        messagesListener = db.collection("messages")
-            .where("server", "==", currentServerContext)
-            .where("channel", "==", currentChannelContext)
-            .orderBy("timestamp", "asc")
-            .onSnapshot((snapshot) => {
-                messagesContainer.innerHTML = ''; // чистим экран перед выводом
-                snapshot.forEach((docSnap) => {
-                    const msg = docSnap.data();
-                    if (msg.author && msg.text) {
-                        appendMessage(msg.author, msg.text, true);
-                    }
-                });
-            }, (error) => {
-                console.error("Ошибка чтения сообщений из Firestore:", error);
+    messagesListener = db.collection("messages")
+        .where("server", "==", currentServerContext)
+        .where("channel", "==", currentChannelContext)
+        .orderBy("timestamp", "asc")
+        .onSnapshot((snapshot) => {
+            messagesContainer.innerHTML = ''; 
+            snapshot.forEach((docSnap) => {
+                const msg = docSnap.data();
+                if (msg.author && msg.text) {
+                    appendMessage(msg.author, msg.text, true);
+                }
             });
-    }
+        }, (error) => {
+            console.error("Ошибка чтения сообщений из Firestore:", error);
+        });
+}
 
     function appendMessage(sender, text, isHistory = false) {
         if (!messagesContainer) return;
