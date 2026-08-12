@@ -184,9 +184,12 @@ db.settings({
                     // Исправленное отклонение аккаунта в базе
                     card.querySelector('.request-decline-btn').addEventListener('click', async () => {
                         await db.collection("users").doc(user.username).update({ status: 'declined' });
-                      adminRequestsList.appendChild(card);
-                }
-                       }); // закрываем snapshot.forEach
+                      
+                      });
+                  
+                     adminRequestsList.appendChild(card);
+                 }
+             }); // закрываем snapshot.forEach
             
             requestsCountBadge.textContent = count;
             noRequestsText.style.display = (count === 0) ? 'block' : 'none';
