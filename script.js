@@ -234,9 +234,9 @@ db.settings({
     if (!messagesContainer) return;
 
     // Принудительно включаем отображение правого окна чата и поля ввода
-    const chatMainArea = document.getElementById('chatMainArea') || document.querySelector('.chat-main-window');
-    const messageInputContainer = document.querySelector('.message-input-container') || document.getElementById('messageInput')?.parentElement;
-    
+       const chatMainArea = document.getElementById('chatMainArea') || document.querySelector('.chat-area') || document.querySelector('div[style*="flex-direction: column"]');
+    const messageInputContainer = document.querySelector('.message-input-container') || document.querySelector('.chat-input-area') || document.getElementById('messageInput')?.parentElement;
+
     if (chatMainArea) chatMainArea.style.display = 'flex';
     if (messagesContainer) messagesContainer.style.display = 'block';
     if (messageInputContainer) messageInputContainer.style.display = 'flex';
