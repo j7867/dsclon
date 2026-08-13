@@ -274,7 +274,8 @@ function loadSavedMessages() {
             <div class="message-actions">${actionsHtml}<button class="action-btn arrow-btn" title="Еще">></button></div>
         `;
         messageElement.querySelector('.message-text').textContent = text;
-        messagesContainer.appendChild(messageElement);
+       const realMessagesArea = document.getElementById('chatMessages') || document.querySelector('.chat-messages') || document.querySelector('.messages-container') || document.getElementById('messagesContainer');
+    if (realMessagesArea) realMessagesArea.appendChild(messageElement);
 
         const editBtn = messageElement.querySelector('.edit-btn');
         if (editBtn) {
@@ -579,10 +580,13 @@ function createDirectMessageItem(username) {
     });
 
     
-// Автоматический запуск сессии при каждой загрузке страницы
-window.addEventListener('load', () => {
-     checkUserSession();
-     if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
- });
-
-    }
+// Автоматический и надежный перехват сессии при загрузке страницы
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        checkUserSession();
+        if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
+    });
+} else {
+    checkUserSession();
+    if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
+}
