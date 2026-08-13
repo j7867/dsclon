@@ -616,7 +616,7 @@ function initiateMessageDelete(messageElement) {
         }
     }, 1000);
 
-    deleteTimeout = setTimeout(async () => {
+       deleteTimeout = setTimeout(async () => {
         clearInterval(deleteInterval);
         panel.classList.remove('active');
 
@@ -647,8 +647,8 @@ function initiateMessageDelete(messageElement) {
         panel.classList.remove('active');
     };
 }
-    
-// Автоматический и надежный перехват сессии при загрузке страницы
+
+// === АВТОМАТИЧЕСКИЙ ЗАПУСК СЕССИИ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ===
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         checkUserSession();
@@ -658,4 +658,3 @@ if (document.readyState === 'loading') {
     checkUserSession();
     if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
 }
-    }
