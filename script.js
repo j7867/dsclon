@@ -589,5 +589,4 @@ if (document.readyState === 'loading') {
 } else {
     checkUserSession();
     if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
-      });
-    }
+}
