@@ -585,3 +585,14 @@ function createDirectMessageItem(username) {
 
     checkUserSession(); loadSavedServersFromMemory();
 }
+/* Железобетонное скрытие окна авторизации, если пользователь уже вошел */
+#authModalOverlay,
+.auth-modal-overlay {
+    display: none !important;
+}
+
+/* Показываем окно только тогда, когда у него есть класс active */
+#authModalOverlay.active,
+.auth-modal-overlay.active {
+    display: flex !important;
+}
