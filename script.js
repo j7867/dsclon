@@ -600,3 +600,5 @@ window.addEventListener('load', () => {
      checkUserSession();
      if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
  });
+
+    }
