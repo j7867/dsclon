@@ -578,7 +578,68 @@ function createDirectMessageItem(username) {
         if (channelModalOverlay && e.target === channelModalOverlay) channelModalOverlay.classList.remove('active');
         if (profileModalOverlay && e.target === profileModalOverlay) profileModalOverlay.classList.remove('active');
     });
+let deleteTimeout = null;
+let deleteInterval = null;
 
+function initiateMessageDelete(messageElement) {
+    const panel = document.getElementById('deleteConfirmPanel');
+    const numberText = document.getElementById('countdownNumber');
+    const circle = document.getElementById('countdownCircle');
+    const cancelBtn = document.getElementById('cancelDeleteBtn');
+    
+    if (!panel || !numberText || !circle || !cancelBtn) return;
+
+    clearTimeout(deleteTimeout);
+    clearInterval(deleteInterval);
+
+    panel.classList.add('active');
+    
+    let timeLeft = 5;
+    numberText.textContent = timeLeft;
+    
+    const maxOffset = 62.8;
+    circle.style.strokeDashoffset = "0";
+
+    deleteInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft >= 0) {
+            numberText.textContent = timeLeft;
+            const progress = (5 - timeLeft) / 5;
+            circle.style.strokeDashoffset = maxOffset * progress;
+        }
+    }, 1000);
+
+    deleteTimeout = setTimeout(async () => {
+        clearInterval(deleteInterval);
+        panel.classList.remove('active');
+
+        try {
+            const textContent = messageElement.querySelector('.message-text')?.textContent || "";
+            const authorContent = messageElement.querySelector('.message-author')?.textContent.replace(':', '').trim() || "";
+
+            const snapshot = await db.collection("messages")
+                .where("server", "==", currentServerContext)
+                .where("channel", "==", currentChannelContext)
+                .where("author", "==", authorContent)
+                .where("text", "==", textContent)
+                .get();
+
+            snapshot.forEach(async (doc) => {
+                await db.collection("messages").doc(doc.id).delete();
+            });
+
+            messageElement.remove();
+        } catch (err) {
+            console.error("Ошибка удаления с сервера Firebase:", err);
+        }
+    }, 5000);
+
+    cancelBtn.onclick = () => {
+        clearTimeout(deleteTimeout);
+        clearInterval(deleteInterval);
+        panel.classList.remove('active');
+    };
+}
     
 // Автоматический и надежный перехват сессии при загрузке страницы
 if (document.readyState === 'loading') {
