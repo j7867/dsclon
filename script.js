@@ -616,7 +616,7 @@ function initiateMessageDelete(messageElement) {
         }
     }, 1000);
 
-       deleteTimeout = setTimeout(async () => {
+    deleteTimeout = setTimeout(async () => {
         clearInterval(deleteInterval);
         panel.classList.remove('active');
 
