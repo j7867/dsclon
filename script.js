@@ -1,3 +1,4 @@
+let messagesListener = null;
 // Ваши уникальные ключи конфигурации Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
