@@ -599,4 +599,3 @@ function createDirectMessageItem(username) {
         checkUserSession();
         if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
     });
-});
