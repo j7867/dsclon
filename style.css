@@ -945,3 +945,30 @@ html, body {
 .auth-modal-overlay.active {
     display: flex !important;
 }
+/* Принудительно возвращаем оригинальную сетку и чат по центру */
+main, 
+#chatMainArea, 
+.chat-main-window, 
+.chat-area {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    width: auto !important;
+    height: 100% !important;
+}
+
+/* Расправляем контейнер, где выводятся сообщения */
+#chatMessages, 
+#messagesContainer, 
+.chat-messages, 
+.messages-container {
+    display: block !important;
+    flex: 1 !important;
+    height: 100% !important;
+}
+
+/* Показываем поле ввода в самом низу экрана */
+.message-input-container, 
+.chat-input-area {
+    display: flex !important;
+}
