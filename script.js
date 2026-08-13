@@ -307,10 +307,9 @@ function loadSavedMessages() {
             initiateMessageDelete(messageElement); // запускаем наш круговой таймер с задержкой 5 сек
         });
     }
-
-     const deleteBtn = messageElement.querySelector('.delete-btn');
-if (deleteBtn) {
-    deleteBtn.addEventListener('click', (e) => {
+const timerDeleteBtn = messageElement.querySelector('.delete-btn');
+if (timerDeleteBtn) {
+    timerDeleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         initiateMessageDelete(messageElement); // запускаем наш круговой таймер с задержкой 5 сек
     });
