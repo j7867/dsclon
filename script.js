@@ -594,8 +594,10 @@ function createDirectMessageItem(username) {
         if (profileModalOverlay && e.target === profileModalOverlay) profileModalOverlay.classList.remove('active');
     });
 
-        // Автоматический запуск сессии при каждой загрузке страницы
-    window.addEventListener('load', () => {
-        checkUserSession();
-        if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
-    });
+    
+// Автоматический запуск сессии при каждой загрузке страницы
+window.addEventListener('load', () => {
+     checkUserSession();
+     if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
+ });
+ });
