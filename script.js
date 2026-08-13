@@ -18,7 +18,7 @@ db.settings({
     forceLongPolling: true // В старых/compat версиях пишется именно так, без слова experimental!
 });
 
-    const messagesContainer = document.getElementById('messagesContainer');
+    const messagesContainer = document.getElementById('messagesContainer') || document.querySelector('.messages-container') || document.querySelector('.chat-messages') || document.getElementById('chatMessages');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
     const chatTitle = document.getElementById('chatTitle'); 
@@ -594,5 +594,9 @@ function createDirectMessageItem(username) {
         if (profileModalOverlay && e.target === profileModalOverlay) profileModalOverlay.classList.remove('active');
     });
 
-    checkUserSession(); loadSavedServersFromMemory();
-}
+        // Автоматический запуск сессии при каждой загрузке страницы
+    window.addEventListener('load', () => {
+        checkUserSession();
+        if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
+    });
+});
