@@ -972,3 +972,89 @@ main,
 .chat-input-area {
     display: flex !important;
 }
+/* Панель удаления над инпутом */
+.delete-confirm-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    background: #2f3136;
+    border: 1px solid #f04747;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.delete-confirm-panel.active {
+    display: block !important;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delete-panel-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-panel-text {
+    color: #dcddde;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.delete-panel-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.delete-cancel-btn {
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.delete-cancel-btn:hover {
+    text-decoration: underline;
+}
+
+/* Круговой таймер */
+.countdown-wrapper {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.countdown-number {
+    position: absolute;
+    color: #f04747;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.countdown-svg {
+    transform: rotate(-90deg); /* Начинаем отсчет строго сверху */
+}
+
+.countdown-circle-bg {
+    fill: none;
+    stroke: #4f545c;
+    stroke-width: 2;
+}
+
+.countdown-circle {
+    fill: none;
+    stroke: #f04747;
+    stroke-width: 2;
+    stroke-dasharray: 62.8; /* Полная длина окружности */
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+}
