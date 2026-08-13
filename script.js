@@ -299,6 +299,14 @@ function loadSavedMessages() {
                 editForm.querySelector('.edit-cancel-btn').addEventListener('click', closeEditForm);
             });
         }
+    // Находим кнопку удаления внутри этого конкретного сообщения
+    const deleteBtn = messageElement.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // чтобы клик не улетал на другие элементы
+            initiateMessageDelete(messageElement); // запускаем наш круговой таймер с задержкой 5 сек
+        });
+    }
 
         const deleteBtn = messageElement.querySelector('.delete-btn');
         if (deleteBtn) {
