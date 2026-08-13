@@ -87,15 +87,20 @@ db.settings({
     let currentServerContext = 'dm'; 
     let currentChannelContext = 'friends-list';
     const CREATOR_NICKNAME = 'dj1ka';
-
-    function checkUserSession() {
-        if (!myName) {
-            if (authModalOverlay) authModalOverlay.classList.add('active');
-        } else {
-            if (authModalOverlay) authModalOverlay.classList.remove('active');
-            initChatAfterAuth();
-        }
+function checkUserSession() {
+    // Проверяем, залогинен ли уже пользователь на этом компьютере
+    const savedUser = localStorage.getItem('chat_active_user');
+    
+    if (savedUser) {
+        // Если ник найден в памяти — мгновенно пропускаем его без открытия окна авторизации
+        myName = savedUser;
+        if (authModalOverlay) authModalOverlay.classList.remove('active');
+        initChatAfterAuth();
+    } else {
+        // Если зашли первый раз или сбросили куки — плавно показываем окно входа
+        if (authModalOverlay) authModalOverlay.classList.add('active');
     }
+}
 
         if (authSubmitBtn) {
         authSubmitBtn.addEventListener('click', async () => {
