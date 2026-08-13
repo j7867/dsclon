@@ -236,9 +236,20 @@ function checkUserSession() {
         localStorage.setItem(key, JSON.stringify(messagesData));
     }
 
-  function loadSavedMessages() {
+ function loadSavedMessages() {
     if (!messagesContainer) return;
     messagesContainer.innerHTML = ''; 
+
+    // Находим оригинальные блоки чата по классам и ID
+       // Универсальный поиск блоков правой части чата (по тегам и структуре)
+    const chatMainWindow = document.querySelector('.chat-main-window') || document.getElementById('chatMainArea') || document.querySelector('main') || document.querySelector('.chat-area');
+    const chatHeader = document.querySelector('.chat-header') || document.querySelector('.channel-header') || chatMainWindow?.firstElementChild;
+    const messageInputContainer = document.querySelector('.message-input-container') || document.querySelector('.chat-input-area') || document.getElementById('messageInput')?.parentElement;
+
+    if (chatMainWindow) chatMainWindow.style.setProperty('display', 'flex', 'important');
+    if (messagesContainer) messagesContainer.style.setProperty('display', 'block', 'important');
+    if (chatHeader) chatHeader.style.setProperty('display', 'flex', 'important');
+    if (messageInputContainer) messageInputContainer.style.setProperty('display', 'flex', 'important');
 
     if (messagesListener) messagesListener();
 
