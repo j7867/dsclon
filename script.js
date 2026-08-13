@@ -146,25 +146,20 @@ function checkUserSession() {
     }
 
     function initChatAfterAuth() {
-        if (userHeaderName) userHeaderName.textContent = myName;
-        if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
-        
-        const chatArea = document.getElementById('chatArea');
-        if (chatArea) chatArea.style.display = 'flex'; 
-
-        if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
-            goToAdminRequestsBtn.style.display = 'block';
-            listenToPendingRequests();
-        }
-        
-        // ВОТ ЭТУ СТРОЧКУ ДОБАВЬ: имитируем клик на главную кнопку публичного сервера при входе
-        if (publicServerBtn) {
-            publicServerBtn.click();
-        } else {
-            loadSavedMessages();
-        }
+    if (userHeaderName) userHeaderName.textContent = myName;
+    if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
+    
+    if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
+        goToAdminRequestsBtn.style.display = 'block';
+        listenToPendingRequests();
     }
-
+    
+    if (publicServerBtn) {
+        publicServerBtn.click();
+    } else {
+        loadSavedMessages();
+    }
+}
        function listenToPendingRequests() {
         if (!adminRequestsList || !requestsCountBadge || !noRequestsText) return;
         
