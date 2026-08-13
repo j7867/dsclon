@@ -308,13 +308,13 @@ function loadSavedMessages() {
         });
     }
 
-        const deleteBtn = messageElement.querySelector('.delete-btn');
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); messageElement.classList.add('deleting');
-                setTimeout(() => { messageElement.remove(); saveMessagesToStorage(); }, 200);
-            });
-        }
+     const deleteBtn = messageElement.querySelector('.delete-btn');
+if (deleteBtn) {
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        initiateMessageDelete(messageElement); // запускаем наш круговой таймер с задержкой 5 сек
+    });
+}
 
         const arrowBtn = messageElement.querySelector('.arrow-btn');
         if (arrowBtn) {
