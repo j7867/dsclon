@@ -590,3 +590,4 @@ if (document.readyState === 'loading') {
     checkUserSession();
     if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
 }
+      });
