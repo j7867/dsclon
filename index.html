@@ -102,15 +102,32 @@
     <div class="messages-container" id="messagesContainer"></div>
 
     <!-- Поле ввода сообщений -->
-    <div class="input-area">
-      <div class="input-wrapper">
+ <!-- Плашка подтверждения удаления в стиле Discord -->
+<div id="deleteConfirmPanel" class="delete-confirm-panel">
+    <div class="delete-panel-content">
+        <span class="delete-panel-text">Вы точно хотите удалить сообщение?</span>
+        <div class="delete-panel-controls">
+            <button id="cancelDeleteBtn" class="delete-cancel-btn">Отмена</button>
+            <div class="countdown-wrapper">
+                <span id="countdownNumber" class="countdown-number">5</span>
+                <svg class="countdown-svg" width="24" height="24" viewBox="0 0 24 24">
+                    <circle class="countdown-circle-bg" cx="12" cy="12" r="10"></circle>
+                    <circle id="countdownCircle" class="countdown-circle" cx="12" cy="12" r="10"></circle>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Поле ввода сообщений (МЫ ЕГО ВЕРНУЛИ НА МЕСТО) -->
+<div class="input-area">
+    <div class="input-wrapper">
         <input type="text" class="message-input" id="messageInput" placeholder="Send a message..." autocomplete="off">
         <button class="send-btn" id="sendBtn" title="Send">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path></svg>
         </button>
-      </div>
     </div>
-  </div> <!-- Закрываем chat-area -->
+</div>
 
   <!-- БОЛЬШОЕ МОДАЛЬНОЕ ОКНО НАСТРОЕК ПРОФИЛЯ (Изначально скрыто) -->
   <div class="profile-modal-overlay" id="profileModalOverlay">
