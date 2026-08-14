@@ -78,10 +78,6 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.firestore();
-db.settings({
-    host: "://googleapis.com",
-    ssl: true,
-    forceLongPolling: true
 });
 
 const CREATOR_NICKNAME = 'dj1ka';
