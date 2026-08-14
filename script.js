@@ -647,15 +647,3 @@ function initiateMessageDelete(messageElement) {
         panel.classList.remove('active');
     };
 }
-
-// === АВТОМАТИЧЕСКИЙ ЗАПУСК СЕССИИ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ===
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        checkUserSession();
-        if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
-    });
-} else {
-    checkUserSession();
-    if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
-}
-    }
