@@ -616,7 +616,7 @@ function initiateMessageDelete(messageElement) {
         }
     }, 1000);
 
-       deleteTimeout = setTimeout(async () => {
+    deleteTimeout = setTimeout(async () => {
         clearInterval(deleteInterval);
         panel.classList.remove('active');
 
@@ -646,17 +646,4 @@ function initiateMessageDelete(messageElement) {
         clearInterval(deleteInterval);
         panel.classList.remove('active');
     };
-}
-
-// === АВТОМАТИЧЕСКИЙ ЗАПУСК СЕССИИ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ===
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        checkUserSession();
-        if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
-    });
-} else {
-    checkUserSession();
-    if (typeof loadSavedServersFromMemory === 'function') loadSavedServersFromMemory();
-}
-
 }
