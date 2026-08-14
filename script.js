@@ -78,7 +78,9 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.firestore();
-});
+}
+
+}
 
 const CREATOR_NICKNAME = 'dj1ka';
 let myName = '';
