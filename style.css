@@ -1,6 +1,3 @@
-/* ==========================================
-   1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И СБРОС СТИЛЕЙ
-   ========================================== */
 :root {
     --bg-main: #313338;
     --bg-sidebar: #2b2d31;
@@ -44,7 +41,6 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
     background: #111214;
 }
-
 /* ==========================================
    2. СЛУЖЕБНЫЕ СТИЛИ И АНИМАЦИИ (KEYFRAMES)
    ========================================== */
@@ -179,37 +175,8 @@ html, body {
     opacity: 1;
 }
 /* ==========================================
-   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И ШАПКА (ФИКС СЕТКИ)
+   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И ШАПКА
    ========================================== */
-.chat-area {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100vh !important;
-    flex: 1 !important;
-    background-color: var(--bg-main);
-    position: relative;
-    overflow: hidden !important; /* Убираем любые дергания и уезды */
-}
-
-.chat-header {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important; /* Разносит название канала и кнопки по углам */
-    padding: 0 16px !important;
-    height: 48px !important;
-    min-height: 48px !important; /* Жестко фиксируем высоту шапки */
-    background-color: #313338 !important; 
-    border-bottom: 1px solid #1f2023 !important;
-    box-sizing: border-box;
-}
-
-.header-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-}
-
 .hashtag {
     color: var(--text-muted);
     font-size: 20px;
@@ -219,6 +186,12 @@ html, body {
     font-size: 16px;
     font-weight: 600;
     color: var(--text-color);
+}
+
+.header-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
 }
 
 .header-right-group {
@@ -246,36 +219,6 @@ html, body {
     cursor: pointer !important;
 }
 
-/* Круглые кнопки в шапке с эффектом поворота */
-.header-right-group button {
-    background-color: #383a40 !important; 
-    border: none !important;
-    color: #dbdee1 !important; 
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 32px !important;  
-    height: 32px !important; 
-    border-radius: 50% !important; 
-    padding: 0 !important;
-    margin: 0 !important;
-    transition: transform 0.3s ease-in-out, background-color 0.2s ease, color 0.2s ease !important;
-}
-
-.header-right-group button:hover {
-    background-color: #4e5058 !important; 
-    color: #ffffff !important;
-}
-
-/* Поворот для шестеренки (75 градусов) и колокольчика (17 градусов) */
-.settings-gear-trigger:hover {
-    transform: rotate(75deg) !important;
-}
-.notification-bell:hover {
-    transform: rotate(17deg) !important;
-}
-
 .header-right-group button svg {
     width: 18px !important;
     height: 18px !important;
@@ -286,26 +229,48 @@ html, body {
     margin-right: 8px !important;
 }
 
+/* Оригинальные круглые кнопки шапки */
+.settings-gear-trigger, .notification-bell {
+    position: relative !important;
+    background-color: rgba(43, 45, 49, 0.7) !important;
+    backdrop-filter: blur(4px) !important;
+    border: none !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: #b5bac1 !important;
+    z-index: 10 !important; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s, color 0.2s, transform 0.2s ease !important;
+}
+
+.settings-gear-trigger:hover, .notification-bell:hover {
+    color: #ffffff !important;
+    background-color: #35373c !important;
+    transform: scale(1.05) !important;
+}
+
+.settings-gear-trigger svg, .notification-bell svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: currentColor;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.settings-gear-trigger:hover svg { 
+    transform: rotate(75deg) !important; 
+}
+.notification-bell:hover svg { 
+    transform: rotate(17deg) !important; 
+}
+
 /* ==========================================
-   5. СООБЩЕНИЯ ЧАТА И ПОЛЕ ВВОДА (ФИКС ВЕРСТКИ)
+   5. ПОЛЕ ВВОДА СООБЩЕНИЙ
    ========================================== */
-.messages-container {
-    flex: 1 !important; /* Заставляет контейнер сообщений занять ВСЁ свободное место */
-    padding: 16px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.input-area {
-    padding: 0 16px 24px 16px;
-    background-color: var(--bg-main) !important;
-    position: relative;
-    z-index: 2;
-    margin-top: auto; /* Прижимает футер строго к самому низу чата */
-}
-
 .input-wrapper {
     background-color: var(--bg-input);
     border-radius: 8px;
@@ -336,78 +301,20 @@ html, body {
     transition: color 0.1s;
 }
 .send-btn:hover { color: #fff; }
-.send-btn svg { width: 24px; height: 24px; fill: currentColor; }
-
-/* ==========================================
-   6. ОРИГИНАЛЬНЫЕ КРУГЛЫЕ КНОПКИ ШАПКИ (ФИКС КЛИКА)
-   ========================================== */
-.settings-gear-trigger, .notification-bell {
-    position: relative !important;
-    background-color: rgba(43, 45, 49, 0.7) !important;
-    backdrop-filter: blur(4px) !important;
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    color: #b5bac1 !important;
-    /* ИСПРАВЛЕНО: z-index понижен, чтобы панели не перекрывали кнопки */
-    z-index: 10 !important; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s, color 0.2s, transform 0.2s ease !important;
+/* Анимация самолетика на кнопке отправки */
+@keyframes planeFlyOut {
+    0% { transform: translate(0, 0); opacity: 1; }
+    45% { transform: translate(40px, -10px) scale(0.8); opacity: 0; }
+    50% { transform: translate(-40px, 10px) scale(0.8); opacity: 0; }
+    100% { transform: translate(0, 0); opacity: 1; }
 }
 
-.settings-gear-trigger:hover, .notification-bell:hover {
-    color: #ffffff !important;
-    background-color: #35373c !important;
-    transform: scale(1.05) !important;
+.input-wrapper:hover .send-btn svg,
+.send-btn:hover svg {
+    animation: planeFlyOut 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
 }
 
-.settings-gear-trigger svg, .notification-bell svg {
-    width: 18px !important;
-    height: 18px !important;
-    fill: currentColor;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-}
-
-/* ИСПРАВЛЕНО: Углы вращения иконок по вашему запросу */
-.settings-gear-trigger:hover svg { 
-    transform: rotate(75deg) !important; 
-}
-.notification-bell:hover svg { 
-    transform: rotate(17deg) !important; 
-}
-
-
-/* ==========================================
-   7. МЕНЮ ДЕЙСТВИЙ НА СООБЩЕНИЯХ И ПОЛЬЗОВАТЕЛЯХ
-   ========================================== */
-.message {
-    display: flex !important;
-    gap: 16px !important;
-    align-items: flex-start !important;
-    position: relative !important;
-    padding: 8px 16px !important;
-    border-radius: 4px !important;
-    /* Настраиваем плавность для фона и рамки одновременно */
-    border: 1px solid transparent !important;
-    transition: background-color 0.25s ease, border-color 0.25s ease !important;
-}
-
-/* Эффект при наведении: фон темнеет, появляется аккуратная белая рамка */
-.message:hover {
-    background-color: rgba(0, 0, 0, 0.25) !important; /* Затемнение фона */
-    border-color: rgba(255, 255, 255, 0.15) !important; /* Мягкая белая рамка как на скрине */
-}
-
-.message.deleting {
-    opacity: 0 !important;
-    transform: translateX(20px) !important;
-}
-
+/* Стили карточек сообщений и панелей действий */
 .message-content {
     display: flex !important;
     flex-direction: column !important;
@@ -415,7 +322,6 @@ html, body {
     flex: 1 !important;
 }
 
-/* Контейнер кнопок действий (аккуратная темная плашка) */
 .message-actions {
     display: flex !important;
     gap: 4px !important;
@@ -425,7 +331,7 @@ html, body {
     transform: translateY(-50%) !important;
     opacity: 0 !important;
     visibility: hidden !important;
-    background-color: #2b2d31 !important; /* Фирменная темная подложка */
+    background-color: #2b2d31 !important;
     border: 1px solid #111214 !important;
     border-radius: 4px !important;
     padding: 2px !important;
@@ -439,7 +345,6 @@ html, body {
     visibility: visible !important;
 }
 
-/* Базовые стили для кнопок действий */
 .message-actions .action-btn {
     background: none !important;
     border: none !important;
@@ -452,41 +357,34 @@ html, body {
     align-items: center !important;
     justify-content: center !important;
     border-radius: 3px !important;
-    /* Плавность для анимаций поворота и цвета */
     transition: color 0.2s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
     width: auto !important;
 }
 
-/* Ховер для обычных кнопок */
 .message-actions .action-btn:hover {
     color: #ffffff !important;
 }
 
-/* ПОВОРОТ: Карандаш при наведении крутится на 17 градусов */
 .message-actions .edit-btn:hover {
     color: #ffffff !important;
     transform: rotate(17deg) !important;
 }
 
-/* ПОВОРОТ: Мусорка при наведении крутится на 17 градусов и краснеет */
 .message-actions .delete-btn:hover {
     color: #f23f43 !important;
     transform: rotate(17deg) !important;
 }
 
-/* РОТАТЕ ДЛЯ СТРЕЛОЧКИ: Базовое состояние */
 .message-actions .action-btn.arrow-btn {
     transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s ease !important;
 }
 
-/* Когда на стрелочку НАЖАЛИ (JS вешает класс .open) — она плавно разворачивается вниз */
 .message-actions .action-btn.arrow-btn.open {
-    transform: rotate(90deg) !important; /* Разворот по часовой, чтобы смотреть вниз */
+    transform: rotate(90deg) !important;
     color: #ffffff !important;
 }
-
 /* ==========================================
-   8. ПАРЯЩЕЕ ОКНО НАСТРОЕК ЗОН И ПАЛИТРА
+   6. ПАРЯЩЕЕ ОКНО НАСТРОЕК ЗОН И ПАЛИТРА
    ========================================== */
 .settings-sidebar {
     position: fixed !important;
@@ -544,7 +442,6 @@ html, body {
 .custom-option { padding: 10px 16px; color: #b5bac1 !important; font-size: 14px; cursor: pointer; }
 .custom-option:hover { background-color: #5865f2 !important; color: #ffffff !important; }
 
-/* Обёртка невидимого инпута цвета */
 .color-picker-wrapper { position: relative; width: 48px; height: 48px; cursor: pointer; margin: 15px auto 0 auto; display: block; }
 .color-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
 .color-picker-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background-color: #313338; transition: transform 0.2s; }
@@ -557,7 +454,7 @@ html, body {
 .back-menu-btn:hover { color: #ffffff; }
 
 /* ==========================================
-   9. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ И ПОДТВЕРЖДЕНИЯ
+   7. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ И ПОДТВЕРЖДЕНИЯ
    ========================================== */
 .notifications-dropdown {
     display: block !important; position: fixed !important;
@@ -602,37 +499,32 @@ html, body {
 .confirm-btn.yes-btn:hover { background-color: #da373c; }
 .confirm-btn.no-btn { background-color: #4e5058; color: #dbdee1; }
 .confirm-btn.no-btn:hover { background-color: #6d6f78; }
-
 /* ==========================================
-   10. БОЛЬШОЕ МОДАЛЬНОЕ ОКНО ПРОФИЛЯ (ФИКС)
+   8. БОЛЬШОЕ МОДАЛЬНОЕ ОКНО ПРОФИЛЯ
    ========================================== */
 .profile-modal-overlay {
     position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
     background-color: rgba(0, 0, 0, 0.75) !important;
     z-index: 99999 !important;
-    display: none !important; /* Управляется строго через active */
+    display: none !important;
     align-items: center !important;
     justify-content: center !important;
     opacity: 0;
     transition: opacity 0.2s ease;
 }
 
-/* Когда модалка открыта */
 .profile-modal-overlay.active {
     display: flex !important;
     opacity: 1 !important;
 }
 
-/* Сама плашка окна - фиксированная, а не на весь экран */
 .profile-modal-window {
-    background-color: #313338 !important; /* Родной цвет Discord */
+    background-color: #313338 !important;
     border: 1px solid #232428 !important;
     border-radius: 8px !important;
-    width: 440px !important; /* Фиксированная ширина */
+    width: 440px !important;
     max-width: 90% !important;
     padding: 24px !important;
     position: relative !important;
@@ -648,304 +540,62 @@ html, body {
     transform: scale(1) !important;
 }
 
-/* Кнопка закрытия (крестик) */
 .profile-modal-close {
     position: absolute !important;
-    top: 16px !important;
-    right: 16px !important;
-    background: none !important;
-    border: none !important;
-    color: #b5bac1 !important;
-    font-size: 24px !important;
-    cursor: pointer !important;
-    width: auto !important;
-    height: auto !important;
+    top: 16px !important; right: 16px !important;
+    background: none !important; border: none !important;
+    color: #b5bac1 !important; font-size: 24px !important;
+    cursor: pointer !important; width: auto !important; height: auto !important;
 }
 .profile-modal-close:hover { color: #fff !important; }
+.profile-modal-title { font-size: 20px !important; font-weight: 600 !important; color: #fff !important; margin-bottom: 4px !important; }
+.profile-edit-section { display: flex !important; flex-direction: column !important; gap: 8px !important; margin-bottom: 12px !important; }
+.profile-label { font-size: 12px !important; text-transform: uppercase !important; font-weight: bold !important; color: #b5bac1 !important; }
 
-/* Элементы внутри модалки */
-.profile-modal-title {
-    font-size: 20px !important;
-    font-weight: 600 !important;
-    color: #fff !important;
-    margin-bottom: 4px !important;
-}
-
-.profile-edit-section {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    margin-bottom: 12px !important;
-}
-
-.profile-label {
-    font-size: 12px !important;
-    text-transform: uppercase !important;
-    font-weight: bold !important;
-    color: #b5bac1 !important;
-}
-
-.profile-input-field {
-    width: 100% !important;
-    background-color: #1e1f22 !important; /* Темный инпут */
-    border: 1px solid #111214 !important;
-    outline: none !important;
-    padding: 10px 12px !important;
-    border-radius: 4px !important;
-    color: #f2f3f5 !important;
-    font-size: 15px !important;
-}
-
-.profile-color-row {
-    display: flex !important;
-    gap: 10px !important;
-}
-
-.avatar-color-circle {
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    transition: transform 0.1s !important;
-}
+.profile-input-field { width: 100% !important; background-color: #1e1f22 !important; border: 1px solid #111214 !important; outline: none !important; padding: 10px 12px !important; border-radius: 4px !important; color: #f2f3f5 !important; font-size: 15px !important; }
+.profile-color-row { display: flex !important; gap: 10px !important; }
+.avatar-color-circle { width: 36px !important; height: 36px !important; border-radius: 50% !important; cursor: pointer !important; transition: transform 0.1s !important; }
 .avatar-color-circle:hover { transform: scale(1.1) !important; }
 .avatar-color-circle.selected { outline: 3px solid white !important; }
 
-/* Фикс зеленой кнопки (теперь она аккуратная внизу окна) */
 .profile-save-global-btn {
-    width: 100% !important;
-    background-color: #23a55a !important;
-    color: white !important;
-    border: none !important;
-    padding: 12px !important;
-    border-radius: 4px !important;
-    cursor: pointer !important;
-    font-weight: bold !important;
-    font-size: 15px !important;
-    margin-top: 10px !important;
-    height: auto !important;
+    width: 100% !important; background-color: #23a55a !important; color: white !important; border: none !important; padding: 12px !important; border-radius: 4px !important; cursor: pointer !important; font-weight: bold !important; font-size: 15px !important; margin-top: 10px !important; height: auto !important;
 }
 .profile-save-global-btn:hover { background-color: #1a7f43 !important; }
+
+/* Редактирование текста сообщений */
+.message-edit-form { display: flex !important; flex-direction: column !important; gap: 8px !important; margin-top: 8px !important; width: 100% !important; max-width: 400px !important; }
+.message-edit-input { width: 100% !important; background-color: #1e1f22 !important; border: 1px solid #111214 !important; outline: none !important; padding: 8px 12px !important; border-radius: 4px !important; color: #f2f3f5 !important; font-size: 14px !important; }
+.edit-form-buttons { display: flex !important; gap: 8px !important; }
+.edit-form-buttons button { border: none !important; padding: 6px 16px !important; border-radius: 4px !important; font-size: 12px !important; font-weight: 600 !important; cursor: pointer !important; transition: background-color 0.15s ease !important; }
+
+.edit-save-btn { background-color: #5865f2 !important; color: #ffffff !important; }
+.edit-save-btn:hover { background-color: #4752c4 !important; }
+.edit-cancel-btn { background-color: #4e5058 !important; color: #dbdee1 !important; }
+.edit-cancel-btn:hover { background-color: #6d6f78 !important; }
+
+/* Модалки логина и создания серверов */
+.auth-modal-overlay { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: #1e1f22 !important; z-index: 100000 !important; display: none !important; align-items: center !important; justify-content: center !important; opacity: 0; transition: opacity 0.3s ease !important; }
+.auth-modal-overlay.active { display: flex !important; opacity: 1 !important; }
+.auth-modal-window { background-color: #313338 !important; padding: 32px !important; border-radius: 8px !important; width: 480px !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; text-align: left; animation: fadeIn 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.auth-title { color: #fff !important; font-size: 24px !important; font-weight: 600 !important; text-align: center !important; margin-bottom: 8px !important; }
+.auth-subtitle { color: #b5bac1 !important; font-size: 14px !important; text-align: center !important; margin-bottom: 20px !important; }
+
+.server-modal-overlay { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0, 0, 0, 0.7) !important; z-index: 99999 !important; display: none !important; align-items: center !important; justify-content: center !important; opacity: 0; transition: opacity 0.2s ease !important; }
+.server-modal-overlay.active { display: flex !important; opacity: 1 !important; }
+.server-modal-window { background-color: #313338 !important; border: 1px solid #232428 !important; border-radius: 8px !important; width: 440px !important; padding: 24px !important; position: relative !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; transform: scale(0.9) !important; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; }
+.server-modal-overlay.active .server-modal-window { transform: scale(1) !important; }
+
+.add-server-btn-sidebar { width: 48px !important; height: 48px !important; border-radius: 50% !important; background-color: #23a55a !important; color: #fff !important; font-size: 26px !important; font-weight: 300 !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; margin-top: 4px !important; opacity: 0 !important; visibility: hidden !important; transform: scale(0.7) !important; transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.3s, border-radius 0.2s !important; }
+.add-server-btn-sidebar.spawned { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
+.add-server-btn-sidebar:hover { border-radius: 16px !important; background-color: #1a7f43 !important; }
+
+#zoneSettingsScreen, #adminRequestsScreen { display: none !important; }
+#authModalOverlay, .auth-modal-overlay { display: none !important; }
+#authModalOverlay.active, .auth-modal-overlay.active { display: flex !important; }
 /* ==========================================
-   ФИКС СТИЛЯ РЕДАКТИРОВАНИЯ СООБЩЕНИЙ
+   9. ФИНАЛЬНЫЙ БРОНЕБОЙНЫЙ ФИКС СЕТКИ ЧАТА ПО ЦЕНТРУ
    ========================================== */
-.message-edit-form {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    margin-top: 8px !important;
-    width: 100% !important;
-    max-width: 400px !important;
-}
-
-.message-edit-input {
-    width: 100% !important;
-    background-color: #1e1f22 !important; /* Родной темный инпут Discord */
-    border: 1px solid #111214 !important;
-    outline: none !important;
-    padding: 8px 12px !important;
-    border-radius: 4px !important;
-    color: #f2f3f5 !important;
-    font-size: 14px !important;
-}
-
-.edit-form-buttons {
-    display: flex !important;
-    gap: 8px !important;
-}
-
-.edit-form-buttons button {
-    border: none !important;
-    padding: 6px 16px !important;
-    border-radius: 4px !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    transition: background-color 0.15s ease !important;
-}
-
-.edit-save-btn {
-    background-color: #5865f2 !important; /* Синяя кнопка */
-    color: #ffffff !important;
-}
-.edit-save-btn:hover {
-    background-color: #4752c4 !important;
-}
-
-.edit-cancel-btn {
-    background-color: #4e5058 !important; /* Серая кнопка */
-    color: #dbdee1 !important;
-}
-.edit-cancel-btn:hover {
-    background-color: #6d6f78 !important;
-}
-/* ==========================================
-   АНИМАЦИЯ САМОЛЕТИКА НА КНОПКЕ ОТПРАВКИ
-   ========================================== */
-@keyframes planeFlyOut {
-    0% { transform: translate(0, 0); opacity: 1; }
-    45% { transform: translate(40px, -10px) scale(0.8); opacity: 0; }
-    50% { transform: translate(-40px, 10px) scale(0.8); opacity: 0; }
-    100% { transform: translate(0, 0); opacity: 1; }
-}
-
-.send-btn svg {
-    transition: color 0.2s ease !important;
-}
-
-/* При наведении на кнопку ввода или саму кнопку - запускаем полет */
-.input-wrapper:hover .send-btn svg,
-.send-btn:hover svg {
-    animation: planeFlyOut 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-}
-/* ==========================================
-   ФИКС ВРАЩЕНИЯ ИКОНОК ШАПКИ ПРИ НАВЕДЕНИИ
-   ========================================== */
-.settings-gear-trigger, .notification-bell {
-    transition: background-color 0.2s ease, transform 0.2s ease !important;
-}
-
-.settings-gear-trigger svg, .notification-bell svg {
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-}
-
-/* Проворачиваем шестеренку на 75 градусов по часовой стрелке */
-.settings-gear-trigger:hover svg {
-    transform: rotate(75deg) !important;
-}
-
-/* Проворачиваем колокольчик на 17 градусов по часовой стрелке */
-.notification-bell:hover svg {
-    transform: rotate(17deg) !important;
-}
-/* ==========================================
-   СИСТЕМА АВТОРИЗАЦИИ И СОЗДАНИЯ СЕРВЕРОВ
-   ========================================== */
-
-/* Оверлей для окна логина */
-.auth-modal-overlay {
-    position: fixed !important;
-    top: 0 !important; left: 0 !important;
-    width: 100vw !important; height: 100vh !important;
-    background-color: #1e1f22 !important; /* Полностью темный фон скрывает чат до входа */
-    z-index: 100000 !important;
-    display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
-    opacity: 0;
-    transition: opacity 0.3s ease !important;
-}
-.auth-modal-overlay.active {
-    display: flex !important;
-    opacity: 1 !important;
-}
-
-.auth-modal-window {
-    background-color: #313338 !important;
-    padding: 32px !important;
-    border-radius: 8px !important;
-    width: 480px !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
-    text-align: left;
-    animation: fadeIn 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-.auth-title {
-    color: #fff !important;
-    font-size: 24px !important;
-    font-weight: 600 !important;
-    text-align: center !important;
-    margin-bottom: 8px !important;
-}
-
-.auth-subtitle {
-    color: #b5bac1 !important;
-    font-size: 14px !important;
-    text-align: center !important;
-    margin-bottom: 20px !important;
-}
-
-/* Оверлей для создания сервера */
-.server-modal-overlay {
-    position: fixed !important;
-    top: 0 !important; left: 0 !important;
-    width: 100vw !important; height: 100vh !important;
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    z-index: 99999 !important;
-    display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
-    opacity: 0;
-    transition: opacity 0.2s ease !important;
-}
-.server-modal-overlay.active {
-    display: flex !important;
-    opacity: 1 !important;
-}
-
-.server-modal-window {
-    background-color: #313338 !important;
-    border: 1px solid #232428 !important;
-    border-radius: 8px !important;
-    width: 440px !important;
-    padding: 24px !important;
-    position: relative !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
-    transform: scale(0.9) !important;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
-.server-modal-overlay.active .server-modal-window {
-    transform: scale(1) !important;
-}
-
-/* Кнопка "Добавить сервер" в сайдбаре ДМ */
-.add-server-btn-sidebar {
-    width: 48px !important;
-    height: 48px !important;
-    border-radius: 50% !important;
-    background-color: #23a55a !important; /* Зеленая кнопка плюс */
-    color: #fff !important;
-    font-size: 26px !important;
-    font-weight: 300 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    margin-top: 4px !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transform: scale(0.7) !important;
-    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.3s, border-radius 0.2s !important;
-}
-
-/* Когда кнопка активирована кликом по пустому месту */
-.add-server-btn-sidebar.spawned {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: scale(1) !important;
-}
-
-.add-server-btn-sidebar:hover {
-    border-radius: 16px !important;
-    background-color: #1a7f43 !important;
-}
-/* Фикс отображения скрытых экранов в боковой панели */
-#zoneSettingsScreen, 
-#adminRequestsScreen {
-    display: none !important;
-}
-/* Скрываем окно авторизации, если пользователь уже вошел */
-#authModalOverlay,
-.auth-modal-overlay {
-    display: none !important;
-}
-
-/* Показываем окно только тогда, когда у него есть класс active */
-#authModalOverlay.active,
-.auth-modal-overlay.active {
-    display: flex !important;
-}
-/* Принудительно возвращаем оригинальную сетку и чат по центру */
 main, 
 #chatMainArea, 
 .chat-main-window, 
@@ -955,225 +605,133 @@ main,
     flex: 1 !important;
     width: auto !important;
     height: 100% !important;
+    background-color: #313338 !important; /* Настоящий цвет фона Discord */
 }
 
-/* Расправляем контейнер, где выводятся сообщения */
 #chatMessages, 
 #messagesContainer, 
 .chat-messages, 
 .messages-container {
-    display: block !important;
-    flex: 1 !important;
-    height: 100% !important;
-}
-
-/* Показываем поле ввода в самом низу экрана */
-.message-input-container, 
-.chat-input-area {
-    display: flex !important;
-}
-/* Панель удаления над инпутом */
-.delete-confirm-panel {
-    display: none;
-    opacity: 0;
-    transform: translateY(10px);
-    background: #2f3136;
-    border: 1px solid #f04747;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin-bottom: 8px;
-    transition: all 0.3s ease;
-    z-index: 10;
-}
-
-.delete-confirm-panel.active {
-    display: block !important;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.delete-panel-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.delete-panel-text {
-    color: #dcddde;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.delete-panel-controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.delete-cancel-btn {
-    background: transparent;
-    color: #fff;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.delete-cancel-btn:hover {
-    text-decoration: underline;
-}
-
-/* Круговой таймер */
-.countdown-wrapper {
-    position: relative;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.countdown-number {
-    position: absolute;
-    color: #f04747;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-.countdown-svg {
-    transform: rotate(-90deg); /* Начинаем отсчет строго сверху */
-}
-
-.countdown-circle-bg {
-    fill: none;
-    stroke: #4f545c;
-    stroke-width: 2;
-}
-
-.countdown-circle {
-    fill: none;
-    stroke: #f04747;
-    stroke-width: 2;
-    stroke-dasharray: 62.8; /* Полная длина окружности */
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1s linear;
-}
-/* ПРИНУДИТЕЛЬНО РАСПРАВЛЯЕМ ЧАТ ПО ЦЕНТРУ ЭКРАНА */
-main, 
-#chatMainArea, 
-.chat-main-window, 
-.chat-area {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    width: auto !important;
-    height: 100% !important;
-}
-
-/* Расправляем контейнер, где должны выводиться сообщения */
-#chatMessages, 
-#messagesContainer, 
-.chat-messages, 
-.messages-container {
-    display: block !important;
+    display: block !important; /* Убираем ломающий флекс */
     flex: 1 !important;
     height: 100% !important;
     padding: 20px !important;
     overflow-y: auto !important;
+    box-sizing: border-box !important;
 }
 
-/* ПОЛЕ ВВОДА В САМОМ НИЗУ ЭКРАНА */
+.message, .message-item {
+    display: flex !important;
+    width: 100% !important;
+    margin-bottom: 12px !important;
+    position: relative !important;
+    background: transparent !important;
+    box-sizing: border-box !important;
+}
+
+.message.deleting {
+    opacity: 0 !important;
+    transform: translateX(20px) !important;
+}
+
 .input-area, 
 .message-input-container, 
 .chat-input-area {
     display: flex !important;
-    padding: 0 20px 20px 20px !important;
-    background: transparent !important;
+    flex-direction: column !important; /* Плашка ложится строго НАД инпутом */
+    width: 100% !important;
+    padding: 0 20px 24px 20px !important;
+    background-color: #313338 !important;
+    margin-top: auto !important;
+    box-sizing: border-box !important;
 }
 
-/* КРАСИВАЯ ПЛАШКА УДАЛЕНИЯ НАД ИНПУТОМ */
+/* КРАСИВАЯ ПЛАШКА Discord ВЫЕЗЖАЮЩАЯ ИЗ СТЕНЫ НАД ИНПУТОМ */
 .delete-confirm-panel {
     display: none;
     opacity: 0;
-    transform: translateY(10px);
-    background: #2f3136;
-    border: 1px solid #f04747;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin: 0 20px 8px 20px !important; /* встает ровно над инпутом */
-    transition: all 0.3s ease;
-    z-index: 10;
+    transform: translateY(15px); /* Плавный выезд снизу вверх */
+    background: #2f3136 !important;
+    border: 1px solid #f04747 !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease !important;
+    z-index: 10 !important;
 }
 
 .delete-confirm-panel.active {
     display: block !important;
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }
 
 .delete-panel-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
 }
 
 .delete-panel-text {
-    color: #dcddde;
-    font-size: 14px;
-    font-weight: 500;
+    color: #dbdee1 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
 }
 
 .delete-panel-controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
 }
 
 .delete-cancel-btn {
-    background: transparent;
-    color: #fff;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-    font-weight: 500;
+    background: transparent !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    font-weight: 500 !important;
 }
 
 .delete-cancel-btn:hover {
-    text-decoration: underline;
+    text-decoration: underline !important;
 }
 
-/* Круговой таймер отсчета */
+/* АНИМИРОВАННЫЙ КРУГОВОЙ ТАЙМЕР ОТСЧЕТА (5 СЕКУНД) */
 .countdown-wrapper {
-    position: relative;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .countdown-number {
-    position: absolute;
-    color: #f04747;
-    font-size: 11px;
-    font-weight: bold;
+    position: absolute !important;
+    color: #f04747 !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
 }
 
 .countdown-svg {
-    transform: rotate(-90deg);
+    transform: rotate(-90deg) !important;
 }
 
 .countdown-circle-bg {
-    fill: none;
-    stroke: #4f545c;
-    stroke-width: 2;
+    fill: none !important;
+    stroke: #4f545c !important;
+    stroke-width: 2 !important;
 }
 
 .countdown-circle {
-    fill: none;
-    stroke: #f04747;
-    stroke-width: 2;
-    stroke-dasharray: 62.8;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1s linear;
+    fill: none !important;
+    stroke: #f04747 !important;
+    stroke-width: 2 !important;
+    stroke-dasharray: 62.8 !important;
+    stroke-dashoffset: 0 !important;
+    transition: stroke-dashoffset 1s linear !important;
 }
