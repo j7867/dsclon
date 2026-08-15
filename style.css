@@ -1058,3 +1058,122 @@ main,
     stroke-dashoffset: 0;
     transition: stroke-dashoffset 1s linear;
 }
+/* ПРИНУДИТЕЛЬНО РАСПРАВЛЯЕМ ЧАТ ПО ЦЕНТРУ ЭКРАНА */
+main, 
+#chatMainArea, 
+.chat-main-window, 
+.chat-area {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    width: auto !important;
+    height: 100% !important;
+}
+
+/* Расправляем контейнер, где должны выводиться сообщения */
+#chatMessages, 
+#messagesContainer, 
+.chat-messages, 
+.messages-container {
+    display: block !important;
+    flex: 1 !important;
+    height: 100% !important;
+    padding: 20px !important;
+    overflow-y: auto !important;
+}
+
+/* ПОЛЕ ВВОДА В САМОМ НИЗУ ЭКРАНА */
+.input-area, 
+.message-input-container, 
+.chat-input-area {
+    display: flex !important;
+    padding: 0 20px 20px 20px !important;
+    background: transparent !important;
+}
+
+/* КРАСИВАЯ ПЛАШКА УДАЛЕНИЯ НАД ИНПУТОМ */
+.delete-confirm-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    background: #2f3136;
+    border: 1px solid #f04747;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin: 0 20px 8px 20px !important; /* встает ровно над инпутом */
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.delete-confirm-panel.active {
+    display: block !important;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delete-panel-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-panel-text {
+    color: #dcddde;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.delete-panel-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.delete-cancel-btn {
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.delete-cancel-btn:hover {
+    text-decoration: underline;
+}
+
+/* Круговой таймер отсчета */
+.countdown-wrapper {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.countdown-number {
+    position: absolute;
+    color: #f04747;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.countdown-svg {
+    transform: rotate(-90deg);
+}
+
+.countdown-circle-bg {
+    fill: none;
+    stroke: #4f545c;
+    stroke-width: 2;
+}
+
+.countdown-circle {
+    fill: none;
+    stroke: #f04747;
+    stroke-width: 2;
+    stroke-dasharray: 62.8;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear;
+}
