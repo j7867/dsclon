@@ -329,3 +329,62 @@ function checkUserSession() {
         if (authModalOverlay) authModalOverlay.classList.add('active');
     }
 }
+// Пробивная глобальная функция для клика по кнопке входа
+window.triggerManualAuth = async function() {
+    const btn = document.getElementById('authSubmitBtn');
+    if (!btn) return;
+    
+    const loginInput = document.getElementById('authLoginInput');
+    const passwordInput = document.getElementById('authPasswordInput');
+    
+    if (!loginInput || !passwordInput) {
+        alert("Ошибка: Поля ввода не найдены на странице!");
+        return;
+    }
+    
+    const login = loginInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    if (!login || !password) {
+        alert('Заполните все поля!');
+        return;
+    }
+
+    try {
+        const userRef = db.collection("users").doc(login);
+        const userSnap = await userRef.get();
+
+        if (userSnap.exists) {
+            const userData = userSnap.data();
+            if (userData.password !== password) { 
+                alert('Неверный пароль для этого никнейма!'); 
+                return; 
+            }
+            if (userData.status === 'pending') { 
+                alert('Ваш аккаунт всё ещё ожидает подтверждения администратором!'); 
+                return; 
+            }
+        } else {
+            const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
+            await userRef.set({ username: login, password: password, status: initialStatus });
+            
+            if (initialStatus === 'pending') { 
+                alert('Заявка на создание аккаунта отправлена администратору!'); 
+                return; 
+            }
+        }
+
+        localStorage.setItem('chat_active_user', login);
+        myName = login;
+        if (authModalOverlay) authModalOverlay.classList.remove('active');
+        
+        // На всякий случай скрываем плашку и через ID напрямую
+        const overlay = document.getElementById('authModalOverlay');
+        if (overlay) overlay.style.setProperty('display', 'none', 'important');
+        
+        initChatAfterAuth();
+    } catch (err) { 
+        console.error("ПОЛНАЯ ОШИБКА АВТОРИЗАЦИИ:", err);
+        alert('Ошибка подключения к базе! Проверьте консоль.'); 
+    }
+};
