@@ -95,9 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
     authLoginInput = document.getElementById('authLoginInput');
     authPasswordInput = document.getElementById('authPasswordInput');
     authSubmitBtn = document.getElementById('authSubmitBtn');
-    userHeaderName = document.querySelector('.user-name') || document.getElementById('userHeaderName');
+    
+    // Привязываем переменные к новым ID нижнего профиля и шапки чата
+    userHeaderName = document.getElementById('userHeaderName');
     openFullProfileBtn = document.getElementById('openFullProfileBtn');
     goToAdminRequestsBtn = document.getElementById('goToAdminRequestsBtn');
+    
     adminRequestsList = document.getElementById('adminRequestsList');
     requestsCountBadge = document.getElementById('requestsCountBadge');
     noRequestsText = document.getElementById('noRequestsText');
