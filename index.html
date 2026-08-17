@@ -24,22 +24,18 @@
 
     <!-- 2. СРЕДНЯЯ КОЛОНКА КАНАЛОВ И ПРОФИЛЯ (240px) -->
     <div class="channels-sidebar" id="channelsSidebar">
-        <!-- Контейнер для Личных сообщений (отображается по умолчанию) -->
+        <!-- Контейнер для Личных сообщений -->
         <div id="dmChannelsSection">
             <div class="sidebar-header">ЛИЧНЫЕ СООБЩЕНИЯ</div>
-            <div class="channels-list" id="dmChannelsList">
-                <!-- Сюда JS будет добавлять новых друзей при принятии заявки -->
-            </div>
+            <div class="channels-list" id="dmChannelsList"></div>
         </div>
 
-        <!-- Контейнер для Общего сервера (изначально скрыт) -->
+        <!-- Контейнер для Общего сервера -->
         <div id="serverChannelsSection" style="display: none;">
             <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding-right: 8px;">
                 <span>TEКСТОВЫЕ КАНАЛЫ</span>
-                <!-- Плюсик для плавного открытия модалки создания каналов -->
                 <span id="openCreateChannelBtn" style="cursor: pointer; font-size: 18px; transition: color 0.15s;" title="Создать канал">+</span>
             </div>
-            <!-- Сюда JS будет динамически добавлять ваши новые текстовые каналы -->
             <div id="serverChannelsList">
                 <div class="custom-user-item active" data-channel="general-chat">
                     <div class="user-avatar" style="background-color: #5865f2;">#</div>
@@ -48,28 +44,30 @@
             </div>
         </div>
 
-        <!-- Профиль пользователя в самом низу левой панели -->
+        <!-- ИСПРАВЛЕННЫЙ БЛОК ПРОФИЛЯ -->
         <div class="user-profile-block" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 10px;">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="user-avatar" id="openFullProfileBtn">U</div>
                 <span class="user-name" id="userHeaderName" style="font-weight: 600; color: #fff;">User</span>
-                <button class="settings-gear-trigger" id="goToAdminRequestsBtn" style="display: none; margin-left: auto; background: none; border: none; cursor: pointer;" title="Заявки">🔔</button>
+                <button id="goToAdminRequestsBtn" style="display: none; background: #383a40; border: none; color: #fff; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; margin-left: auto;">Админ</button>
             </div>
         </div>
-    </div> <!-- СЕРЕДИНА ЧЁТКО ЗАКРЫЛАСЬ ТУТ, ЧАТ БОЛЬШЕ НЕ СЖИМАЕТСЯ -->
-    <!-- 3. ЦЕНТРАЛЬНАЯ ШИРОКАЯ ОБЛАСТЬ ЧАТА (ВЫНЕСЕНА НА СВОБОДУ) -->
+    </div>
+    <!-- 3. ЦЕНТРАЛЬНАЯ ШИРОКАЯ ОБЛАСТЬ ЧАТА -->
     <div class="chat-area" id="chatArea">
+        <!-- Шапка чата -->
         <div class="chat-header">
             <div class="header-left">
                 <span class="hashtag">#</span>
                 <h3 id="chatTitle">general-chat</h3>
             </div>
             
-            <!-- ПРАВАЯ ЧАСТЬ ШАПКИ: ПРОФИЛЬ, КОЛОКОЛЬЧИК И ШЕСТЕРЕНКА -->
+            <!-- Исправленная шапка: Иконки на месте, текст User заменится на твой ник -->
             <div class="header-right-group">
-                <span class="user-name-header">User</span>
+                <span class="user-name-header" id="topUserName">User</span>
                 <div class="user-avatar-header" id="userAvatarHeader" style="background-color: #5865f2; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; cursor: pointer;">U</div>
-                <!-- Кнопка уведомлений -->
+                
+                <!-- Кнопка уведомлений (колокольчик вернулся наверх) -->
                 <button id="notificationBell" class="notification-bell" title="Уведомления">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
                 </button>
@@ -127,7 +125,7 @@
                 </div>
             </div>
 
-        <!-- Сама строка ввода сообщений -->
+            <!-- Сама строка ввода сообщений -->
             <div class="input-wrapper">
                 <input type="text" class="message-input" id="messageInput" placeholder="Send a message..." autocomplete="off">
                 <button class="send-btn" id="sendBtn" title="Send">
@@ -135,78 +133,4 @@
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- БОЛЬШОЕ МОДАЛЬНОЕ ОКНО НАСТРОЕК ПРОФИЛЯ -->
-    <div class="profile-modal-overlay" id="profileModalOverlay">
-        <div class="profile-modal-window">
-            <button class="profile-modal-close" id="closeProfileModalBtn">×</button>
-            <h2 class="profile-modal-title">Настройки аккаунта</h2>
-            <div class="profile-modal-content">
-                <div class="profile-edit-section">
-                    <label class="profile-label">Ваш никнейм</label>
-                    <input type="text" class="profile-input-field" id="profileNicknameInput" placeholder="Введите новый ник">
-                </div>
-                
-                <div class="profile-edit-section">
-                    <label class="profile-label">Цвет аватара</label>
-                    <div class="profile-color-row">
-                        <div class="avatar-color-circle" data-color="#5865f2" style="background-color: #5865f2;"></div>
-                        <div class="avatar-color-circle" data-color="#23a55a" style="background-color: #23a55a;"></div>
-                        <div class="avatar-color-circle" data-color="#f23f43" style="background-color: #f23f43;"></div>
-                        <div class="avatar-color-circle" data-color="#eb459e" style="background-color: #eb459e;"></div>
-                        <div class="avatar-color-circle" data-color="#f47fff" style="background-color: #f47fff;"></div>
-                    </div>
-                </div>
-
-                <div class="profile-edit-section" style="margin-top: 20px;">
-                    <label class="profile-label">Загрузить фото профиля</label>
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <input type="file" id="profileImageFileInput" accept="image/png, image/jpeg, image/jpg, image/webp" style="display: none;">
-                        <button type="button" class="menu-nav-btn" id="uploadAvatarFileBtn" style="text-align: center; width: auto; padding: 10px 18px;">Выбрать файл</button>
-                        <button type="button" class="confirm-btn no-btn" id="resetAvatarFileBtn" style="display: none; padding: 10px 14px;">Удалить фото</button>
-                    </div>
-                </div>
-            </div>
-            <button class="profile-save-global-btn" id="saveProfileChangesBtn">Сохранить изменения</button>
-        </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ -->
-    <div class="auth-modal-overlay active" id="authModalOverlay">
-        <div class="auth-modal-window">
-            <h2 class="auth-title">С возвращением!</h2>
-            <p class="auth-subtitle">Мы так рады видеть вас снова!</p>
-            <div class="profile-edit-section">
-                <label class="profile-label">Логин *</label>
-                <input type="text" id="authLoginInput" class="profile-input-field" placeholder="Введите логин" autocomplete="off">
-            </div>
-            <div class="profile-edit-section" style="margin-top: 16px;">
-                <label class="profile-label">Пароль *</label>
-                <input type="password" id="authPasswordInput" class="profile-input-field" placeholder="Введите ваш пароль">
-            </div>
-            <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="triggerManualAuth()">Вход / Регистрация</button>
-        </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ СЕРВЕРА -->
-    <div class="server-modal-overlay" id="serverModalOverlay">
-        <div class="server-modal-window">
-            <button class="profile-modal-close" id="closeServerModalBtn">×</button>
-            <h2 class="profile-modal-title" style="text-align: center; font-size: 24px;">Создайте свой сервер</h2>
-            <p class="auth-subtitle" style="text-align: center; margin-bottom: 20px;">Отличный сервер — это сервер, где собираются друзья для общения.</p>
-            <div class="profile-edit-section">
-                <label class="profile-label">Имя сервера</label>
-                <input type="text" id="newServerNameInput" class="profile-input-field" placeholder="Введите имя сервера" autocomplete="off">
-            </div>
-            <button class="profile-save-global-btn" id="submitCreateServerBtn" style="margin-top: 12px;">Создать</button>
-        </div>
-    </div>
-    <!-- 1. СНАЧАЛА ЗАГРУЖАЕМ БАЗУ ДАННЫХ FIREBASE -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-
-    <!-- 2. И ТОЛЬКО ПОТОМ ТВОЙ СКРИПТ, КОТОРЫЙ ЕЙ ПОЛЬЗУЕТСЯ -->
-    <script src="script.js"></script>
-</body>
-</html>
+    </div> <!-- Закрываем chat-area -->
