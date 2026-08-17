@@ -192,21 +192,26 @@ document.addEventListener('DOMContentLoaded', () => {
     checkUserSession();
 });
 function initChatAfterAuth() {
-    // Находим никнейм в шапке (пробуем по ID и по классам)
-    const topName = document.getElementById('userHeaderName') || document.querySelector('.user-name-header') || document.querySelector('.user-name');
+    // Обновляем профиль в левом нижнем углу
+    const leftName = document.getElementById('userHeaderName');
+    if (leftName) leftName.textContent = myName;
+
+    const leftAvatar = document.getElementById('openFullProfileBtn');
+    if (leftAvatar) leftAvatar.textContent = myName.charAt(0).toUpperCase();
+
+    // Обновляем шапку чата (Текст User пропадет, встанет твой ник)
+    const topName = document.getElementById('topUserName') || document.querySelector('.user-name-header');
     if (topName) topName.textContent = myName;
 
-    // Находим аватарку в шапке и ставим туда первую букву ника
-    const topAvatar = document.getElementById('userAvatarHeader') || document.getElementById('openFullProfileBtn') || document.querySelector('.user-avatar-header');
+    const topAvatar = document.getElementById('userAvatarHeader') || document.querySelector('.user-avatar-header');
     if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
     
-    // Проверяем админские права для dj1ka
+    // Проверка админ-панели для создателя
     if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
         goToAdminRequestsBtn.style.display = 'block';
         listenToPendingRequests();
     }
     
-    // Автоматически кликаем на сервер, чтобы прогрузить сообщения
     if (publicServerBtn) {
         publicServerBtn.click();
     } else {
