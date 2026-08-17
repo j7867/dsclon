@@ -192,14 +192,21 @@ document.addEventListener('DOMContentLoaded', () => {
     checkUserSession();
 });
 function initChatAfterAuth() {
-    if (userHeaderName) userHeaderName.textContent = myName;
-    if (openFullProfileBtn) openFullProfileBtn.textContent = myName.charAt(0).toUpperCase();
+    // Находим никнейм в шапке (пробуем по ID и по классам)
+    const topName = document.getElementById('userHeaderName') || document.querySelector('.user-name-header') || document.querySelector('.user-name');
+    if (topName) topName.textContent = myName;
+
+    // Находим аватарку в шапке и ставим туда первую букву ника
+    const topAvatar = document.getElementById('userAvatarHeader') || document.getElementById('openFullProfileBtn') || document.querySelector('.user-avatar-header');
+    if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
     
+    // Проверяем админские права для dj1ka
     if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
         goToAdminRequestsBtn.style.display = 'block';
         listenToPendingRequests();
     }
     
+    // Автоматически кликаем на сервер, чтобы прогрузить сообщения
     if (publicServerBtn) {
         publicServerBtn.click();
     } else {
