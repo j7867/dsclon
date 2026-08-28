@@ -22,7 +22,7 @@
         <div class="add-server-btn-sidebar" id="addServerBtnTrigger">+</div>
     </div>
 
-    <!-- 2. СРЕДНЯЯ КОЛОНКА КАНАЛОВ И ПРОФИЛЯ (240px) -->
+    <!-- 2. СРЕДНЯЯ КОЛОНКА КАНАЛОВ (240px) -->
     <div class="channels-sidebar" id="channelsSidebar">
         <!-- Контейнер для Личных сообщений -->
         <div id="dmChannelsSection">
@@ -43,9 +43,11 @@
                 </div>
             </div>
         </div>
+    </div> <!-- ЛЕВАЯ ПАНЕЛЬ ЗАКРЫЛАСЬ, СЕТКА БОЛЬШЕ НЕ СЛОМАЕТСЯ -->
 
     <!-- 3. ЦЕНТРАЛЬНАЯ ШИРОКАЯ ОБЛАСТЬ ЧАТА -->
     <div class="chat-area" id="chatArea">
+        
         <!-- Шапка чата -->
         <div class="chat-header">
             <div class="header-left">
@@ -53,12 +55,12 @@
                 <h3 id="chatTitle">general-chat</h3>
             </div>
             
-            <!-- Исправленная шапка: Иконки на месте, текст User заменится на твой ник -->
+            <!-- Правая группа кнопок (В самом дальнем правом углу) -->
             <div class="header-right-group">
                 <span class="user-name-header" id="topUserName">User</span>
                 <div class="user-avatar-header" id="userAvatarHeader" style="background-color: #5865f2; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; cursor: pointer;">U</div>
                 
-                <!-- Кнопка уведомлений (колокольчик вернулся наверх) -->
+                <!-- Кнопка уведомлений -->
                 <button id="notificationBell" class="notification-bell" title="Уведомления">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
                 </button>
@@ -68,60 +70,3 @@
                 </button>
             </div>
         </div>
-
-        <!-- Парящее окно настроек -->
-        <div class="settings-sidebar" id="settingsSidebar">
-            <h2 class="modal-title">Настройки</h2>
-            <div class="modal-screen active-screen" id="mainSettingsScreen">
-                <button class="menu-nav-btn" id="goToZonesBtn">Настройка зон</button>
-            </div>
-            <div class="modal-screen" id="zoneSettingsScreen">
-                <button class="back-menu-nav-btn" id="backToMenuBtn">← Назад</button>
-                <div class="custom-select-container">
-                    <div class="custom-select-trigger" id="zoneSelectTrigger">Выберите зону <span class="select-arrow">▼</span></div>
-                    <div class="custom-select-options" id="zoneSelectOptions">
-                        <div class="custom-option" data-value="chatArea">Central Chat</div>
-                        <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
-                        <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
-                        <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
-                    </div>
-                </div>
-                <div class="color-picker-wrapper">
-                    <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
-                    <div class="color-picker-circle" id="colorPreviewCircle"></div>
-                </div>
-                <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 20px; text-align: center;">Применить</button>
-            </div>
-        </div>
-
-        <!-- Контейнер для сообщений чата -->
-        <div class="messages-container" id="messagesContainer"></div>
-
-        <!-- Зона ввода и плашка отмены -->
-        <div class="input-area">
-            <!-- Плашка подтверждения удаления в стиле Discord -->
-            <div id="deleteConfirmPanel" class="delete-confirm-panel">
-                <div class="delete-panel-content">
-                    <span class="delete-panel-text">Вы точно хотите удалить сообщение?</span>
-                    <div class="delete-panel-controls">
-                        <button id="cancelDeleteBtn" class="delete-cancel-btn">Отмена</button>
-                        <div class="countdown-wrapper">
-                            <span id="countdownNumber" class="countdown-number">5</span>
-                            <svg class="countdown-svg" width="24" height="24" viewBox="0 0 24 24">
-                                <circle class="countdown-circle-bg" cx="12" cy="12" r="10"></circle>
-                                <circle id="countdownCircle" class="countdown-circle" cx="12" cy="12" r="10"></circle>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Сама строка ввода сообщений -->
-            <div class="input-wrapper">
-                <input type="text" class="message-input" id="messageInput" placeholder="Send a message..." autocomplete="off">
-                <button class="send-btn" id="sendBtn" title="Send">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path></svg>
-                </button>
-            </div>
-        </div>
-    </div> <!-- Закрываем chat-area -->
