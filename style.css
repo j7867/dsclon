@@ -18,12 +18,15 @@
 }
 
 html, body {
-    display: flex;
-    height: 100%;
-    width: 100vw;
+    display: flex !important;
+    flex-direction: row !important; /* Насильно выстраиваем панели и чат слева направо в один ряд */
+    height: 100vh !important;
+    width: 100vw !important;
     background-color: var(--bg-main);
     color: var(--text-color);
-    overflow: hidden;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Кастомный скроллбар в стиле Discord */
