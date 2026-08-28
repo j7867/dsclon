@@ -335,3 +335,65 @@ html, body {
     color: #f2f3f5 !important;
     font-size: 15px !important;
 }
+/* ==========================================
+   ФИНАЛЬНЫЙ ДИЗАЙН ПАРЯЩЕЙ ПАНЕЛИ НАСТРОЕК
+   ========================================== */
+
+/* Превращаем уродливый список в красивую темную плашку */
+.settings-sidebar, 
+#settingsSidebar {
+    position: fixed !important;
+    top: 60px !important;
+    right: 20px !important;
+    background-color: #2b2d31 !important; /* Цвет панелей Discord */
+    border: 1px solid #1f2023 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    width: 240px !important;
+    height: auto !important;
+    z-index: 99999 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    color: #f2f3f5 !important;
+    
+    /* Изначально полностью скрываем панель от глаз */
+    display: none !important;
+}
+
+/* Показываем её в виде flex-контейнера ТОЛЬКО когда скрипт добавляет класс active */
+.settings-sidebar.active,
+#settingsSidebar.active {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+
+/* Красиво оформляем внутренние кнопки внутри настроек */
+.menu-nav-btn, .back-menu-nav-btn, .applyColorBtn, #applyColorBtn {
+    width: 100% !important;
+    background-color: #383a40 !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    transition: background 0.15s ease !important;
+}
+
+.menu-nav-btn:hover, #applyColorBtn:hover {
+    background-color: #4e5058 !important;
+}
+
+/* Оформляем выпадающий список выбора зон */
+.custom-select-trigger {
+    background-color: #1e1f22 !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    color: #dbdee1 !important;
+}
