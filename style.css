@@ -779,3 +779,26 @@ main,
 .input-wrapper {
     width: 100% !important;
 }
+/* ==========================================
+   ФИНАЛЬНЫЙ СДВИГ ШАПКИ В САМЫЙ ПРАВЫЙ КРАЙ
+   ========================================== */
+
+/* Заставляем шапку чата растянуться на всю ширину экрана */
+.chat-header {
+    width: 100% !important;
+    min-width: calc(100vw - 312px) !important; /* Учитываем ширину левых панелей */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* Разносит название канала влево, а кнопки — в самый правый край */
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+}
+
+/* Насильно утягиваем кнопки настроек в самый угол экрана */
+.header-right-group {
+    margin-left: auto !important; /* Выталкивает весь блок до упора вправо */
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+}
+
