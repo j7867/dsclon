@@ -217,24 +217,47 @@ async function handleSendMessage() {
 }
 
 function appendMessage(author, text) {
-    const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
-    const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
+    const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); 
+    if (!realMessagesArea) return;
+    
+    const messageElement = document.createElement('div'); 
+    messageElement.className = 'message-item message';
+    
     messageElement.innerHTML = `
-        <div class="message-content"><span class="message-author">${author}:</span><span class="message-text">${text}</span></div>
+        <div class="message-content">
+            <span class="message-author">${author}:</span>
+            <span class="message-text">${text}</span>
+        </div>
         <div class="message-hover-actions">
             <button class="action-btn hover-edit-btn" title="Редактировать сообщение">✏️</button>
             <div class="action-dropdown-wrapper">
                 <button class="action-btn hover-more-btn" title="Ещё">&gt;</button>
-                <div class="hover-submenu"><button class="submenu-item-btn">Добавить в друзья</button></div>
+                <div class="hover-submenu">
+                    <button class="submenu-item-btn">Добавить в друзья</button>
+                </div>
             </div>
             <button class="action-btn hover-delete-trigger-btn" title="Удалить">🗑️</button>
         </div>
     `;
+    
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
-    if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
+    if (timerDeleteBtn) { 
+        timerDeleteBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            initiateMessageDelete(messageElement); 
+        }); 
+    }
+    
     const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
-    if (addFriendBtn) { addFriendBtn.addEventListener('click', (e) => { e.stopPropagation(); alert(\`Заявка в друзья пользователю \${author} отправлена!\`); }); }
-    realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
+    if (addFriendBtn) { 
+        addFriendBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            alert('Заявка в друзья пользователю ' + author + ' успешно отправлена!'); 
+        }); 
+    }
+    
+    realMessagesArea.appendChild(messageElement); 
+    realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
 
 function checkUserSession() {
