@@ -1,4 +1,4 @@
-// === ФУНКЦИЯ КРУГОВОГО ТАЙМЕРА УДАЛЕНИЯ СООБЩЕНИЙ ===
+// === 1. ФУНКЦИЯ КРУГОВОГО ТАЙМЕРА УДАЛЕНИЯ СООБЩЕНИЙ ===
 let deleteTimeout = null;
 let deleteInterval = null;
 
@@ -64,7 +64,7 @@ function initiateMessageDelete(messageElement) {
 
 let messagesListener = null;
 
-// === КОНФИГУРАЦИЯ GOOGLE FIREBASE ===
+// === 2. КОНФИГУРАЦИЯ GOOGLE FIREBASE ===
 const firebaseConfig = {
   apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
   authDomain: "://firebaseapp.com",
@@ -83,19 +83,20 @@ const CREATOR_NICKNAME = 'dj1ka';
 let myName = '';
 let currentServerContext = 'public';
 let currentChannelContext = 'general-chat';
+
 // Основные элементы интерфейса
 let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn;
 let userHeaderName, openFullProfileBtn, goToAdminRequestsBtn;
 let adminRequestsList, requestsCountBadge, noRequestsText;
 let publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
 
+// === 3. ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ СОБЫТИЙ ===
 document.addEventListener('DOMContentLoaded', () => {
     authModalOverlay = document.getElementById('authModalOverlay');
     authLoginInput = document.getElementById('authLoginInput');
     authPasswordInput = document.getElementById('authPasswordInput');
     authSubmitBtn = document.getElementById('authSubmitBtn');
     
-    // Привязываем переменные к новым ID нижнего профиля и шапки чата
     userHeaderName = document.getElementById('userHeaderName');
     openFullProfileBtn = document.getElementById('openFullProfileBtn');
     goToAdminRequestsBtn = document.getElementById('goToAdminRequestsBtn');
@@ -112,48 +113,22 @@ document.addEventListener('DOMContentLoaded', () => {
     messageInput = document.getElementById('messageInput');
     sendBtn = document.getElementById('sendBtn');
     
-    messagesContainer = document.getElementById('messagesContainer') || document.querySelector('.messages-container') || document.querySelector('.chat-messages') || document.getElementById('chatMessages');
+    messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
 
-    if (authSubmitBtn) {
-        authSubmitBtn.addEventListener('click', async () => {
-            const login = authLoginInput.value.trim();
-            const password = authPasswordInput.value.trim();
-            if (!login || !password) { alert('Заполните все поля!'); return; }
-            
-            try {
-                const userRef = db.collection("users").doc(login);
-                const userSnap = await userRef.get();
-
-                if (userSnap.exists) {
-                    const userData = userSnap.data();
-                    if (userData.password !== password) { 
-                        alert('Неверный пароль для этого никнейма!'); 
-                        return; 
-                    }
-                    if (userData.status === 'pending') { 
-                        alert('Ваш аккаунт всё ещё ожидает подтверждения администратором!'); 
-                        return; 
-                    }
-                } else {
-                    const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
-                    await userRef.set({ username: login, password: password, status: initialStatus });
-                    
-                    if (initialStatus === 'pending') { 
-                        alert('Заявка на создание аккаунта отправлена администратору!'); 
-                        return; 
-                    }
-                }
-
-                localStorage.setItem('chat_active_user', login);
-                myName = login;
-                if (authModalOverlay) authModalOverlay.classList.remove('active');
-                initChatAfterAuth();
-            } catch (err) { 
-                console.error("ПОЛНАЯ ОШИБКА АВТОРИЗАЦИИ:", err);
-                alert('Ошибка подключения к базе! Подробности в консоли (F12)'); 
-            }
+    // ОЖИВЛЯЕМ ШЕСТЕРЕНКУ НАСТРОЕК ЗОН
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    const settingsSidebar = document.getElementById('settingsSidebar');
+    if (openSettingsBtn && settingsSidebar) {
+        openSettingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsSidebar.classList.toggle('active');
         });
     }
+    document.addEventListener('click', (e) => {
+        if (settingsSidebar && !settingsSidebar.contains(e.target) && e.target !== openSettingsBtn) {
+            settingsSidebar.classList.remove('active');
+        }
+    });
 
     if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) {
@@ -190,28 +165,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Запуск проверки сессии при старте
     checkUserSession();
 });
+// === 4. СИНХРОНИЗАЦИЯ ИНТЕРФЕЙСА И АВТОРЛЕНДЕР ===
 function initChatAfterAuth() {
-    // Обновляем профиль в левом нижнем углу
     const leftName = document.getElementById('userHeaderName');
     if (leftName) leftName.textContent = myName;
 
     const leftAvatar = document.getElementById('openFullProfileBtn');
     if (leftAvatar) leftAvatar.textContent = myName.charAt(0).toUpperCase();
 
-    // Обновляем шапку чата (Текст User пропадет, встанет твой ник)
-    const topName = document.getElementById('topUserName') || document.querySelector('.user-name-header');
+    // Жёстко подставляем dj1ka в новый ID шапки чата
+    const topName = document.getElementById('topUserName');
     if (topName) topName.textContent = myName;
 
-    const topAvatar = document.getElementById('userAvatarHeader') || document.querySelector('.user-avatar-header');
+    const topAvatar = document.getElementById('userAvatarHeader');
     if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
     
-    // Проверка админ-панели для создателя
     if (myName === CREATOR_NICKNAME && goToAdminRequestsBtn) {
         goToAdminRequestsBtn.style.display = 'block';
-        listenToPendingRequests();
     }
     
     if (publicServerBtn) {
@@ -221,48 +193,8 @@ function initChatAfterAuth() {
     }
 }
 
-function listenToPendingRequests() {
-    if (!adminRequestsList || !requestsCountBadge || !noRequestsText) return;
-    
-    db.collection("users").onSnapshot((snapshot) => {
-        adminRequestsList.innerHTML = '';
-        let count = 0;
-        
-        snapshot.forEach((docSnap) => {
-            const user = docSnap.data();
-            if (user.status === 'pending') {
-                count++;
-                const card = document.createElement('div');
-                card.className = 'request-card';
-                card.innerHTML = `
-                    <div class="request-info">
-                        <div class="request-user-name">Логин: ${user.username}</div>
-                        <div class="request-user-pass">Пароль: ${user.password}</div>
-                    </div>
-                    <div class="request-actions-row">
-                        <button class="request-btn request-approve-btn">✔️ Одобрить</button>
-                        <button class="request-btn request-decline-btn">❌ Отклонить</button>
-                    </div>
-                `;
-
-                card.querySelector('.request-approve-btn').addEventListener('click', async () => {
-                    await db.collection("users").doc(user.username).update({ status: 'approved' });
-                });
-
-                card.querySelector('.request-decline-btn').addEventListener('click', async () => {
-                    await db.collection("users").doc(user.username).update({ status: 'declined' });
-                });
-
-                adminRequestsList.appendChild(card);
-            }
-        });
-        requestsCountBadge.textContent = count;
-        noRequestsText.style.display = (count === 0) ? 'block' : 'none';
-    });
-}
-
 function loadSavedMessages() {
-    const realContainer = document.getElementById('chatMessages') || document.getElementById('messagesContainer') || document.querySelector('.chat-messages') || document.querySelector('.messages-container');
+    const realContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
     if (!realContainer) return;
     
     realContainer.innerHTML = ''; 
@@ -288,6 +220,7 @@ function loadSavedMessages() {
             console.error("Ошибка чтения сообщений из Firestore:", error);
         });
 }
+
 async function handleSendMessage() {
     if (!messageInput) return;
     const text = messageInput.value.trim();
@@ -308,11 +241,11 @@ async function handleSendMessage() {
 }
 
 function appendMessage(author, text, isHistory = false) {
-    const realMessagesArea = document.getElementById('chatMessages') || document.querySelector('.chat-messages') || document.querySelector('.messages-container') || document.getElementById('messagesContainer');
+    const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
     if (!realMessagesArea) return;
 
     const messageElement = document.createElement('div');
-    messageElement.className = 'message-item';
+    messageElement.className = 'message message-item';
     
     messageElement.innerHTML = `
         <div class="message-content">
@@ -341,31 +274,24 @@ function checkUserSession() {
         if (authModalOverlay) authModalOverlay.classList.remove('active');
         const overlay = document.getElementById('authModalOverlay');
         if (overlay) overlay.style.setProperty('display', 'none', 'important');
-        
         initChatAfterAuth();
-
-        // Принудительно заставляем сайт открыть Общий Сервер при старте
+        
+        // Принудительно открываем Общий Сервер при старте сессии
         setTimeout(() => {
             const publicBtn = document.getElementById('publicServerBtn');
             if (publicBtn) publicBtn.click();
-        }, 100);
+        }, 120);
     } else {
         if (authModalOverlay) authModalOverlay.classList.add('active');
     }
 }
 
-// Пробивная глобальная функция для клика по кнопке входа
+// === 5. ПРОБИВНАЯ ГЛОБАЛЬНАЯ ФУНКЦИЯ ДЛЯ КНОПКИ ВХОДА ===
 window.triggerManualAuth = async function() {
-    const btn = document.getElementById('authSubmitBtn');
-    if (!btn) return;
-    
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
     
-    if (!loginInput || !passwordInput) {
-        alert("Ошибка: Поля ввода не найдены на странице!");
-        return;
-    }
+    if (!loginInput || !passwordInput) return;
     
     const login = loginInput.value.trim();
     const password = passwordInput.value.trim();
@@ -385,31 +311,19 @@ window.triggerManualAuth = async function() {
                 alert('Неверный пароль для этого никнейма!'); 
                 return; 
             }
-            if (userData.status === 'pending') { 
-                alert('Ваш аккаунт всё ещё ожидает подтверждения администратором!'); 
-                return; 
-            }
         } else {
             const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
             await userRef.set({ username: login, password: password, status: initialStatus });
-            
-            if (initialStatus === 'pending') { 
-                alert('Заявка на создание аккаунта отправлена администратору!'); 
-                return; 
-            }
         }
 
         localStorage.setItem('chat_active_user', login);
         myName = login;
-        if (authModalOverlay) authModalOverlay.classList.remove('active');
         
-        // На всякий случай скрываем плашку и через ID напрямую
         const overlay = document.getElementById('authModalOverlay');
         if (overlay) overlay.style.setProperty('display', 'none', 'important');
         
         initChatAfterAuth();
     } catch (err) { 
-        console.error("ПОЛНАЯ ОШИБКА АВТОРИЗАЦИИ:", err);
-        alert('Ошибка подключения к базе! Проверьте консоль.'); 
+        console.error("ОШИБКА АВТОРИЗАЦИИ:", err);
     }
 };
