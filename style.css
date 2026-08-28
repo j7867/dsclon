@@ -276,3 +276,13 @@ html, body {
     visibility: visible !important;
     transform: translateY(0) scale(1) !important;
 }
+/* ==========================================
+   ПРИНУДИТЕЛЬНЫЙ ВЫЗОВ ОКНА АВТОРИЗАЦИИ
+   ========================================== */
+
+/* Перебиваем любые скрытия и насильно выводим модалку входа на экран */
+.auth-modal-overlay.active {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
