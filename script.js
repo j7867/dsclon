@@ -286,7 +286,7 @@ function checkUserSession() {
     }
 }
 
-// === 5. ПРОБИВНАЯ ГЛОБАЛЬНАЯ ФУНКЦИЯ ДЛЯ КНОПКИ ВХОДА ===
+// ГЛОБАЛЬНАЯ ОШИБКОУСТОЙЧИВАЯ ФУНКЦИЯ АВТОРИЗАЦИИ (ТЕПЕРЬ В САМОМ ВЕРХУ)
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
