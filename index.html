@@ -157,9 +157,9 @@
             <button class="profile-save-global-btn" id="saveProfileChangesBtn">Сохранить изменения</button>
         </div>
     </div>
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ (ВЕРНУЛИ ACTIVE И ОТКЛЮЧИЛИ АВТОЗАПОЛНЕНИЕ) -->
+        <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ (ИСПРАВЛЕНО НА DIV ДЛЯ СНЯТИЯ ОШИБКИ) -->
     <div class="auth-modal-overlay active" id="authModalOverlay">
-        <form class="auth-modal-window" onsubmit="event.preventDefault(); window.triggerManualAuth();" autocomplete="off">
+        <div class="auth-modal-window" autocomplete="off">
             <h2 class="auth-title">С возвращением!</h2>
             <p class="auth-subtitle">Мы так рады видеть вас снова!</p>
             <div class="auth-field">
@@ -170,10 +170,10 @@
                 <label class="profile-label">Пароль *</label>
                 <input type="password" id="authPasswordInput" class="profile-input-field" placeholder="Введите ваш пароль" autocomplete="new-password">
             </div>
-            <button type="submit" id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;">Вход / Регистрация</button>
-        </form>
+            <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="window.triggerManualAuth()">Вход / Регистрация</button>
+        </div>
     </div>
-
+    
     <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ СЕРВЕРА -->
     <div class="server-modal-overlay" id="serverModalOverlay">
         <div class="server-modal-window">
