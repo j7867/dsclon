@@ -48,17 +48,15 @@ function initiateMessageDelete(messageElement) {
     
     let timeLeft = 5;
     numberText.textContent = timeLeft;
-    if (circle) circle.style.strokeDashoffset = "0";
-
-    deleteInterval = setInterval(() => {
+      deleteInterval = setInterval(() => {
         timeLeft--;
         if (timeLeft >= 0) {
             numberText.textContent = timeLeft;
-            if (circle) circle.style.strokeDashoffset = 62.8 * ((5 - timeLeft) / 5);
+            // Рассчитываем плавное заполнение: от 62.8 (пустой) до 0 (полный красный)
+            if (circle) circle.style.strokeDashoffset = 62.8 * (timeLeft / 5);
         }
     }, 1000);
 
-    deleteTimeout = setTimeout(async () => {
         clearInterval(deleteInterval);
         panel.classList.remove('active');
         try {
