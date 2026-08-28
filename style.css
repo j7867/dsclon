@@ -716,48 +716,35 @@ html, body {
     transition: stroke-dashoffset 1s linear !important; /* Шаг за шагом заполняем его */
 }
 /* =======================================================
-   ФИКС ХОВЕР-ПАНЕЛИ: ПОРЯДОК, НАКЛОНЫ И ВРАЩЕНИЕ СТРЕЛКИ
+   ФИКС ХОВЕР-ПАНЕЛИ: СТРЕЛКА СПРАВА, КРУЧЕНИЯ И НАКЛОНЫ
    ======================================================= */
 
-/* Фикс круга таймера: убираем scaleX(-1), ломавший анимацию, и пускаем ход против часовой */
-.countdown-svg {
-    transform: rotate(-90deg) !important; 
-}
-.countdown-circle {
-    fill: none !important;
-    stroke: #f04747 !important;
-    stroke-width: 2 !important;
-    stroke-dasharray: 62.8 !important;
-    stroke-dashoffset: 62.8 !important; /* Стартуем с пустого */
-    transition: stroke-dashoffset 1s linear !important;
-}
-
-/* Фикс стрелочки: крутим ТОЛЬКО текст внутри неё (тег span), сама квадратная кнопка не двигается */
+/* Твоё требование: Стрелочка плавно поворачивается строго носом вниз (на 90 градусов) */
 .hover-more-btn span {
     display: inline-block !important;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 .action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: rotate(90deg) !important; /* Разворачивает стрелочку > строго вниз */
+    transform: rotate(90deg) !important; /* Ровно 90 градусов вниз вместо 180 */
     color: #fff !important;
 }
 
-/* Плавная подготовка карандаша и мусорки к наклонам */
+/* Подготовка карандаша и мусорки к плавному полному прокручиванию */
 .hover-edit-btn, 
 .hover-delete-trigger-btn {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.1s !important;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.1s !important;
 }
 
-/* Твоё требование: Карандаш наклоняется плавно на 19 градусов при наведении */
+/* Твоё требование: Карандаш плавно прокручивается вокруг оси при наведении */
 .hover-edit-btn:hover {
-    transform: rotate(19deg) !important;
+    transform: rotate(360deg) !important; /* Полный оборот кручения */
     background-color: #35373c !important;
     color: #fff !important;
 }
 
-/* Твоё требование: Мусорка наклоняется плавно на 19 градусов при наведении */
+/* Твоё требование: Мусорка плавно прокручивается вокруг оси при наведении */
 .hover-delete-trigger-btn:hover {
-    transform: rotate(19deg) !important;
+    transform: rotate(360deg) !important; /* Полный оборот кручения */
     background-color: #f23f43 !important;
     color: #fff !important;
 }
