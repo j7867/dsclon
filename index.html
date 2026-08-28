@@ -157,22 +157,21 @@
             <button class="profile-save-global-btn" id="saveProfileChangesBtn">Сохранить изменения</button>
         </div>
     </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ -->
-    <div class="auth-modal-overlay" id="authModalOverlay">
-        <div class="auth-modal-window">
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ (ВЕРНУЛИ ACTIVE И ОТКЛЮЧИЛИ АВТОЗАПОЛНЕНИЕ) -->
+    <div class="auth-modal-overlay active" id="authModalOverlay">
+        <form class="auth-modal-window" onsubmit="event.preventDefault(); window.triggerManualAuth();" autocomplete="off">
             <h2 class="auth-title">С возвращением!</h2>
             <p class="auth-subtitle">Мы так рады видеть вас снова!</p>
             <div class="auth-field">
                 <label class="profile-label">Логин *</label>
-                <input type="text" id="authLoginInput" class="profile-input-field" placeholder="Введите логин" autocomplete="off">
+                <input type="text" id="authLoginInput" class="profile-input-field" placeholder="Введите логин" autocomplete="new-password">
             </div>
             <div class="auth-field" style="margin-top: 16px;">
                 <label class="profile-label">Пароль *</label>
-                <input type="password" id="authPasswordInput" class="profile-input-field" placeholder="Введите ваш пароль">
+                <input type="password" id="authPasswordInput" class="profile-input-field" placeholder="Введите ваш пароль" autocomplete="new-password">
             </div>
-            <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="triggerManualAuth()">Вход / Регистрация</button>
-        </div>
+            <button type="submit" id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;">Вход / Регистрация</button>
+        </form>
     </div>
 
     <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ СЕРВЕРА -->
