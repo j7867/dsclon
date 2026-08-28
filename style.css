@@ -830,3 +830,64 @@ main,
     border: none !important;
     outline: none !important;
 }
+/* ==========================================
+   БРОНЕБОЙНЫЙ АБСОЛЮТНЫЙ ВЫРАВНИВАТЕЛЬ ЧАТА
+   ========================================== */
+
+/* Растягиваем сам контейнер чата на всю правую половину */
+.chat-area, #chatArea {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    height: 100vh !important;
+    background-color: #313338 !important;
+    box-sizing: border-box !important;
+}
+
+/* ШАПКА: Заставляем её занять 100% ширины чата */
+.chat-header {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+}
+
+/* УТЯГИВАЕМ ВЕРХНИЙ БЛОК В САМЫЙ ПРАВЫЙ УГОЛ */
+.header-right-group {
+    position: absolute !important;
+    right: 20px !important; /* Впритык к правому краю по твоему чертежу */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+}
+
+/* ИНПУТ: Полностью расправляем зону ввода во всю длину экрана */
+.input-area {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 20px 24px 20px !important;
+    box-sizing: border-box !important;
+}
+
+/* Растягиваем саму рамку ввода от левого до правого края серого окна */
+.input-wrapper {
+    display: flex !important;
+    width: 100% !important; /* На всю длину по чертежу */
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+/* Само текстовое поле внутри рамки заставляем вырасти */
+.message-input {
+    flex: 1 !important; /* Выталкивает самолетик в край и занимает всё место */
+    width: 100% !important;
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+}
