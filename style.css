@@ -19,7 +19,7 @@
 
 html, body {
     display: flex !important;
-    flex-direction: row !important; /* Насильно выстраиваем панели и чат слева направо в один ряд */
+    flex-direction: row !important; /* Насильно выстраиваем всё слева направо */
     height: 100vh !important;
     width: 100vw !important;
     background-color: var(--bg-main);
@@ -29,48 +29,23 @@ html, body {
     padding: 0 !important;
 }
 
-/* Кастомный скроллбар в стиле Discord */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: #1e1f22;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #111214;
-}
-/* ==========================================
-   2. СЛУЖЕБНЫЕ СТИЛИ И АНИМАЦИИ (KEYFRAMES)
-   ========================================== */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Скроллбар */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1e1f22; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #111214; }
+
+/* Анимации */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes planeFlyOut {
+    0% { transform: translate(0, 0); opacity: 1; }
+    45% { transform: translate(40px, -10px) scale(0.8); opacity: 0; }
+    50% { transform: translate(-40px, 10px) scale(0.8); opacity: 0; }
+    100% { transform: translate(0, 0); opacity: 1; }
 }
 
-@keyframes popIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-@keyframes fadeInNotifItem {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.zone-highlight {
-    outline: 3px solid #ffffff !important;
-    box-shadow: 0 0 15px #ffffff, inset 0 0 100px 30px rgba(0, 0, 0, 0.95) !important;
-    z-index: 9998 !important;
-}
-
-/* ==========================================
-   3. БОКОВЫЕ ПАНЕЛИ (СЕРВЕРЫ И КАНАЛЫ)
-   ========================================== */
+/* 1. ЛЕВАЯ КОЛОНКА СЕРВЕРОВ */
 .guilds-sidebar {
     width: 72px;
     background-color: var(--bg-channels);
@@ -96,798 +71,158 @@ html, body {
     transition: all 0.2s ease;
     color: var(--text-color);
 }
+.guild-icon:hover, .guild-icon.active { border-radius: 16px; background-color: var(--accent-color); }
 
-.guild-icon:hover, .guild-icon.active {
-    border-radius: 16px;
-    background-color: var(--accent-color);
+.add-server-btn-sidebar {
+    width: 48px !important; height: 48px !important; border-radius: 50% !important;
+    background-color: #23a55a !important; color: #fff !important; font-size: 26px !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    cursor: pointer !important; margin-top: 4px !important; transition: all 0.2s !important;
 }
+.add-server-btn-sidebar:hover { border-radius: 16px !important; background-color: #1a7f43 !important; }
 
+/* 2. СРЕДНЯЯ КОЛОНКА КАНАЛОВ (ЖЕСТКАЯ ФИКСАЦИЯ ШИРИНЫ) */
 .channels-sidebar {
-    width: 240px;
+    width: 240px !important;
+    min-width: 240px !important;
+    max-width: 240px !important;
     background-color: var(--bg-sidebar);
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     padding: 12px;
     gap: 2px;
     border-right: 1px solid var(--border-color);
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
 }
 
-.sidebar-header {
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    padding-left: 8px;
-}
-
-.custom-user-item {
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.1s;
-    color: var(--text-muted);
-}
-
-.custom-user-item:hover, .custom-user-item.active {
-    background-color: rgba(255, 255, 255, 0.06);
-    color: var(--text-color);
-}
-
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: var(--accent-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    flex-shrink: 0;
-}
-
-.user-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
-}
-
-.user-profile-block { 
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px;
-}
-.user-profile-block a, 
-.user-profile-block button {
-    font-size: 14px;
-    color: #ffffff;
-    text-decoration: none;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-}
-.user-profile-block a:hover {
-    opacity: 1;
-}
-/* ==========================================
-   4. ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА И ШАПКА
-   ========================================== */
-.hashtag {
-    color: var(--text-muted);
-    font-size: 20px;
-}
-
-#chatTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.header-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-}
-
-.header-right-group {
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important; 
-}
-
-.user-name-header {
-    font-size: 14px !important;
-    color: #f2f3f5 !important;
-    font-weight: 500 !important;
-}
-
-.user-avatar-header {
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 12px !important;
-    color: #ffffff !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-}
-
-.header-right-group button svg {
-    width: 18px !important;
-    height: 18px !important;
-    display: block !important;
-}
-
-#openSettingsBtn {
-    margin-right: 8px !important;
-}
-
-/* Оригинальные круглые кнопки шапки */
-.settings-gear-trigger, .notification-bell {
-    position: relative !important;
-    background-color: rgba(43, 45, 49, 0.7) !important;
-    backdrop-filter: blur(4px) !important;
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    color: #b5bac1 !important;
-    z-index: 10 !important; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s, color 0.2s, transform 0.2s ease !important;
-}
-
-.settings-gear-trigger:hover, .notification-bell:hover {
-    color: #ffffff !important;
-    background-color: #35373c !important;
-    transform: scale(1.05) !important;
-}
-
-.settings-gear-trigger svg, .notification-bell svg {
-    width: 18px !important;
-    height: 18px !important;
-    fill: currentColor;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
-}
-
-.settings-gear-trigger:hover svg { 
-    transform: rotate(75deg) !important; 
-}
-.notification-bell:hover svg { 
-    transform: rotate(17deg) !important; 
-}
-
-/* ==========================================
-   5. ПОЛЕ ВВОДА СООБЩЕНИЙ
-   ========================================== */
-.input-wrapper {
-    background-color: var(--bg-input);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    gap: 12px;
-}
-
-.message-input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text-color);
-    font-size: 15px;
-}
-.message-input::placeholder { color: var(--text-muted); }
-
-.send-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.1s;
-}
-.send-btn:hover { color: #fff; }
-/* Анимация самолетика на кнопке отправки */
-@keyframes planeFlyOut {
-    0% { transform: translate(0, 0); opacity: 1; }
-    45% { transform: translate(40px, -10px) scale(0.8); opacity: 0; }
-    50% { transform: translate(-40px, 10px) scale(0.8); opacity: 0; }
-    100% { transform: translate(0, 0); opacity: 1; }
-}
-
-.input-wrapper:hover .send-btn svg,
-.send-btn:hover svg {
-    animation: planeFlyOut 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-}
-
-/* Стили карточек сообщений и панелей действий */
-.message-content {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-    flex: 1 !important;
-}
-
-.message-actions {
-    display: flex !important;
-    gap: 4px !important;
-    position: absolute !important;
-    right: 16px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    background-color: #2b2d31 !important;
-    border: 1px solid #111214 !important;
-    border-radius: 4px !important;
-    padding: 2px !important;
-    z-index: 5 !important;
-    height: 32px !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
-}
-
-.message:hover .message-actions {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-.message-actions .action-btn {
-    background: none !important;
-    border: none !important;
-    color: #b5bac1 !important;
-    padding: 0 8px !important;
-    height: 100% !important;
-    cursor: pointer !important;
-    font-size: 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 3px !important;
-    transition: color 0.2s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
-    width: auto !important;
-}
-
-.message-actions .action-btn:hover {
-    color: #ffffff !important;
-}
-
-.message-actions .edit-btn:hover {
-    color: #ffffff !important;
-    transform: rotate(17deg) !important;
-}
-
-.message-actions .delete-btn:hover {
-    color: #f23f43 !important;
-    transform: rotate(17deg) !important;
-}
-
-.message-actions .action-btn.arrow-btn {
-    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s ease !important;
-}
-
-.message-actions .action-btn.arrow-btn.open {
-    transform: rotate(90deg) !important;
-    color: #ffffff !important;
-}
-/* ==========================================
-   6. ПАРЯЩЕЕ ОКНО НАСТРОЕК ЗОН И ПАЛИТРА
-   ========================================== */
-.settings-sidebar {
-    position: fixed !important;
-    top: 64px !important;
-    right: 16px !important;
-    background-color: #313338 !important;
-    padding: 20px;
-    border-radius: 8px;
-    width: 280px !important;
-    height: auto !important;
-    z-index: 9999;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    border: 1px solid #232428;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-15px) scale(0.95);
-    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
-}
-
-.settings-sidebar.active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
-}
-
-.settings-sidebar .modal-screen {
-    position: relative !important;
-    width: 100% !important;
-    display: none !important;
-}
-.settings-sidebar .modal-screen.active-screen { display: block !important; }
-
-.modal-title { color: #ffffff !important; font-size: 16px; font-weight: 600; margin-bottom: 15px; }
-.custom-select-container { position: relative; margin-bottom: 20px; width: 100%; }
-
-.custom-select-trigger {
-    background-color: #1e1f22 !important; color: #dbdee1 !important;
-    padding: 12px 16px; border-radius: 4px; cursor: pointer;
-    border: 1px solid #111214; font-size: 14px;
-    display: flex; justify-content: space-between; align-items: center;
-}
-
-.custom-select-options {
-    position: absolute; top: 100% !important; left: 0; right: 0;
-    background-color: #111214 !important; border-radius: 4px;
-    margin-top: 5px !important; opacity: 0; visibility: hidden; z-index: 10100;
-    border: 1px solid #232428; overflow: hidden;
-    transform: translateY(-8px); transition: all 0.25s ease;
-}
-
-.custom-select-options.active {
-    opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important;
-}
-
-.custom-option { padding: 10px 16px; color: #b5bac1 !important; font-size: 14px; cursor: pointer; }
-.custom-option:hover { background-color: #5865f2 !important; color: #ffffff !important; }
-
-.color-picker-wrapper { position: relative; width: 48px; height: 48px; cursor: pointer; margin: 15px auto 0 auto; display: block; }
-.color-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2; }
-.color-picker-circle { width: 100%; height: 100%; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background-color: #313338; transition: transform 0.2s; }
-.color-picker-wrapper:hover .color-picker-circle { transform: scale(1.08); }
-
-.menu-nav-btn { width: 100%; background-color: #383a40; color: #dbdee1; border: none; padding: 10px 14px; border-radius: 4px; cursor: pointer; text-align: left; font-size: 14px; transition: all 0.15s; }
-.menu-nav-btn:hover { background-color: #4e5058; color: #ffffff; }
-
-.back-menu-btn { background: none; border: none; color: #b5bac1; font-size: 12px; cursor: pointer; margin-bottom: 5px; }
-.back-menu-btn:hover { color: #ffffff; }
-
-/* ==========================================
-   7. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ И ПОДТВЕРЖДЕНИЯ
-   ========================================== */
-.notifications-dropdown {
-    display: block !important; position: fixed !important;
-    top: 64px !important; right: 60px !important;
-    background-color: #313338; border: 1px solid #232428; border-radius: 8px;
-    width: 280px; max-height: 300px; overflow-y: auto; z-index: 9999;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6); padding: 12px; opacity: 0; visibility: hidden;
-    transform: translateY(-12px) scale(0.97);
-    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.25s !important;
-}
-
-.notifications-dropdown.visible { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
-
-.notification-item {
-    position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 4px; background-color: #1e1f22; margin-bottom: 6px; font-size: 13px; text-align: left;
-    animation: fadeInNotifItem 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-}
-
-.notification-item .notif-title { font-weight: bold; font-size: 11px; text-transform: uppercase; color: var(--text-muted); }
-.notification-item .notif-text { color: #dbdee1; }
-#notifEmptyText { color: var(--text-muted); text-align: center; padding: 15px; font-size: 13px; }
-
-.notif-actions { display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; }
-.notif-action-btn {
-    background-color: #2b2d31 !important; border: none !important; width: 28px !important; height: 28px !important; border-radius: 50% !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 11px; color: #b5bac1 !important; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important; opacity: 0; transform: scale(0.8);
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transition: all 0.2s ease !important;
-}
-.notif-action-btn.accept-btn { animation-delay: 0.1s; }
-.notif-action-btn.decline-btn { animation-delay: 0.2s; }
-.notif-action-btn:hover { transform: rotate(360deg) scale(1.1) !important; color: #ffffff !important; background-color: #383a40 !important; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important; }
-.notif-action-btn.accept-btn:hover { color: #23a55a !important; }
-.notif-action-btn.decline-btn:hover { color: #f23f43; }
-
-.notif-blur-target { transition: filter 0.2s ease, opacity 0.2s ease; }
-.notif-blur-target.blurred { filter: blur(0.8px) !important; opacity: 0.7 !important; background-color: #111214 !important; border-radius: 4px; pointer-events: none; }
-
-.confirm-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(30, 31, 34, 0.93) !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; z-index: 10; border-radius: 4px; animation: fadeIn 0.15s ease; }
-.confirm-title { font-size: 12px; font-weight: 600; color: #dbdee1; text-align: center; line-height: 1.3; }
-.confirm-buttons { display: flex; gap: 12px; }
-.confirm-btn { border: none; padding: 4px 12px; border-radius: 3px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background-color 0.15s; }
-.confirm-btn.yes-btn { background-color: #f23f43; color: #ffffff; }
-.confirm-btn.yes-btn:hover { background-color: #da373c; }
-.confirm-btn.no-btn { background-color: #4e5058; color: #dbdee1; }
-.confirm-btn.no-btn:hover { background-color: #6d6f78; }
-/* ==========================================
-   8. БОЛЬШОЕ МОДАЛЬНОЕ ОКНО ПРОФИЛЯ
-   ========================================== */
-.profile-modal-overlay {
-    position: fixed !important;
-    top: 0 !important; left: 0 !important;
-    width: 100vw !important; height: 100vh !important;
-    background-color: rgba(0, 0, 0, 0.75) !important;
-    z-index: 99999 !important;
-    display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.profile-modal-overlay.active {
-    display: flex !important;
-    opacity: 1 !important;
-}
-
-.profile-modal-window {
-    background-color: #313338 !important;
-    border: 1px solid #232428 !important;
-    border-radius: 8px !important;
-    width: 440px !important;
-    max-width: 90% !important;
-    padding: 24px !important;
-    position: relative !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-    transform: scale(0.95);
-    transition: transform 0.2s ease;
-}
-
-.profile-modal-overlay.active .profile-modal-window {
-    transform: scale(1) !important;
-}
-
-.profile-modal-close {
-    position: absolute !important;
-    top: 16px !important; right: 16px !important;
-    background: none !important; border: none !important;
-    color: #b5bac1 !important; font-size: 24px !important;
-    cursor: pointer !important; width: auto !important; height: auto !important;
-}
-.profile-modal-close:hover { color: #fff !important; }
-.profile-modal-title { font-size: 20px !important; font-weight: 600 !important; color: #fff !important; margin-bottom: 4px !important; }
-.profile-edit-section { display: flex !important; flex-direction: column !important; gap: 8px !important; margin-bottom: 12px !important; }
-.profile-label { font-size: 12px !important; text-transform: uppercase !important; font-weight: bold !important; color: #b5bac1 !important; }
-
-.profile-input-field { width: 100% !important; background-color: #1e1f22 !important; border: 1px solid #111214 !important; outline: none !important; padding: 10px 12px !important; border-radius: 4px !important; color: #f2f3f5 !important; font-size: 15px !important; }
-.profile-color-row { display: flex !important; gap: 10px !important; }
-.avatar-color-circle { width: 36px !important; height: 36px !important; border-radius: 50% !important; cursor: pointer !important; transition: transform 0.1s !important; }
-.avatar-color-circle:hover { transform: scale(1.1) !important; }
-.avatar-color-circle.selected { outline: 3px solid white !important; }
-
-.profile-save-global-btn {
-    width: 100% !important; background-color: #23a55a !important; color: white !important; border: none !important; padding: 12px !important; border-radius: 4px !important; cursor: pointer !important; font-weight: bold !important; font-size: 15px !important; margin-top: 10px !important; height: auto !important;
-}
-.profile-save-global-btn:hover { background-color: #1a7f43 !important; }
-
-/* Редактирование текста сообщений */
-.message-edit-form { display: flex !important; flex-direction: column !important; gap: 8px !important; margin-top: 8px !important; width: 100% !important; max-width: 400px !important; }
-.message-edit-input { width: 100% !important; background-color: #1e1f22 !important; border: 1px solid #111214 !important; outline: none !important; padding: 8px 12px !important; border-radius: 4px !important; color: #f2f3f5 !important; font-size: 14px !important; }
-.edit-form-buttons { display: flex !important; gap: 8px !important; }
-.edit-form-buttons button { border: none !important; padding: 6px 16px !important; border-radius: 4px !important; font-size: 12px !important; font-weight: 600 !important; cursor: pointer !important; transition: background-color 0.15s ease !important; }
-
-.edit-save-btn { background-color: #5865f2 !important; color: #ffffff !important; }
-.edit-save-btn:hover { background-color: #4752c4 !important; }
-.edit-cancel-btn { background-color: #4e5058 !important; color: #dbdee1 !important; }
-.edit-cancel-btn:hover { background-color: #6d6f78 !important; }
-
-/* Модалки логина и создания серверов */
-.auth-modal-overlay { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: #1e1f22 !important; z-index: 100000 !important; display: none !important; align-items: center !important; justify-content: center !important; opacity: 0; transition: opacity 0.3s ease !important; }
-.auth-modal-overlay.active { display: flex !important; opacity: 1 !important; }
-.auth-modal-window { background-color: #313338 !important; padding: 32px !important; border-radius: 8px !important; width: 480px !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; text-align: left; animation: fadeIn 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-.auth-title { color: #fff !important; font-size: 24px !important; font-weight: 600 !important; text-align: center !important; margin-bottom: 8px !important; }
-.auth-subtitle { color: #b5bac1 !important; font-size: 14px !important; text-align: center !important; margin-bottom: 20px !important; }
-
-.server-modal-overlay { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0, 0, 0, 0.7) !important; z-index: 99999 !important; display: none !important; align-items: center !important; justify-content: center !important; opacity: 0; transition: opacity 0.2s ease !important; }
-.server-modal-overlay.active { display: flex !important; opacity: 1 !important; }
-.server-modal-window { background-color: #313338 !important; border: 1px solid #232428 !important; border-radius: 8px !important; width: 440px !important; padding: 24px !important; position: relative !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; transform: scale(0.9) !important; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; }
-.server-modal-overlay.active .server-modal-window { transform: scale(1) !important; }
-
-.add-server-btn-sidebar { width: 48px !important; height: 48px !important; border-radius: 50% !important; background-color: #23a55a !important; color: #fff !important; font-size: 26px !important; font-weight: 300 !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; margin-top: 4px !important; opacity: 0 !important; visibility: hidden !important; transform: scale(0.7) !important; transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.3s, border-radius 0.2s !important; }
-.add-server-btn-sidebar.spawned { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
-.add-server-btn-sidebar:hover { border-radius: 16px !important; background-color: #1a7f43 !important; }
-
-#zoneSettingsScreen, #adminRequestsScreen { display: none !important; }
-#authModalOverlay, .auth-modal-overlay { display: none !important; }
-#authModalOverlay.active, .auth-modal-overlay.active { display: flex !important; }
-/* ==========================================
-   9. ФИНАЛЬНЫЙ БРОНЕБОЙНЫЙ ФИКС СЕТКИ ЧАТА ПО ЦЕНТРУ
-   ========================================== */
-main, 
-#chatMainArea, 
-.chat-main-window, 
+.sidebar-header { font-size: 12px; text-transform: uppercase; font-weight: bold; color: var(--text-muted); margin-bottom: 8px; padding-left: 8px; }
+.custom-user-item { padding: 8px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.1s; color: var(--text-muted); }
+.custom-user-item:hover, .custom-user-item.active { background-color: rgba(255, 255, 255, 0.06); color: var(--text-color); }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: var(--accent-color); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: #fff; flex-shrink: 0; }
+/* 3. ГЛАВНАЯ ЦЕНТРАЛЬНАЯ ОБЛАСТЬ ЧАТА */
 .chat-area {
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 !important;
-    width: auto !important;
-    height: 100% !important;
-    background-color: #313338 !important; /* Настоящий цвет фона Discord */
+    flex: 1 !important; /* Забирает ВСЁ свободное пространство справа */
+    height: 100vh !important;
+    background-color: var(--bg-main) !important;
+    position: relative !important;
+    box-sizing: border-box !important;
 }
 
-#chatMessages, 
-#messagesContainer, 
-.chat-messages, 
+/* ШАПКА ЧАТА С РАЗНОСОМ ПО КРАЯМ */
+.chat-header {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 20px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    background-color: #313338 !important;
+    border-bottom: 1px solid #1f2023 !important;
+    box-sizing: border-box !important;
+}
+
+.header-left { display: flex !important; align-items: center !important; gap: 8px !important; }
+.hashtag { color: var(--text-muted); font-size: 20px; }
+#chatTitle { font-size: 16px; font-weight: 600; color: var(--text-color); }
+
+/* УТЯГИВАЕМ ПРОФИЛЬ И КНОПКИ В САМЫЙ ПРАВЫЙ КРАЙ */
+.header-right-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    margin-left: auto !important; /* Насильно выталкивает блок вправо */
+}
+
+.user-name-header { font-size: 14px !important; color: #f2f3f5 !important; font-weight: 500 !important; }
+
+/* Круглые кнопки с поворотами */
+.settings-gear-trigger, .notification-bell {
+    background-color: #383a40 !important; border: none !important; color: #dbdee1 !important; cursor: pointer !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    width: 32px !important; height: 32px !important; border-radius: 50% !important; transition: all 0.2s ease !important;
+}
+.settings-gear-trigger:hover, .notification-bell:hover { background-color: #4e5058 !important; color: #ffffff !important; }
+.settings-gear-trigger:hover svg { transform: rotate(75deg) !important; }
+.notification-bell:hover svg { transform: rotate(17deg) !important; }
+.settings-gear-trigger svg, .notification-bell svg { width: 18px !important; height: 18px !important; fill: currentColor; transition: transform 0.3s ease !important; }
+
+/* КОНТЕЙНЕР СООБЩЕНИЙ */
 .messages-container {
-    display: block !important; /* Убираем ломающий флекс */
     flex: 1 !important;
-    height: 100% !important;
     padding: 20px !important;
     overflow-y: auto !important;
+    display: block !important;
     box-sizing: border-box !important;
 }
 
-.message, .message-item {
-    display: flex !important;
-    width: 100% !important;
-    margin-bottom: 12px !important;
-    position: relative !important;
-    background: transparent !important;
-    box-sizing: border-box !important;
-}
+.message { display: flex !important; width: 100% !important; margin-bottom: 12px !important; position: relative !important; background: transparent !important; box-sizing: border-box !important; }
+.message-content { display: flex !important; flex-direction: column !important; gap: 4px !important; flex: 1 !important; }
 
-.message.deleting {
-    opacity: 0 !important;
-    transform: translateX(20px) !important;
-}
-
-.input-area, 
-.message-input-container, 
-.chat-input-area {
+/* ЗОНА ВВОДА И ИНПУТ НА ВСЮ ШИРИНУ ЭКРАНА */
+.input-area {
     display: flex !important;
-    flex-direction: column !important; /* Плашка ложится строго НАД инпутом */
+    flex-direction: column !important;
     width: 100% !important;
     padding: 0 20px 24px 20px !important;
-    background-color: #313338 !important;
+    background-color: var(--bg-main) !important;
     margin-top: auto !important;
     box-sizing: border-box !important;
 }
 
-/* КРАСИВАЯ ПЛАШКА Discord ВЫЕЗЖАЮЩАЯ ИЗ СТЕНЫ НАД ИНПУТОМ */
+.input-wrapper {
+    display: flex !important;
+    width: 100% !important; /* На всю ширину серого экрана */
+    background-color: var(--bg-input);
+    border-radius: 8px;
+    align-items: center !important;
+    padding: 10px 16px;
+    gap: 12px;
+    box-sizing: border-box !important;
+}
+
+.message-input {
+    flex: 1 !important; /* Занимает всё пространство до самолётика */
+    width: 100% !important;
+    background: none !important; border: none !important; outline: none !important;
+    color: var(--text-color); font-size: 15px;
+}
+.message-input::placeholder { color: var(--text-muted); }
+
+.send-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
+.send-btn:hover { color: #fff; }
+.send-btn svg { width: 24px; height: 24px; fill: currentColor; }
+.input-wrapper:hover .send-btn svg, .send-btn:hover svg { animation: planeFlyOut 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important; }
+
+/* КРАСИВАЯ ПЛАШКА Discord НАД ИНПУТОМ */
 .delete-confirm-panel {
-    display: none;
-    opacity: 0;
-    transform: translateY(15px); /* Плавный выезд снизу вверх */
-    background: #2f3136 !important;
-    border: 1px solid #f04747 !important;
-    border-radius: 8px !important;
-    padding: 12px 16px !important;
-    margin-bottom: 12px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease !important;
-    z-index: 10 !important;
+    display: none; opacity: 0; transform: translateY(15px);
+    background: #2f3136 !important; border: 1px solid #f04747 !important; border-radius: 8px !important;
+    padding: 12px 16px !important; margin-bottom: 12px !important; width: 100% !important; box-sizing: border-box !important;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease !important; z-index: 10 !important;
 }
+.delete-confirm-panel.active { display: block !important; opacity: 1 !important; transform: translateY(0) !important; }
+.delete-panel-content { display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; }
+.delete-panel-text { color: #dbdee1 !important; font-size: 14px; font-weight: 500; }
+.delete-panel-controls { display: flex !important; align-items: center !important; gap: 16px !important; }
+.delete-cancel-btn { background: transparent !important; color: #ffffff !important; border: none !important; font-size: 14px !important; cursor: pointer !important; font-weight: 500 !important; }
+.delete-cancel-btn:hover { text-decoration: underline !important; }
 
-.delete-confirm-panel.active {
-    display: block !important;
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-}
+/* КРУГОВОЙ ТАЙМЕР ОТСЧЕТА */
+.countdown-wrapper { position: relative !important; width: 24px !important; height: 24px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+.countdown-number { position: absolute !important; color: #f04747 !important; font-size: 11px !important; font-weight: bold !important; }
+.countdown-svg { transform: rotate(-90deg) !important; }
+.countdown-circle-bg { fill: none !important; stroke: #4f545c !important; stroke-width: 2 !important; }
+.countdown-circle { fill: none !important; stroke: #f04747 !important; stroke-width: 2 !important; stroke-dasharray: 62.8 !important; stroke-dashoffset: 0 !important; transition: stroke-dashoffset 1s linear !important; }
 
-.delete-panel-content {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    width: 100% !important;
-}
-
-.delete-panel-text {
-    color: #dbdee1 !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-}
-
-.delete-panel-controls {
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-}
-
-.delete-cancel-btn {
-    background: transparent !important;
-    color: #ffffff !important;
-    border: none !important;
-    font-size: 14px !important;
-    cursor: pointer !important;
-    font-weight: 500 !important;
-}
-
-.delete-cancel-btn:hover {
-    text-decoration: underline !important;
-}
-
-/* АНИМИРОВАННЫЙ КРУГОВОЙ ТАЙМЕР ОТСЧЕТА (5 СЕКУНД) */
-.countdown-wrapper {
-    position: relative !important;
-    width: 24px !important;
-    height: 24px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.countdown-number {
-    position: absolute !important;
-    color: #f04747 !important;
-    font-size: 11px !important;
-    font-weight: bold !important;
-}
-
-.countdown-svg {
-    transform: rotate(-90deg) !important;
-}
-
-.countdown-circle-bg {
-    fill: none !important;
-    stroke: #4f545c !important;
-    stroke-width: 2 !important;
-}
-
-.countdown-circle {
-    fill: none !important;
-    stroke: #f04747 !important;
-    stroke-width: 2 !important;
-    stroke-dasharray: 62.8 !important;
-    stroke-dashoffset: 0 !important;
-    transition: stroke-dashoffset 1s linear !important;
-}
-/* ==========================================
-   ЖЕЛЕЗОБЕТОННЫЙ ВЫРАВНИВАТЕЛЬ ЦЕНТРАЛЬНОГО ЧАТА
-   ========================================== */
-
-/* Растягиваем центральный чат на всю свободную ширину справа от панелей */
-.chat-area, 
-#chatArea {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    width: auto !important;
-    height: 100vh !important;
-    background-color: #313338 !important; /* Настоящий цвет Discord */
-    position: relative !important;
-}
-
-/* Насильно расправляем зону сообщений, чтобы они шли списком по центру */
-.messages-container, 
-#messagesContainer {
-    display: block !important;
-    flex: 1 !important;
-    height: calc(100vh - 120px) !important;
-    padding: 20px !important;
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-}
-
-/* Выравниваем инпут и плашку удаления строго по ширине чата в самом низу */
-.input-area {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    padding: 0 20px 24px 20px !important;
-    background-color: #313338 !important;
-    margin-top: auto !important;
-    box-sizing: border-box !important;
-}
-
-.input-wrapper {
-    width: 100% !important;
-}
-/* ==========================================
-   ФИНАЛЬНЫЙ СДВИГ ШАПКИ В САМЫЙ ПРАВЫЙ КРАЙ
-   ========================================== */
-
-/* Заставляем шапку чата растянуться на всю ширину экрана */
-.chat-header {
-    width: 100% !important;
-    min-width: calc(100vw - 312px) !important; /* Учитываем ширину левых панелей */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important; /* Разносит название канала влево, а кнопки — в самый правый край */
-    padding: 0 20px !important;
-    box-sizing: border-box !important;
-}
-
-/* Насильно утягиваем кнопки настроек в самый угол экрана */
-.header-right-group {
-    margin-left: auto !important; /* Выталкивает весь блок до упора вправо */
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-}
-/* ==========================================
-   ЖЕЛЕЗОБЕТОННОЕ РАСПРАВЛЕНИЕ ИНПУТА ВШИРЬ
-   ========================================== */
-
-/* Контейнер зоны ввода: растягиваем по ширине на 100% */
-.input-area {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 0 20px 24px 20px !important;
-    box-sizing: border-box !important;
-}
-
-/* Сама плашка инпута: заставляем её занять всю ширину чата */
-.input-wrapper {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    box-sizing: border-box !important;
-}
-
-/* Само текстовое поле внутри плашки: заставляем его расти вширь */
-.message-input {
-    flex: 1 !important; /* Насильно отдаем инпуту всё свободное место до самолётика */
-    width: 100% !important;
-    background: none !important;
-    border: none !important;
-    outline: none !important;
-}
-/* ==========================================
-   БРОНЕБОЙНЫЙ АБСОЛЮТНЫЙ ВЫРАВНИВАТЕЛЬ ЧАТА
-   ========================================== */
-
-/* Растягиваем сам контейнер чата на всю правую половину */
-.chat-area, #chatArea {
-    position: relative !important;
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    height: 100vh !important;
-    background-color: #313338 !important;
-    box-sizing: border-box !important;
-}
-
-/* ШАПКА: Заставляем её занять 100% ширины чата */
-.chat-header {
-    width: 100% !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 0 20px !important;
-    box-sizing: border-box !important;
-}
-
-/* УТЯГИВАЕМ ВЕРХНИЙ БЛОК В САМЫЙ ПРАВЫЙ УГОЛ */
-.header-right-group {
-    position: absolute !important;
-    right: 20px !important; /* Впритык к правому краю по твоему чертежу */
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 16px !important;
-}
-
-/* ИНПУТ: Полностью расправляем зону ввода во всю длину экрана */
-.input-area {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 0 20px 24px 20px !important;
-    box-sizing: border-box !important;
-}
-
-/* Растягиваем саму рамку ввода от левого до правого края серого окна */
-.input-wrapper {
-    display: flex !important;
-    width: 100% !important; /* На всю длину по чертежу */
-    align-items: center !important;
-    box-sizing: border-box !important;
-}
-
-/* Само текстовое поле внутри рамки заставляем вырасти */
-.message-input {
-    flex: 1 !important; /* Выталкивает самолетик в край и занимает всё место */
-    width: 100% !important;
-    background: none !important;
-    border: none !important;
-    outline: none !important;
-}
+/* МОДАЛКИ И СЕРВЕРА (СПРЯТАНЫ) */
+.auth-modal-overlay, .server-modal-overlay, .profile-modal-overlay { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(0,0,0,0.7) !important; z-index: 100000 !important; display: none !important; align-items: center !important; justify-content: center !important; }
+.auth-modal-overlay.active, .server-modal-overlay.active, .profile-modal-overlay.active { display: flex !important; }
+.auth-modal-window, .server-modal-window, .profile-modal-window { background-color: #313338 !important; padding: 32px !important; border-radius: 8px !important; width: 440px !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; }
+.auth-title, .profile-modal-title { color: #fff !important; font-size: 24px !important; font-weight: 600; text-align: center; margin-bottom: 8px; }
+.auth-subtitle { color: #b5bac1 !important; font-size: 14px; text-align: center; margin-bottom: 20px; }
+.profile-input-field { width: 100% !important; background-color: #1e1f22 !important; border: 1px solid #111214 !important; outline: none !important; padding: 10px 12px !important; border-radius: 4px !important; color: #f2f3f5 !important; font-size: 15px !important; }
+.profile-save-global-btn { width: 100% !important; background-color: #23a55a !important; color: white !important; border: none !important; padding: 12px !important; border-radius: 4px !important; cursor: pointer !important; font-weight: bold; font-size: 15px; margin-top: 10px; }
+.profile-save-global-btn:hover { background-color: #1a7f43 !important; }
