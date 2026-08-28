@@ -226,3 +226,53 @@ html, body {
 .profile-input-field { width: 100% !important; background-color: #1e1f22 !important; border: 1px solid #111214 !important; outline: none !important; padding: 10px 12px !important; border-radius: 4px !important; color: #f2f3f5 !important; font-size: 15px !important; }
 .profile-save-global-btn { width: 100% !important; background-color: #23a55a !important; color: white !important; border: none !important; padding: 12px !important; border-radius: 4px !important; cursor: pointer !important; font-weight: bold; font-size: 15px; margin-top: 10px; }
 .profile-save-global-btn:hover { background-color: #1a7f43 !important; }
+/* ==========================================
+   УЛЬТИМАТИВНЫЙ ФИКС ШАПКИ И СКРЫТИЯ НАСТРОЕК
+   ========================================== */
+
+/* Насильно растягиваем шапку и расталкиваем элементы по углам */
+.chat-header {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* Название канала улетит влево, кнопки — вправо */
+    padding: 0 20px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+/* Утягиваем группу настроек в самый дальний правый угол экрана */
+.header-right-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    margin-left: auto !important; /* Жестко выталкивает блок в правый край */
+}
+
+/* Намертво прячем парящее окно настроек, пока на шестеренку не нажали */
+.settings-sidebar {
+    position: fixed !important;
+    top: 64px !important;
+    right: 16px !important;
+    background-color: #313338 !important;
+    padding: 20px !important;
+    border-radius: 8px !important;
+    width: 280px !important;
+    height: auto !important;
+    z-index: 9999 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    border: 1px solid #232428 !important;
+    
+    /* Скрываем блок от глаз по умолчанию */
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Показываем настройки ТОЛЬКО тогда, когда у них есть класс active */
+.settings-sidebar.active {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
