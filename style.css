@@ -715,3 +715,49 @@ html, body {
     stroke-dashoffset: 62.8 !important; /* Начинаем с абсолютно пустого круга */
     transition: stroke-dashoffset 1s linear !important; /* Шаг за шагом заполняем его */
 }
+/* =======================================================
+   ФИКС ХОВЕР-ПАНЕЛИ: ПОРЯДОК, НАКЛОНЫ И ВРАЩЕНИЕ СТРЕЛКИ
+   ======================================================= */
+
+/* Фикс круга таймера: убираем scaleX(-1), ломавший анимацию, и пускаем ход против часовой */
+.countdown-svg {
+    transform: rotate(-90deg) !important; 
+}
+.countdown-circle {
+    fill: none !important;
+    stroke: #f04747 !important;
+    stroke-width: 2 !important;
+    stroke-dasharray: 62.8 !important;
+    stroke-dashoffset: 62.8 !important; /* Стартуем с пустого */
+    transition: stroke-dashoffset 1s linear !important;
+}
+
+/* Фикс стрелочки: крутим ТОЛЬКО текст внутри неё (тег span), сама квадратная кнопка не двигается */
+.hover-more-btn span {
+    display: inline-block !important;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+.action-dropdown-wrapper:hover .hover-more-btn span {
+    transform: rotate(90deg) !important; /* Разворачивает стрелочку > строго вниз */
+    color: #fff !important;
+}
+
+/* Плавная подготовка карандаша и мусорки к наклонам */
+.hover-edit-btn, 
+.hover-delete-trigger-btn {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.1s !important;
+}
+
+/* Твоё требование: Карандаш наклоняется плавно на 19 градусов при наведении */
+.hover-edit-btn:hover {
+    transform: rotate(19deg) !important;
+    background-color: #35373c !important;
+    color: #fff !important;
+}
+
+/* Твоё требование: Мусорка наклоняется плавно на 19 градусов при наведении */
+.hover-delete-trigger-btn:hover {
+    transform: rotate(19deg) !important;
+    background-color: #f23f43 !important;
+    color: #fff !important;
+}
