@@ -397,3 +397,48 @@ html, body {
     justify-content: space-between !important;
     color: #dbdee1 !important;
 }
+/* ==========================================
+   КОНЕЧНЫЙ ЛОСК: ИСПРАВЛЕНИЕ ИКОНОК И ЗОН
+   ========================================== */
+
+/* 1. Насильно выравниваем иконки в шапке ровно по центру и убираем обрезку */
+.header-right-group {
+    position: static !important; /* Убираем абсолютный сдвиг, ломавший шестеренку */
+    transform: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    margin-left: auto !important; /* Намертво утягивает всю группу в правый край */
+}
+
+/* 2. Прячем уродливый список выбора зон внутри панели настроек */
+.custom-select-options, 
+#zoneSelectOptions {
+    display: none !important; /* Намертво скрываем список по умолчанию */
+    position: absolute !important;
+    background-color: #1e1f22 !important;
+    border: 1px solid #111214 !important;
+    border-radius: 4px !important;
+    width: calc(100% - 32px) !important;
+    z-index: 1000000 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+    padding: 4px 0 !important;
+}
+
+/* 3. Показываем список зон только тогда, когда на него нажали (класс active) */
+.custom-select-container.active .custom-select-options,
+#zoneSelectOptions.active {
+    display: block !important;
+}
+
+/* Оформляем строчки выбора зон внутри списка */
+.custom-option {
+    padding: 8px 12px !important;
+    color: #b5bac1 !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+}
+.custom-option:hover {
+    background-color: #35373c !important;
+    color: #fff !important;
+}
