@@ -735,3 +735,44 @@ main,
     stroke-dashoffset: 0 !important;
     transition: stroke-dashoffset 1s linear !important;
 }
+/* ==========================================
+   ЖЕЛЕЗОБЕТОННЫЙ ВЫРАВНИВАТЕЛЬ ЦЕНТРАЛЬНОГО ЧАТА
+   ========================================== */
+
+/* Растягиваем центральный чат на всю свободную ширину справа от панелей */
+.chat-area, 
+#chatArea {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    width: auto !important;
+    height: 100vh !important;
+    background-color: #313338 !important; /* Настоящий цвет Discord */
+    position: relative !important;
+}
+
+/* Насильно расправляем зону сообщений, чтобы они шли списком по центру */
+.messages-container, 
+#messagesContainer {
+    display: block !important;
+    flex: 1 !important;
+    height: calc(100vh - 120px) !important;
+    padding: 20px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Выравниваем инпут и плашку удаления строго по ширине чата в самом низу */
+.input-area {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    padding: 0 20px 24px 20px !important;
+    background-color: #313338 !important;
+    margin-top: auto !important;
+    box-sizing: border-box !important;
+}
+
+.input-wrapper {
+    width: 100% !important;
+}
