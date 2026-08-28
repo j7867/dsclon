@@ -1,4 +1,3 @@
-
 // === ФУНКЦИЯ КРУГОВОГО ТАЙМЕРА УДАЛЕНИЯ СООБЩЕНИЙ ===
 let deleteTimeout = null;
 let deleteInterval = null;
@@ -340,11 +339,21 @@ function checkUserSession() {
     if (savedUser) {
         myName = savedUser;
         if (authModalOverlay) authModalOverlay.classList.remove('active');
+        const overlay = document.getElementById('authModalOverlay');
+        if (overlay) overlay.style.setProperty('display', 'none', 'important');
+        
         initChatAfterAuth();
+
+        // Принудительно заставляем сайт открыть Общий Сервер при старте
+        setTimeout(() => {
+            const publicBtn = document.getElementById('publicServerBtn');
+            if (publicBtn) publicBtn.click();
+        }, 100);
     } else {
         if (authModalOverlay) authModalOverlay.classList.add('active');
     }
 }
+
 // Пробивная глобальная функция для клика по кнопке входа
 window.triggerManualAuth = async function() {
     const btn = document.getElementById('authSubmitBtn');
