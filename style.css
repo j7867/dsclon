@@ -672,3 +672,32 @@ html, body {
     background-color: #5865f2 !important; /* Фирменный синий цвет Discord */
     color: #fff !important;
 }
+/* =======================================================
+   ФИКС: ПАРЯЩЕЕ ОКНО УВЕДОМЛЕНИЙ ДЛЯ КОЛОКОЛЬЧИКА
+   ======================================================= */
+.bell-dropdown-panel {
+    position: fixed !important;
+    top: 60px !important;
+    right: 64px !important; /* Встает аккурат под колокольчиком */
+    background-color: #2b2d31 !important; /* Цвет Discord */
+    border: 1px solid #1f2023 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    width: 260px !important;
+    height: auto !important;
+    z-index: 99999 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    
+    /* Эффект плавного вылета, как у шестеренки */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-10px) scale(0.95) !important;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important;
+}
+
+/* Плавное проявление при клике */
+.bell-dropdown-panel.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
