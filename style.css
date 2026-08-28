@@ -442,3 +442,10 @@ html, body {
     background-color: #35373c !important;
     color: #fff !important;
 }
+/* Управляем отображением внутренних экранов настроек */
+.modal-screen {
+    display: none; /* Прячем экраны по умолчанию */
+}
+.modal-screen.active-screen {
+    display: block !important; /* Показываем только первый экран */
+}
