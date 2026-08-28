@@ -597,3 +597,78 @@ html, body {
     color: #dbdee1 !important;
     font-size: 15px;
 }
+/* =======================================================
+   ФИКС: ОБВОДКА СООБЩЕНИЙ, СТРЕЛОЧКА И СКРЫТОЕ ПОДМЕНЮ
+   ======================================================= */
+
+/* Твоё требование: При наведении на сообщение делаем красивую обводку всей строки */
+.message-item {
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    padding: 8px 12px !important;
+    transition: background-color 0.1s ease, border-color 0.1s ease !important;
+}
+.message-item:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border-color: #4e5058 !important; /* Серый аккуратный контур в стиле Discord */
+}
+
+/* Контейнер для стрелочки и подменю */
+.action-dropdown-wrapper {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+/* Твоё требование: анимация поворота стрелочки > вниз */
+.hover-more-btn {
+    transition: transform 0.2s ease !important;
+}
+.action-dropdown-wrapper:hover .hover-more-btn {
+    transform: rotate(90deg) !important; /* Разворачивает стрелочку > строго вниз */
+    color: #fff !important;
+}
+
+/* Скрытое подменю, где теперь прячется кнопка "Добавить в друзья" */
+.hover-submenu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    background-color: #111214 !important; /* Глубокий темный цвет меню */
+    border: 1px solid #232428 !important;
+    border-radius: 4px !important;
+    padding: 4px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+    z-index: 1000 !important;
+    width: 160px !important;
+    
+    /* Плавное появление при наведении на обертку стрелочки */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-5px) !important;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s !important;
+}
+
+/* Показываем подменю при наведении на блок стрелочки */
+.action-dropdown-wrapper:hover .hover-submenu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(2px) !important;
+}
+
+/* Стили кнопки внутри подменю */
+.submenu-item-btn {
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    color: #b5bac1 !important;
+    padding: 6px 10px !important;
+    text-align: left !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    border-radius: 2px !important;
+    transition: background-color 0.1s, color 0.1s !important;
+}
+.submenu-item-btn:hover {
+    background-color: #5865f2 !important; /* Фирменный синий цвет Discord */
+    color: #fff !important;
+}
