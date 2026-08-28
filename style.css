@@ -449,3 +449,151 @@ html, body {
 .modal-screen.active-screen {
     display: block !important; /* Показываем только первый экран */
 }
+/* =======================================================
+   ФИНАЛЬНЫЙ СТИЛИСТИЧЕСКИЙ ФИКС: ПЛАВНОСТЬ И ХОВЕР-ПАНЕЛИ
+   ======================================================= */
+
+/* Делаем плавное появление парящей панели настроек шестерёнки */
+.settings-sidebar, #settingsSidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    position: fixed !important;
+    top: 60px !important;
+    right: 20px !important;
+    background-color: #2b2d31 !important;
+    border: 1px solid #1f2023 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    width: 240px !important;
+    z-index: 99999 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    
+    /* Эффект плавного вылета */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-10px) scale(0.95) !important;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important;
+}
+
+/* При активации шестерёнки плавно выводим её */
+.settings-sidebar.active, #settingsSidebar.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+/* Управляем внутренними экранами настроек зон */
+.modal-screen {
+    display: none !important; /* Скрыты по умолчанию */
+}
+.modal-screen.active-screen {
+    display: block !important; /* Показываем только активный экран */
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* ПЛАВАЮЩАЯ ДИСКОРД-ПАНЕЛЬ ДЕЙСТВИЙ ПРИ НАВЕДЕНИИ НА СООБЩЕНИЕ */
+.message-item {
+    position: relative !important;
+    transition: background-color 0.1s ease;
+}
+.message-item:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.message-hover-actions {
+    position: absolute !important;
+    right: 32px !important;
+    top: -12px !important;
+    background-color: #313338 !important;
+    border: 1px solid #232428 !important;
+    border-radius: 4px !important;
+    display: flex !important;
+    padding: 2px !important;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.16) !important;
+    z-index: 50 !important;
+    
+    /* Скрыта по умолчанию, проявляется плавно */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scale(0.95) !important;
+    transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s !important;
+}
+
+/* Показываем панель только при наведении на конкретную строчку сообщения */
+.message-item:hover .message-hover-actions {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1) !important;
+}
+
+.action-btn {
+    background: transparent !important;
+    border: none !important;
+    color: #b5bac1 !important;
+    cursor: pointer !important;
+    padding: 4px 8px !important;
+    font-size: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px !important;
+    transition: background-color 0.1s, color 0.1s !important;
+}
+.action-btn:hover {
+    background-color: #35373c !important;
+    color: #fff !important;
+}
+.hover-delete-trigger-btn:hover {
+    background-color: #f23f43 !important;
+    color: #fff !important;
+}
+
+/* ПЛАВНОСТЬ ДЛЯ ВСЕХ МОДАЛОК (ВКЛЮЧАЯ ПРОФИЛЬ ПО ЦЕНТРУ ЭКРАНА) */
+.profile-modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    z-index: 1000000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Плавное проявление */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.2s ease, visibility 0.2s !important;
+}
+
+.profile-modal-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.profile-modal-window {
+    background-color: #313338 !important;
+    padding: 24px !important;
+    border-radius: 8px !important;
+    width: 400px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    transform: scale(0.9) !important;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important;
+}
+.profile-modal-overlay.active .profile-modal-window {
+    transform: scale(1) !important;
+}
+
+/* Стили заголовков и текста внутри сообщений */
+.message-author {
+    font-weight: 600 !important;
+    color: #fff !important;
+    margin-right: 8px;
+    font-size: 15px;
+}
+.message-text {
+    color: #dbdee1 !important;
+    font-size: 15px;
+}
