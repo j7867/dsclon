@@ -223,22 +223,22 @@ function appendMessage(author, text) {
     
     const messageElement = document.createElement('div'); 
     messageElement.className = 'message-item message';
-    
-    messageElement.innerHTML = `
+       messageElement.innerHTML = `
         <div class="message-content">
             <span class="message-author">${author}:</span>
             <span class="message-text">${text}</span>
         </div>
-        <!-- Стрелочка встала крайней левой перед остальными кнопками -->
+        <!-- Стрелочка встала в самый правый край по чертежу -->
         <div class="message-hover-actions">
+            <button class="action-btn hover-edit-btn" title="Редактировать сообщение">✏️</button>
+            <button class="action-btn hover-delete-trigger-btn" title="Удалить">🗑️</button>
+            
             <div class="action-dropdown-wrapper">
                 <button class="action-btn hover-more-btn"><span>&gt;</span></button>
                 <div class="hover-submenu">
                     <button class="submenu-item-btn">Добавить в друзья</button>
                 </div>
             </div>
-            <button class="action-btn hover-edit-btn" title="Редактировать сообщение">✏️</button>
-            <button class="action-btn hover-delete-trigger-btn" title="Удалить">🗑️</button>
         </div>
     `;
     
