@@ -261,7 +261,7 @@ async function handleSendMessage() {
     } catch (err) { console.error(err); }
 }
 
-// ДОРАБОТАННЫЙ РЕНДЕР: Панель реакций и действий при наведении
+// ОБНОВЛЕННЫЙ РЕНДЕР: Панель со стрелочкой-трансформером и скрытым меню
 function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
     if (!realMessagesArea) return;
@@ -274,20 +274,41 @@ function appendMessage(author, text) {
             <span class="message-author">${author}:</span>
             <span class="message-text">${text}</span>
         </div>
-        <!-- Дискорд-панель действий, всплывающая справа при наведении -->
+        <!-- Дискорд-панель действий -->
         <div class="message-hover-actions">
             <button class="action-btn hover-emoji-btn" title="Добавить реакцию">😀</button>
             <button class="action-btn hover-edit-btn" title="Редактировать сообщение">✏️</button>
-            <button class="action-btn hover-more-btn" title="Ещё">💬</button>
+            
+            <!-- Стрелочка-трансформер с выпадающим подменю внутри -->
+            <div class="action-dropdown-wrapper">
+                <button class="action-btn hover-more-btn" title="Ещё">&gt;</button>
+                <div class="hover-submenu">
+                    <button class="submenu-item-btn">Добавить в друзья</button>
+                </div>
+            </div>
+            
             <button class="action-btn hover-delete-trigger-btn" title="Удалить">🗑️</button>
         </div>
     `;
 
+    // Логика удаления
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) {
         timerDeleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             initiateMessageDelete(messageElement);
+        });
+    }
+
+    // Логика для кнопки "Добавить в друзья" внутри подменю
+    const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
+    if (addFriendBtn) {
+        addFriendBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            alert(`Заявка в друзья пользователю ${author} успешно отправлена!`);
+            // Закрываем подменю после клика
+            const submenu = messageElement.querySelector('.hover-submenu');
+            if (submenu) submenu.classList.remove('active');
         });
     }
 
