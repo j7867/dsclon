@@ -193,14 +193,25 @@ document.addEventListener('DOMContentLoaded', () => {
             profileModalOverlay.classList.remove('active');
         });
     }
-    // ОЖИВЛЯЕМ КНОПКУ УВЕДОМЛЕНИЙ (КОЛОКОЛЬЧИК)
+      // ОЖИВЛЯЕМ НАСТОЯЩУЮ ПЛАШКУ УВЕДОМЛЕНИЙ В СТИЛЕ DISCORD
     const notificationBell = document.getElementById('notificationBell');
-    if (notificationBell) {
+    const bellDropdownPanel = document.getElementById('bellDropdownPanel');
+    
+    if (notificationBell && bellDropdownPanel) {
         notificationBell.addEventListener('click', (e) => {
             e.stopPropagation();
-            alert('Уведомления успешно включены! Вы будете получать звуковые сигналы о новых сообщениях.');
+            bellDropdownPanel.classList.toggle('active');
+            // Если открыты настройки — закрываем их, чтобы не налезали друг на друга
+            if (settingsSidebar) settingsSidebar.classList.remove('active');
         });
     }
+
+    // Добавляем закрытие колокольчика при клике в любое другое место
+    document.addEventListener('click', (e) => {
+        if (bellDropdownPanel && !bellDropdownPanel.contains(e.target) && e.target !== notificationBell) {
+            bellDropdownPanel.classList.remove('active');
+        }
+    });
 
     // ГЛОБАЛЬНЫЙ КЛИК ДЛЯ ЗАКРЫТИЯ ОКИН НАСТРОЕК
     document.addEventListener('click', (e) => {
