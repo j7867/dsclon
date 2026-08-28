@@ -716,35 +716,36 @@ html, body {
     transition: stroke-dashoffset 1s linear !important; /* Шаг за шагом заполняем его */
 }
 /* =======================================================
-   ФИКС ХОВЕР-ПАНЕЛИ: СТРЕЛКА СПРАВА, КРУЧЕНИЯ И НАКЛОНЫ
+   ФИКС ХОВЕР-ПАНЕЛИ: НАКЛОН 19 ГРАДУСОВ И ПОВОРОТ ВНИЗ
    ======================================================= */
 
-/* Твоё требование: Стрелочка плавно поворачивается строго носом вниз (на 90 градусов) */
+/* Фикс стрелочки: так как знак изначально смотрит влево (<),
+   чтобы развернуть его носом вниз, нам нужно повернуть его строго на -90 градусов */
 .hover-more-btn span {
     display: inline-block !important;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 .action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: rotate(90deg) !important; /* Ровно 90 градусов вниз вместо 180 */
+    transform: rotate(-90deg) !important; /* Насильно разворачивает знак < носом строго вниз */
     color: #fff !important;
 }
 
-/* Подготовка карандаша и мусорки к плавному полному прокручиванию */
+/* Возвращаем аккуратные наклоны вместо безумного кручения в 360 градусов */
 .hover-edit-btn, 
 .hover-delete-trigger-btn {
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.1s !important;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.1s !important;
 }
 
-/* Твоё требование: Карандаш плавно прокручивается вокруг оси при наведении */
+/* Твоё требование: Карандаш наклоняется плавно на 19 градусов при наведении */
 .hover-edit-btn:hover {
-    transform: rotate(360deg) !important; /* Полный оборот кручения */
+    transform: rotate(19deg) !important;
     background-color: #35373c !important;
     color: #fff !important;
 }
 
-/* Твоё требование: Мусорка плавно прокручивается вокруг оси при наведении */
+/* Твоё требование: Мусорка наклоняется плавно на 19 градусов при наведении */
 .hover-delete-trigger-btn:hover {
-    transform: rotate(360deg) !important; /* Полный оборот кручения */
+    transform: rotate(19deg) !important;
     background-color: #f23f43 !important;
     color: #fff !important;
 }
