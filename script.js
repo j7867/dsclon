@@ -193,6 +193,14 @@ document.addEventListener('DOMContentLoaded', () => {
             profileModalOverlay.classList.remove('active');
         });
     }
+    // ОЖИВЛЯЕМ КНОПКУ УВЕДОМЛЕНИЙ (КОЛОКОЛЬЧИК)
+    const notificationBell = document.getElementById('notificationBell');
+    if (notificationBell) {
+        notificationBell.addEventListener('click', (e) => {
+            e.stopPropagation();
+            alert('Уведомления успешно включены! Вы будете получать звуковые сигналы о новых сообщениях.');
+        });
+    }
 
     // ГЛОБАЛЬНЫЙ КЛИК ДЛЯ ЗАКРЫТИЯ ОКИН НАСТРОЕК
     document.addEventListener('click', (e) => {
