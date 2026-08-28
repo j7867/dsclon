@@ -50,11 +50,12 @@ function initiateMessageDelete(messageElement) {
     numberText.textContent = timeLeft;
     if (circle) circle.style.strokeDashoffset = "62.8";
 
-    deleteInterval = setInterval(() => {
+       deleteInterval = setInterval(() => {
         timeLeft--;
         if (timeLeft >= 0) {
             numberText.textContent = timeLeft;
-            if (circle) circle.style.strokeDashoffset = 62.8 * (timeLeft / 5);
+       if (circle) circle.style.strokeDashoffset = (62.8 * (timeLeft / 5)) + 'px';
+
         }
     }, 1000);
 
@@ -228,14 +229,15 @@ function appendMessage(author, text) {
             <span class="message-author">${author}:</span>
             <span class="message-text">${text}</span>
         </div>
+        <!-- Стрелочка встала крайней левой перед остальными кнопками -->
         <div class="message-hover-actions">
-            <button class="action-btn hover-edit-btn" title="Редактировать сообщение">✏️</button>
             <div class="action-dropdown-wrapper">
-                <button class="action-btn hover-more-btn" title="Ещё">&gt;</button>
+                <button class="action-btn hover-more-btn"><span>&gt;</span></button>
                 <div class="hover-submenu">
                     <button class="submenu-item-btn">Добавить в друзья</button>
                 </div>
             </div>
+            <button class="action-btn hover-edit-btn" title="Редактировать сообщение">✏️</button>
             <button class="action-btn hover-delete-trigger-btn" title="Удалить">🗑️</button>
         </div>
     `;
