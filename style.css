@@ -801,4 +801,32 @@ main,
     align-items: center !important;
     gap: 16px !important;
 }
+/* ==========================================
+   ЖЕЛЕЗОБЕТОННОЕ РАСПРАВЛЕНИЕ ИНПУТА ВШИРЬ
+   ========================================== */
 
+/* Контейнер зоны ввода: растягиваем по ширине на 100% */
+.input-area {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 20px 24px 20px !important;
+    box-sizing: border-box !important;
+}
+
+/* Сама плашка инпута: заставляем её занять всю ширину чата */
+.input-wrapper {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+/* Само текстовое поле внутри плашки: заставляем его расти вширь */
+.message-input {
+    flex: 1 !important; /* Насильно отдаем инпуту всё свободное место до самолётика */
+    width: 100% !important;
+    background: none !important;
+    border: none !important;
+    outline: none !important;
+}
