@@ -115,15 +115,74 @@ document.addEventListener('DOMContentLoaded', () => {
     
     messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
 
-    // ОЖИВЛЯЕМ ШЕСТЕРЕНКУ НАСТРОЕК ЗОН
+        // ОЖИВЛЯЕМ ШЕСТЕРЕНКУ И ВСЕ КНОПКИ ВНУТРИ НАСТРОЕК ЗОН
     const openSettingsBtn = document.getElementById('openSettingsBtn');
     const settingsSidebar = document.getElementById('settingsSidebar');
+    
     if (openSettingsBtn && settingsSidebar) {
         openSettingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             settingsSidebar.classList.toggle('active');
         });
     }
+
+    const goToZonesBtn = document.getElementById('goToZonesBtn');
+    const backToMenuBtn = document.getElementById('backToMenuBtn');
+    const mainSettingsScreen = document.getElementById('mainSettingsScreen');
+    const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
+    
+    if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
+        goToZonesBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mainSettingsScreen.style.setProperty('display', 'none', 'important');
+            zoneSettingsScreen.style.setProperty('display', 'block', 'important');
+        });
+    }
+    
+    if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
+        backToMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            zoneSettingsScreen.style.setProperty('display', 'none', 'important');
+            mainSettingsScreen.style.setProperty('display', 'block', 'important');
+        });
+    }
+
+    const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
+    const zoneSelectOptions = document.getElementById('zoneSelectOptions');
+    let selectedZone = ''; 
+
+    if (zoneSelectTrigger && zoneSelectOptions) {
+        zoneSelectTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            zoneSelectOptions.classList.toggle('active');
+        });
+    }
+
+    document.querySelectorAll('.custom-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.stopPropagation();
+            selectedZone = this.getAttribute('data-value'); 
+            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = this.textContent + ' <span class="select-arrow">▼</span>';
+            if (zoneSelectOptions) zoneSelectOptions.classList.remove('active'); 
+        });
+    });
+
+    const applyColorBtn = document.getElementById('applyColorBtn');
+    const customColorInput = document.getElementById('customColorInput');
+
+    if (applyColorBtn && customColorInput) {
+        applyColorBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!selectedZone) { alert('Сначала выберите зону чата!'); return; }
+            
+            const targetElement = document.getElementById(selectedZone);
+            if (targetElement) {
+                targetElement.style.setProperty('background-color', customColorInput.value, 'important');
+                alert('Цвет зоны успешно изменен!');
+            }
+        });
+    }
+
     document.addEventListener('click', (e) => {
         if (settingsSidebar && !settingsSidebar.contains(e.target) && e.target !== openSettingsBtn) {
             settingsSidebar.classList.remove('active');
