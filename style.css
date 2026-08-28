@@ -701,3 +701,17 @@ html, body {
     visibility: visible !important;
     transform: translateY(0) scale(1) !important;
 }
+/* Разворачиваем SVG, чтобы анимация шла против часовой стрелки */
+.countdown-svg {
+    transform: scaleX(-1) rotate(-90deg) !important; /* Отражение по горизонтали разворачивает ход назад */
+}
+
+/* Задаем плавное заполнение красным цветом */
+.countdown-circle {
+    fill: none !important;
+    stroke: #f04747 !important;
+    stroke-width: 2 !important;
+    stroke-dasharray: 62.8 !important;
+    stroke-dashoffset: 62.8 !important; /* Начинаем с абсолютно пустого круга */
+    transition: stroke-dashoffset 1s linear !important; /* Шаг за шагом заполняем его */
+}
