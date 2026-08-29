@@ -237,12 +237,40 @@ async function startVoiceCall() {
 
 async function startScreenShare() {
     try {
-        if (!peerConnection) { alert('Сначала подключитесь к голосу!'); return; }
+        // Жестко инициализируем peerConnection, если он не создался ранее, обходя любые алерты!
+        if (!peerConnection) { 
+            peerConnection = new RTCPeerConnection(rtcServers); 
+        }
+        
+        // Захватываем поток экрана компьютера
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
         const screenTrack = screenStream.getVideoTracks()[0];
-        const senders = peerConnection.getSenders(); const sender = senders.find(s => s.track && s.track.kind === 'video');
-        if (sender) { sender.replaceTrack(screenTrack); } else { peerConnection.addTrack(screenTrack, screenStream); }
-    } catch (err) { console.error('Ошибка экрана:', err); }
+        
+        // Переключаем визуал: прячем текстовую аватарку и пускаем стрим в плеер
+        const placeholder = document.getElementById('voiceAvatarPlaceholder');
+        const remoteVideo = document.getElementById('remoteVideo');
+        if (placeholder) placeholder.style.display = 'none';
+        if (remoteVideo) {
+            remoteVideo.srcObject = screenStream;
+            remoteVideo.muted = true; // Чтобы сам себя не слышал эхом
+        }
+
+        const senders = peerConnection.getSenders(); 
+        const sender = senders.find(s => s.track && s.track.kind === 'video');
+        if (sender) { 
+            sender.replaceTrack(screenTrack); 
+        } else { 
+            peerConnection.addTrack(screenTrack, screenStream); 
+        }
+        
+        // Если пользователь нажмет "Остановить делить экран" сверху в Хроме
+        screenTrack.onended = () => {
+            if (remoteVideo) remoteVideo.srcObject = null;
+            if (placeholder) placeholder.style.display = 'flex';
+        };
+    } catch (err) { 
+        console.error('Ошибка захвата экрана:', err); 
+    }
 }
 
 async function joinVoiceCall() {
@@ -276,9 +304,10 @@ async function hangUpCall() {
         try {
             const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); });
             const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); });
-            await roomRef.delete();
-        } catch (err) { console.error(err); }
-    }
+                await roomRef.delete();
+    } catch (err) { console.error(err); }
+    const placeholder = document.getElementById('voiceAvatarPlaceholder');
+    if (placeholder) placeholder.style.display = 'flex';
     currentRoomId = null;
 }
 
