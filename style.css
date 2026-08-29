@@ -679,93 +679,123 @@ html, body {
     border-radius: 2px !important;
     transition: background-color 0.1s, color 0.1s !important;
 }
-.submenu-item-btn:hover {
-    background-color: #5865f2 !important; /* Фирменный синий цвет Discord */
-    color: #fff !important;
-}
 /* =======================================================
-   ФИКС: ПАРЯЩЕЕ ОКНО УВЕДОМЛЕНИЙ ДЛЯ КОЛОКОЛЬЧИКА
+   ЕДИНЫЙ ИЗОЛИРОВАННЫЙ БЛОК ХОВЕР-ПАНЕЛИ (БЕЗ ДЁРГАНИЯ)
    ======================================================= */
-.bell-dropdown-panel {
-    position: fixed !important;
-    top: 60px !important;
-    right: 64px !important; /* Встает аккурат под колокольчиком */
-    background-color: #2b2d31 !important; /* Цвет Discord */
-    border: 1px solid #1f2023 !important;
-    border-radius: 8px !important;
-    padding: 16px !important;
-    width: 260px !important;
-    height: auto !important;
-    z-index: 99999 !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+
+/* 1. Настройка строки сообщения и обводки */
+.message-item {
+    position: relative !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    padding: 8px 12px !important;
+    transition: background-color 0.1s ease, border-color 0.1s ease !important;
+}
+.message-item:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border-color: #4e5058 !important; /* Серый аккуратный контур Дискорда */
+}
+
+/* 2. Сама всплывающая панель действий справа */
+.message-hover-actions {
+    position: absolute !important;
+    right: 32px !important;
+    top: -12px !important;
+    background-color: #313338 !important;
+    border: 1px solid #232428 !important;
+    border-radius: 4px !important;
+    display: flex !important;
+    padding: 2px !important;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.16) !important;
+    z-index: 9999 !important;
+    height: 32px !important;
+    align-items: center !important;
     
-    /* Эффект плавного вылета, как у шестеренки */
+    /* Плавное проявление панели */
     opacity: 0 !important;
     visibility: hidden !important;
-    transform: translateY(-10px) scale(0.95) !important;
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important;
+    transform: scale(0.95) !important;
+    transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s !important;
 }
-
-/* Плавное проявление при клике */
-.bell-dropdown-panel.active {
+.message-item:hover .message-hover-actions {
     opacity: 1 !important;
     visibility: visible !important;
-    transform: translateY(0) scale(1) !important;
-}
-/* Разворачиваем SVG, чтобы анимация шла против часовой стрелки */
-.countdown-svg {
-    transform: scaleX(-1) rotate(-90deg) !important; /* Отражение по горизонтали разворачивает ход назад */
+    transform: scale(1) !important;
 }
 
-/* Задаем плавное заполнение красным цветом */
-.countdown-circle {
-    fill: none !important;
-    stroke: #f04747 !important;
-    stroke-width: 2 !important;
-    stroke-dasharray: 62.8 !important;
-    stroke-dashoffset: 62.8 !important; /* Начинаем с абсолютно пустого круга */
-    transition: stroke-dashoffset 1s linear !important; /* Шаг за шагом заполняем его */
+/* 3. Квадратные кнопки-рамки (Стоят МЁРТВО на месте) */
+.action-btn {
+    background: transparent !important;
+    border: none !important;
+    color: #b5bac1 !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px !important;
+    transition: background-color 0.1s, color 0.1s !important;
 }
-/* =======================================================
-   ФИКС ХОВЕР-ПАНЕЛИ: БЛОКИРОВКА РАМОК И НАКЛОНЫ ЗНАЧКОВ
-   ======================================================= */
 
+/* 4. Внутренние значки в кнопках (Только они наклоняются на 19°) */
 .hover-edit-btn span,
-.hover-delete-trigger-btn span {
-    display: inline-block !important;
-}
-/* =======================================================
-   ФИНАЛЬНЫЙ АБСОЛЮТНЫЙ ГРАДУСНЫЙ ПОВОРОТ СТРЕЛКИ ВНИЗ
-   ======================================================= */
-
-/* Изначальное состояние: разворачиваем исходный знак > влево на 180 градусов */
+.hover-delete-trigger-btn span,
 .hover-more-btn span {
     display: inline-block !important;
-    transform: rotate(180deg) !important; /* Насильно делает из нее знак < */
-    transform-origin: center center !important; /* Вращение строго по центру значка */
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-/* При наведении: катимся ПРОТИВ часовой стрелки носом вниз и блокируем перехват фокуса менюшкой */
-.action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: rotate(90deg) !important; /* Чистый, плавный и точный взгляд строго в пол */
-    color: #fff !important;
-    pointer-events: none !important; /* Жёсткий фикс дёргания — меню больше не ворует ховер */
+.hover-edit-btn:hover span { transform: rotate(19deg) !important; }
+.hover-edit-btn:hover { background-color: #35373c !important; color: #fff !important; }
+
+.hover-delete-trigger-btn:hover span { transform: rotate(19deg) !important; }
+.hover-delete-trigger-btn:hover { background-color: #f23f43 !important; color: #fff !important; }
+
+/* 5. Контейнер для выпадающего меню стрелочки */
+.action-dropdown-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 28px !important;
 }
 
-/* Твоё требование: Сама квадратная кнопка стоит ровно, а карандаш внутри неё наклоняется на 19° */
-.hover-edit-btn:hover span {
-    transform: rotate(19deg) !important;
+/* ФИКС СТРЕЛКИ: Изначальное состояние (Развернута влево на 180°) */
+.hover-more-btn span {
+    transform: rotate(180deg) !important;
+    transform-origin: center center !important;
 }
-.hover-edit-btn:hover {
-    background-color: #35373c !important;
+
+/* Твоё требование: При наведении плавно катится против часовой строго вниз до 90° */
+.action-dropdown-wrapper:hover .hover-more-btn span {
+    transform: rotate(90deg) !important;
     color: #fff !important;
 }
-/* Твоё требование: Красный квадрат стоит на месте, а мусорка внутри него наклоняется на 19° */
-.hover-delete-trigger-btn:hover span {
-    transform: rotate(19deg) !important;
+
+/* 6. Скрытая плашка "Добавить в друзья" (Вынесена из потока ховера!) */
+.hover-submenu {
+    position: fixed !important; /* Переключили на fixed, чтобы она ВООБЩЕ не влияла на размеры кнопок! */
+    margin-top: 34px !important; /* Четкий зазор снизу */
+    background-color: #111214 !important;
+    border: 1px solid #232428 !important;
+    border-radius: 4px !important;
+    padding: 4px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+    z-index: 100000 !important;
+    width: 140px !important;
+    
+    /* Полное скрытие по умолчанию */
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-5px) !important;
+    transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s !important;
 }
-.hover-delete-trigger-btn:hover {
-    background-color: #f23f43 !important;
-    color: #fff !important;
+
+/* Показываем синюю менюшку только при наведении на блок dropdown */
+.action-dropdown-wrapper:hover .hover-submenu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
 }
