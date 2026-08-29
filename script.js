@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
         backToMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); zoneSettingsScreen.classList.remove('active-screen'); mainSettingsScreen.classList.add('active-screen'); });
     }
-    const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
+        const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
     const zoneSelectOptions = document.getElementById('zoneSelectOptions');
     let selectedZone = '';
     if (zoneSelectTrigger && zoneSelectOptions) {
@@ -123,111 +123,69 @@ document.addEventListener('DOMContentLoaded', () => {
             if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
         });
     });
+
     const applyColorBtn = document.getElementById('applyColorBtn');
     const customColorInput = document.getElementById('customColorInput');
     if (applyColorBtn && customColorInput) {
         applyColorBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); if (!selectedZone) { alert('Выберите зону!'); return; }
+            e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; }
             const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); }
         });
     }
-    const userAvatarHeader = document.getElementById('userAvatarHeader');
+
+    // Оживляем клики по кружочкам красок в окне настроек профиля
+    let selectedAvatarColor = '#5865f2';
+    document.querySelectorAll('.avatar-color-circle').forEach(circle => {
+        circle.onclick = function(e) {
+            e.stopPropagation();
+            document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedAvatarColor = this.getAttribute('data-color');
+            const cropBox = document.querySelector('.avatar-crop-container');
+            if (cropBox) cropBox.style.backgroundColor = selectedAvatarColor;
+        };
+    });
+    // ОЖИВЛЯЕМ КНОПКУ «СОХРАНИТЬ ИЗМЕНЕНИЯ» ПРОФИЛЯ С КРАСКАМИ И АВАТАРКОЙ
+    const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
+    const profileNicknameInput = document.getElementById('profileNicknameInput');
     const profileModalOverlay = document.getElementById('profileModalOverlay');
-    const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
-    if (userAvatarHeader && profileModalOverlay) {
-        userAvatarHeader.addEventListener('click', (e) => { e.stopPropagation(); profileModalOverlay.classList.add('active'); });
-    }
-    if (closeProfileModalBtn && profileModalOverlay) {
-        closeProfileModalBtn.addEventListener('click', () => { profileModalOverlay.classList.remove('active'); });
-    }
-    const notificationBell = document.getElementById('notificationBell');
-    const bellDropdownPanel = document.getElementById('bellDropdownPanel');
-    if (notificationBell && bellDropdownPanel) {
-        notificationBell.addEventListener('click', (e) => { e.stopPropagation(); bellDropdownPanel.classList.toggle('active'); if (settingsSidebar) settingsSidebar.classList.remove('active'); });
-    }
-    document.addEventListener('click', (e) => {
-        if (settingsSidebar && !settingsSidebar.contains(e.target) && e.target !== openSettingsBtn) { settingsSidebar.classList.remove('active'); }
-        if (zoneSelectOptions && !zoneSelectOptions.contains(e.target) && e.target !== zoneSelectTrigger) { zoneSelectOptions.classList.remove('active'); }
-        if (bellDropdownPanel && !bellDropdownPanel.contains(e.target) && e.target !== notificationBell) { bellDropdownPanel.classList.remove('active'); }
-    });
-    if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
-    if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
-    if (publicServerBtn) {
-        publicServerBtn.addEventListener('click', () => {
-            document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active');
-            currentServerContext = 'public'; currentChannelContext = 'general-chat';
-            if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#';
-            if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block';
-            loadSavedMessages();
-        });
-    }
-    checkUserSession();
-});
-function initChatAfterAuth() {
-    const topName = document.getElementById('topUserName'); if (topName) topName.textContent = myName;
-    const topAvatar = document.getElementById('userAvatarHeader'); if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
-    if (publicServerBtn) publicServerBtn.click();
-}
 
-function loadSavedMessages() {
-    const realContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realContainer) return;
-    realContainer.innerHTML = ''; if (messagesListener) { messagesListener(); messagesListener = null; }
-    messagesListener = db.collection("messages").where("server", "==", currentServerContext).where("channel", "==", currentChannelContext).orderBy("timestamp", "asc").onSnapshot((snapshot) => {
-        realContainer.innerHTML = ''; snapshot.forEach((docSnap) => { const msg = docSnap.data(); if (msg.author && msg.text) { appendMessage(msg.author, msg.text); } });
-    });
-}
-
-async function handleSendMessage() {
-    if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
-    try {
-        await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-        messageInput.value = '';
-    } catch (err) { console.error(err); }
-}
-
-function appendMessage(author, text) {
-    const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
-    const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
-    messageElement.innerHTML = `
-        <div class="message-content"><span class="message-author">${author}:</span><span class="message-text">${text}</span></div>
-        <div class="message-hover-actions">
-            <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
-            <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
-            <div class="action-dropdown-wrapper">
-                           <div class="action-dropdown-wrapper">
-                <button class="action-btn hover-more-btn" title="Ещё"><span>&lt;</span></button>
-                <div class="hover-submenu"><button class="submenu-item-btn">Добавить в друзья</button></div>
-            </div>
-    `;
-    const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
-    if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
-    const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
-    if (addFriendBtn) { addFriendBtn.addEventListener('click', (e) => { e.stopPropagation(); alert('Заявка отправлена!'); }); }
-    
-    // РЕДАКТОР КНОПКИ КАРАНДАША
-    const editBtn = messageElement.querySelector('.hover-edit-btn');
-    if (editBtn) {
-        editBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); const textSpan = messageElement.querySelector('.message-text');
-            if (!textSpan || messageElement.classList.contains('editing')) return;
-            messageElement.classList.add('editing'); const originalText = textSpan.textContent;
-            textSpan.innerHTML = `<div style="display:inline-flex; gap:8px; align-items:center; width:100%; margin-top:4px;"><input type="text" class="edit-input" value="${originalText}" style="flex:1; background-color:#383a40; border:none; outline:none; color:#fff; padding:6px; border-radius:4px;"><button class="s-btn" style="background-color:#23a55a; color:#fff; border:none; padding:6px; border-radius:4px; cursor:pointer;">Ок</button><button class="c-btn" style="background:transparent; color:#fff; border:none; cursor:pointer;">Х</button></div>`;
-            const sBtn = textSpan.querySelector('.s-btn'), cBtn = textSpan.querySelector('.c-btn'), inp = textSpan.querySelector('.edit-input');
-            sBtn.addEventListener('click', async (evt) => {
-                evt.stopPropagation(); const nt = inp.value.trim(); if (!nt) return;
-                try {
-                    const snap = await db.collection("messages").where("server","==",currentServerContext).where("channel","==",currentChannelContext).where("author","==",author).where("text","==",originalText).get();
-                    snap.forEach(async(doc)=>{await db.collection("messages").doc(doc.id).update({text:nt});}); textSpan.textContent = nt; messageElement.classList.remove('editing');
-                } catch(err){console.error(err);}
-            });
-            cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
-        });
+    if (saveProfileChangesBtn) {
+        saveProfileChangesBtn.onclick = function() {
+            const newNick = profileNicknameInput ? profileNicknameInput.value.trim() : '';
+            if (newNick) {
+                myName = newNick;
+                localStorage.setItem('chat_active_user', myName);
+            }
+            
+            const topName = document.getElementById('topUserName');
+            const topAvatar = document.getElementById('userAvatarHeader');
+            if (topName) topName.textContent = myName;
+            
+            if (topAvatar) {
+                topAvatar.style.backgroundColor = selectedAvatarColor;
+                if (base64AvatarData) {
+                    topAvatar.textContent = '';
+                    topAvatar.style.backgroundImage = 'url(' + base64AvatarData + ')';
+                    topAvatar.style.backgroundSize = 'cover';
+                    topAvatar.style.backgroundPosition = 'center';
+                } else {
+                    topAvatar.style.backgroundImage = 'none';
+                    topAvatar.textContent = myName.charAt(0).toUpperCase();
+                }
+            }
+            if (profileModalOverlay) profileModalOverlay.classList.remove('active');
+            alert('Профиль успешно обновлен!');
+        };
     }
-    realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
-
 function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
-    if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
-    else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+    if (savedUser) { 
+        myName = savedUser; 
+        if (authModalOverlay) authModalOverlay.classList.remove('active'); 
+        initChatAfterAuth(); 
+    } else { 
+        if (authModalOverlay) authModalOverlay.classList.add('active'); 
+    }
 }
