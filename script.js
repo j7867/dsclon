@@ -1,4 +1,4 @@
-selectedAvatarColor = this.getAttribute('data-color');
+let selectedAvatarColor = '#5865f2';
 let base64AvatarData = '';
 // === 1. ГЛОБАЛЬНАЯ ФУНКЦИЯ АВТОРИЗАЦИИ ===
 window.triggerManualAuth = async function() {
@@ -132,10 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
             base64AvatarData = ''; modalAvatarImg.style.display = 'none'; modalAvatarLetter.style.display = 'block'; zoomSliderWrapper.style.display = 'none'; resetAvatarFileBtn.style.display = 'none'; uploadAvatarFileBtn.textContent = 'Выбрать файл'; if (profileImageFileInput) profileImageFileInput.value = '';
         };
     }
-    document.querySelectorAll('.avatar-color-circle').forEach(circle => {
+        document.querySelectorAll('.avatar-color-circle').forEach(circle => {
         circle.onclick = function(e) {
-            e.stopPropagation(); document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected')); this.classList.add('selected');
-            selectedAvatarColor = this.getAttribute('data-color'); const cropBox = document.querySelector('.avatar-crop-container'); if (cropBox) cropBox.style.backgroundColor = selectedAvatarColor;
+            e.stopPropagation();
+            document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected'));
+            e.currentTarget.classList.add('selected');
+            selectedAvatarColor = e.currentTarget.getAttribute('data-color');
+            const cropBox = document.querySelector('.avatar-crop-container');
+            if (cropBox) cropBox.style.backgroundColor = selectedAvatarColor;
         };
     });
 
