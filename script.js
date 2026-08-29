@@ -131,7 +131,44 @@ document.addEventListener('DOMContentLoaded', () => {
             await hangUpCall();
         };
     }
+    // === ОЖИВЛЯЕМ ПЕРЕКЛЮЧЕНИЕ ТЕКСТОВЫХ И ГОЛОСОВЫХ КАНАЛОВ ===
+    document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
+        item.onclick = async function(e) {
+            e.stopPropagation();
+            
+            // Снимаем активный класс со всех каналов и даём текущему
+            document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            
+            const channelType = this.getAttribute('data-type');
+            const channelName = this.getAttribute('data-channel');
+            
+            currentChannelContext = channelName;
+            if (chatTitle) chatTitle.textContent = channelName;
+            
+            const vZone = document.getElementById('videoCallZone');
 
+            // Если кликнули на ГОЛОСОВОЙ КАНАЛ
+                      if (channelType === 'voice') {
+                if (hashtag) hashtag.textContent = '🔊';
+                if (vZone) vZone.style.display = 'flex'; // Мгновенно выкатываем нижний пульт звонка
+                
+                // Автоматически запускаем WebRTC звонок и запрашиваем микрофон
+                await startVoiceCall();
+            }
+                // Если вернулись на ТЕКСТОВЫЙ КАНАЛ
+                if (hashtag) hashtag.textContent = '#';
+                
+                // Глушим звонок и прячем пульт
+                await hangUpCall();
+                if (vZone) vZone.style.display = 'none';
+                
+                // Подгружаем историю сообщений чата
+                loadSavedMessages();
+            }
+        };
+    });
+    
     if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
     if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
