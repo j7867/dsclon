@@ -1,3 +1,4 @@
+let publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn, selectedAvatarColor = '#5865f2';
 // === 1. ГЛОБАЛЬНАЯ ФУНКЦИЯ АВТОРИЗАЦИИ ===
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
