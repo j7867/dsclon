@@ -1,4 +1,3 @@
-// === 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И WEBRTC КОНФИГУРАЦИЯ ===
 let selectedAvatarColor = '#5865f2';
 let base64AvatarData = '';
 let localStream = null;
@@ -13,7 +12,6 @@ const rtcServers = {
     iceCandidatePoolSize: 10,
 };
 
-// === 2. ФУНКЦИЯ АВТОРИЗАЦИИ ===
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
@@ -39,7 +37,6 @@ window.triggerManualAuth = async function() {
     } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
 
-// === 3. КРУГОВОЙ ТАЙМЕР УДАЛЕНИЯ СООБЩЕНИЙ ===
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
@@ -83,7 +80,7 @@ if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 const CREATOR_NICKNAME = 'dj1ka'; let myName = ''; let currentServerContext = 'public'; let currentChannelContext = 'general-chat';
 let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn, publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
-// === 4. ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ DOM ===
+
 document.addEventListener('DOMContentLoaded', () => {
     authModalOverlay = document.getElementById('authModalOverlay'); authLoginInput = document.getElementById('authLoginInput'); authPasswordInput = document.getElementById('authPasswordInput'); authSubmitBtn = document.getElementById('authSubmitBtn'); publicServerBtn = document.getElementById('publicServerBtn'); dmServerBtn = document.getElementById('dmServerBtn'); serverChannelsSection = document.getElementById('serverChannelsSection'); dmChannelsSection = document.getElementById('dmChannelsSection'); chatTitle = document.getElementById('chatTitle'); hashtag = document.getElementById('hashtag'); messageInput = document.getElementById('messageInput'); sendBtn = document.getElementById('sendBtn'); messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
 
@@ -100,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const applyColorBtn = document.getElementById('applyColorBtn'); const customColorInput = document.getElementById('customColorInput');
     if (applyColorBtn && customColorInput) { applyColorBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; } const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); } }); }
-
     const bellDropdownPanel = document.getElementById('bellDropdownPanel'); const notificationBell = document.getElementById('notificationBell');
     if (notificationBell && bellDropdownPanel) { notificationBell.addEventListener('click', (e) => { e.stopPropagation(); bellDropdownPanel.classList.toggle('active'); if (settingsSidebar) settingsSidebar.classList.remove('active'); }); }
     document.addEventListener('click', (e) => {
@@ -121,51 +117,35 @@ document.addEventListener('DOMContentLoaded', () => {
             if (textChannel) textChannel.click();
         };
     }
-    // === ОЖИВЛЯЕМ ПЕРЕКЛЮЧЕНИЕ ТЕКСТОВЫХ И ГОЛОСОВЫХ КАНАЛОВ БЕЗ БАГОВ ===
-    document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
-        item.onclick = async function(e) {
-            e.stopPropagation();
-            document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            const channelType = this.getAttribute('data-type');
-            const channelName = this.getAttribute('data-channel');
-            currentChannelContext = channelName;
-            if (chatTitle) chatTitle.textContent = channelName;
-            const vZone = document.getElementById('videoCallZone');
-               // === ОБНОВЛЕННОЕ ПЕРЕКЛЮЧЕНИЕ КАНАЛОВ СО СКРЫТИЕМ ИНПУТА ===
-    document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
-        item.onclick = async function(e) {
-            e.stopPropagation();
-            document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            
-            const channelType = this.getAttribute('data-type');
-            const channelName = this.getAttribute('data-channel');
-            currentChannelContext = channelName;
-            if (chatTitle) chatTitle.textContent = channelName;
-            
-            const vZone = document.getElementById('videoCallZone');
-            const inputArea = document.querySelector('.input-area'); // Находим нижнюю панель ввода
 
-            // ТВОЁ ТРЕБОВАНИЕ: Если зашли в ГОЛОСОВОЙ КАНАЛ
+    // === ОБНОВЛЕННОЕ ПЕРЕКЛЮЧЕНИЕ КАНАЛОВ СО СКРЫТИЕМ ИНПУТА ===
+    document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
+        item.onclick = async function(e) {
+            e.stopPropagation();
+            document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            const channelType = this.getAttribute('data-type');
+            const channelName = this.getAttribute('data-channel');
+            currentChannelContext = channelName;
+            if (chatTitle) chatTitle.textContent = channelName;
+            const vZone = document.getElementById('videoCallZone');
+            const inputArea = document.querySelector('.input-area');
             if (channelType === 'voice') {
                 if (hashtag) hashtag.textContent = '🔊';
                 if (vZone) vZone.style.display = 'flex';
-                if (inputArea) inputArea.style.display = 'none'; // НАХУЙ ПРЯЧЕМ ТЕКСТОВЫЙ ИНПУТ
-                
+                if (inputArea) inputArea.style.display = 'none';
                 await startVoiceCall();
-                      } else {
+            } else {
                 if (hashtag) hashtag.textContent = '#';
                 if (vZone) vZone.style.display = 'none';
                 if (inputArea) inputArea.style.display = 'flex';
-                
                 await hangUpCall();
                 loadSavedMessages();
             }
         };
     });
 
-       if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
+    if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
     if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
     checkUserSession();
@@ -184,11 +164,11 @@ function loadSavedMessages() {
         realContainer.innerHTML = ''; snapshot.forEach((docSnap) => { const msg = docSnap.data(); if (msg.author && msg.text) { appendMessage(msg.author, msg.text); } });
     });
 }
-
 async function handleSendMessage() {
     if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
     try { await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); messageInput.value = ''; } catch (err) { console.error(err); }
 }
+
 function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
@@ -228,7 +208,6 @@ function appendMessage(author, text) {
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
 
-// === WEBRTC ФУНКЦИИ СИГНАЛКИ И УПРАВЛЕНИЯ ===
 async function startVoiceCall() {
     try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -241,7 +220,7 @@ async function startVoiceCall() {
         if (!peerConnection) { peerConnection = new RTCPeerConnection(rtcServers); }
         peerConnection.ontrack = (event) => {
             const remoteVideo = document.getElementById('remoteVideo'); const videoCallZone = document.getElementById('videoCallZone');
-            if (remoteVideo && event.streams && event.streams[0]) { remoteVideo.srcObject = event.streams[0]; if (videoCallZone) videoCallZone.style.display = 'flex'; }
+            if (remoteVideo && event.streams && event.streams) { remoteVideo.srcObject = event.streams; if (videoCallZone) videoCallZone.style.display = 'flex'; }
         };
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); currentRoomId = roomRef.id;
         const callerCandidatesCollection = roomRef.collection('callerCandidates');
@@ -259,7 +238,7 @@ async function startScreenShare() {
     try {
         if (!peerConnection) { peerConnection = new RTCPeerConnection(rtcServers); }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        const screenTrack = screenStream.getVideoTracks()[0];
+        const screenTrack = screenStream.getVideoTracks();
         const placeholder = document.getElementById('voiceAvatarPlaceholder');
         const remoteVideo = document.getElementById('remoteVideo');
         if (placeholder) placeholder.style.display = 'none';
@@ -279,7 +258,7 @@ async function joinVoiceCall() {
             if (localStream) { localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); }); }
             peerConnection.ontrack = (event) => {
                 const remoteVideo = document.getElementById('remoteVideo'); const videoCallZone = document.getElementById('videoCallZone');
-                if (remoteVideo && event.streams && event.streams[0]) { remoteVideo.srcObject = event.streams[0]; if (videoCallZone) videoCallZone.style.display = 'flex'; }
+                if (remoteVideo && event.streams && event.streams) { remoteVideo.srcObject = event.streams; if (videoCallZone) videoCallZone.style.display = 'flex'; }
             };
         }
         const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
@@ -308,10 +287,12 @@ async function hangUpCall() {
     if (placeholder) placeholder.style.display = 'flex';
     currentRoomId = null;
 }
-
 function checkUserSession() {
-    const savedUser = localStorage.getItem('chat_active_user');
-    if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
+const savedUser = localStorage.getItem('chat_active_user');
+if (savedUser) { myName = savedUser; if (authModalOverlay)
+authModalOverlay.classList.remove('active'); initChatAfterAuth(); 
+    }
 else { if (authModalOverlay) authModalOverlay.classList.add('active'); 
-     }
- }
+      }
+}
+
