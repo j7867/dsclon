@@ -3,15 +3,12 @@ window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
     if (!loginInput || !passwordInput) return;
-    
     const login = loginInput.value.trim();
     const password = passwordInput.value.trim();
     if (!login || !password) { alert('Заполните все поля!'); return; }
-
     try {
         const userRef = db.collection("users").doc(login);
         const userSnap = await userRef.get();
-
         if (userSnap.exists) {
             const userData = userSnap.data();
             if (userData.password !== password) { alert('Неверный пароль!'); return; }
@@ -19,37 +16,25 @@ window.triggerManualAuth = async function() {
             const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
             await userRef.set({ username: login, password: password, status: initialStatus });
         }
-
         localStorage.setItem('chat_active_user', login);
         myName = login;
-        
         const overlay = document.getElementById('authModalOverlay');
         if (overlay) overlay.classList.remove('active');
         initChatAfterAuth();
-    } catch (err) { 
-        console.error("ОШИБКА АВТОРИЗАЦИИ:", err);
-    }
+    } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
 
-// === 2. ФУНКЦИЯ КРУГОВОГО ТАЙМЕРА УДАЛЕНИЯ СООБЩЕНИЙ ===
-let deleteTimeout = null;
-let deleteInterval = null;
-
+// === 2. ФУНКЦИЯ КРУГОВОГО ТАЙМЕРА УДАЛЕНИЯ ===
+let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
     const numberText = document.getElementById('countdownNumber');
     const circle = document.getElementById('countdownCircle');
     const cancelBtn = document.getElementById('cancelDeleteBtn');
     if (!panel || !numberText || !circle || !cancelBtn) return;
-
-    clearTimeout(deleteTimeout);
-    clearInterval(deleteInterval);
-    panel.classList.add('active');
-    
-    let timeLeft = 5;
-    numberText.textContent = timeLeft;
+    clearTimeout(deleteTimeout); clearInterval(deleteInterval);
+    panel.classList.add('active'); let timeLeft = 5; numberText.textContent = timeLeft;
     if (circle) circle.style.strokeDashoffset = "62.8";
-
     deleteInterval = setInterval(() => {
         timeLeft--;
         if (timeLeft >= 0) {
@@ -57,30 +42,20 @@ function initiateMessageDelete(messageElement) {
             if (circle) circle.style.strokeDashoffset = (62.8 * (timeLeft / 5)) + 'px';
         }
     }, 1000);
-
     deleteTimeout = setTimeout(async () => {
-        clearInterval(deleteInterval);
-        panel.classList.remove('active');
+        clearInterval(deleteInterval); panel.classList.remove('active');
         try {
             const textContent = messageElement.querySelector('.message-text')?.textContent || "";
             const authorContent = messageElement.querySelector('.message-author')?.textContent.replace(':', '').trim() || "";
-            const snapshot = await db.collection("messages")
-                .where("server", "==", currentServerContext)
-                .where("channel", "==", currentChannelContext)
-                .where("author", "==", authorContent)
-                .where("text", "==", textContent).get();
-
+            const snapshot = await db.collection("messages").where("server", "==", currentServerContext).where("channel", "==", currentChannelContext).where("author", "==", authorContent).where("text", "==", textContent).get();
             snapshot.forEach(async (doc) => { await db.collection("messages").doc(doc.id).delete(); });
             messageElement.remove();
         } catch (err) { console.error(err); }
     }, 5000);
-
     cancelBtn.onclick = () => { clearTimeout(deleteTimeout); clearInterval(deleteInterval); panel.classList.remove('active'); };
 }
 
 let messagesListener = null;
-
-// === 3. КОНФИГУРАЦИЯ FIREBASE ===
 const firebaseConfig = {
   apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
   authDomain: "://firebaseapp.com",
@@ -91,54 +66,21 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
+const CREATOR_NICKNAME = 'dj1ka'; let myName = ''; let currentServerContext = 'public'; let currentChannelContext = 'general-chat';
+let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn, publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
 
-const CREATOR_NICKNAME = 'dj1ka';
-let myName = '';
-let currentServerContext = 'public';
-let currentChannelContext = 'general-chat';
-
-let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn;
-let publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
-
-// === 4. ОБРАБОТЧИКИ СОБЫТИЙ И КНОПОК ===
+// === 3. ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ DOMContentLoaded ===
 document.addEventListener('DOMContentLoaded', () => {
-    authModalOverlay = document.getElementById('authModalOverlay');
-    authLoginInput = document.getElementById('authLoginInput');
-    authPasswordInput = document.getElementById('authPasswordInput');
-    authSubmitBtn = document.getElementById('authSubmitBtn');
-    publicServerBtn = document.getElementById('publicServerBtn');
-    dmServerBtn = document.getElementById('dmServerBtn');
-    serverChannelsSection = document.getElementById('serverChannelsSection');
-    dmChannelsSection = document.getElementById('dmChannelsSection');
-    chatTitle = document.getElementById('chatTitle');
-    hashtag = document.getElementById('hashtag');
-    messageInput = document.getElementById('messageInput');
-    sendBtn = document.getElementById('sendBtn');
-    messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
+    authModalOverlay = document.getElementById('authModalOverlay'); authLoginInput = document.getElementById('authLoginInput'); authPasswordInput = document.getElementById('authPasswordInput'); authSubmitBtn = document.getElementById('authSubmitBtn'); publicServerBtn = document.getElementById('publicServerBtn'); dmServerBtn = document.getElementById('dmServerBtn'); serverChannelsSection = document.getElementById('serverChannelsSection'); dmChannelsSection = document.getElementById('dmChannelsSection'); chatTitle = document.getElementById('chatTitle'); hashtag = document.getElementById('hashtag'); messageInput = document.getElementById('messageInput'); sendBtn = document.getElementById('sendBtn'); messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
 
-    const openSettingsBtn = document.getElementById('openSettingsBtn');
-    const settingsSidebar = document.getElementById('settingsSidebar');
-    if (openSettingsBtn && settingsSidebar) {
-        openSettingsBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsSidebar.classList.toggle('active'); });
-    }
+    const openSettingsBtn = document.getElementById('openSettingsBtn'); const settingsSidebar = document.getElementById('settingsSidebar');
+    if (openSettingsBtn && settingsSidebar) { openSettingsBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsSidebar.classList.toggle('active'); }); }
+    const goToZonesBtn = document.getElementById('goToZonesBtn'); const backToMenuBtn = document.getElementById('backToMenuBtn'); const mainSettingsScreen = document.getElementById('mainSettingsScreen'); const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
+    if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) { goToZonesBtn.addEventListener('click', (e) => { e.stopPropagation(); mainSettingsScreen.classList.remove('active-screen'); zoneSettingsScreen.classList.add('active-screen'); }); }
+    if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) { backToMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); zoneSettingsScreen.classList.remove('active-screen'); mainSettingsScreen.classList.add('active-screen'); }); }
 
-    const goToZonesBtn = document.getElementById('goToZonesBtn');
-    const backToMenuBtn = document.getElementById('backToMenuBtn');
-    const mainSettingsScreen = document.getElementById('mainSettingsScreen');
-    const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
-    if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
-        goToZonesBtn.addEventListener('click', (e) => { e.stopPropagation(); mainSettingsScreen.classList.remove('active-screen'); zoneSettingsScreen.classList.add('active-screen'); });
-    }
-    if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
-        backToMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); zoneSettingsScreen.classList.remove('active-screen'); mainSettingsScreen.classList.add('active-screen'); });
-    }
-
-    const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
-    const zoneSelectOptions = document.getElementById('zoneSelectOptions');
-    let selectedZone = '';
-    if (zoneSelectTrigger && zoneSelectOptions) {
-        zoneSelectTrigger.addEventListener('click', (e) => { e.stopPropagation(); zoneSelectOptions.classList.toggle('active'); });
-    }
+    const zoneSelectTrigger = document.getElementById('zoneSelectTrigger'); const zoneSelectOptions = document.getElementById('zoneSelectOptions'); let selectedZone = '';
+    if (zoneSelectTrigger && zoneSelectOptions) { zoneSelectTrigger.addEventListener('click', (e) => { e.stopPropagation(); zoneSelectOptions.classList.toggle('active'); }); }
     document.querySelectorAll('.custom-option').forEach(option => {
         option.addEventListener('click', function(e) {
             e.stopPropagation(); selectedZone = this.getAttribute('data-value');
@@ -146,172 +88,80 @@ document.addEventListener('DOMContentLoaded', () => {
             if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
         });
     });
-
-    const applyColorBtn = document.getElementById('applyColorBtn');
-    const customColorInput = document.getElementById('customColorInput');
+    const applyColorBtn = document.getElementById('applyColorBtn'); const customColorInput = document.getElementById('customColorInput');
     if (applyColorBtn && customColorInput) {
         applyColorBtn.addEventListener('click', (e) => {
             e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; }
             const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); }
         });
     }
-// === 1. ГЛОБАЛЬНАЯ ФУНКЦИЯ АВТОРИЗАЦИИ ===
-window.triggerManualAuth = async function() {
-    const loginInput = document.getElementById('authLoginInput');
-    const passwordInput = document.getElementById('authPasswordInput');
-    if (!loginInput || !passwordInput) return;
-    
-    const login = loginInput.value.trim();
-    const password = passwordInput.value.trim();
-    if (!login || !password) { alert('Заполните все поля!'); return; }
+    let selectedAvatarColor = '#5865f2'; let currentZoomScale = 1; let base64AvatarData = '';
+    const userAvatarHeader = document.getElementById('userAvatarHeader'); const profileModalOverlay = document.getElementById('profileModalOverlay'); const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
+    const uploadAvatarFileBtn = document.getElementById('uploadAvatarFileBtn'); const profileImageFileInput = document.getElementById('profileImageFileInput'); const modalAvatarImg = document.getElementById('modalAvatarImg');
+    const modalAvatarLetter = document.getElementById('modalAvatarLetter'); const avatarZoomSlider = document.getElementById('avatarZoomSlider'); const zoomSliderWrapper = document.getElementById('zoomSliderWrapper'); const resetAvatarFileBtn = document.getElementById('resetAvatarFileBtn');
 
-    try {
-        const userRef = db.collection("users").doc(login);
-        const userSnap = await userRef.get();
-
-        if (userSnap.exists) {
-            const userData = userSnap.data();
-            if (userData.password !== password) { alert('Неверный пароль!'); return; }
-        } else {
-            const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
-            await userRef.set({ username: login, password: password, status: initialStatus });
-        }
-
-        localStorage.setItem('chat_active_user', login);
-        myName = login;
-        
-        const overlay = document.getElementById('authModalOverlay');
-        if (overlay) overlay.classList.remove('active');
-        initChatAfterAuth();
-    } catch (err) { 
-        console.error("ОШИБКА АВТОРИЗАЦИИ:", err);
+    if (userAvatarHeader && profileModalOverlay) {
+        userAvatarHeader.onclick = function(e) { e.stopPropagation(); const profileNicknameInput = document.getElementById('profileNicknameInput'); if (profileNicknameInput) profileNicknameInput.value = myName; profileModalOverlay.classList.add('active'); };
     }
-};
+    if (closeProfileModalBtn && profileModalOverlay) { closeProfileModalBtn.onclick = function() { profileModalOverlay.classList.remove('active'); }; }
+    if (uploadAvatarFileBtn && profileImageFileInput) { uploadAvatarFileBtn.onclick = function(e) { e.stopPropagation(); profileImageFileInput.click(); }; }
 
-// === 2. ФУНКЦИЯ КРУГОВОГО ТАЙМЕРА УДАЛЕНИЯ СООБЩЕНИЙ ===
-let deleteTimeout = null;
-let deleteInterval = null;
-
-function initiateMessageDelete(messageElement) {
-    const panel = document.getElementById('deleteConfirmPanel');
-    const numberText = document.getElementById('countdownNumber');
-    const circle = document.getElementById('countdownCircle');
-    const cancelBtn = document.getElementById('cancelDeleteBtn');
-    if (!panel || !numberText || !circle || !cancelBtn) return;
-
-    clearTimeout(deleteTimeout);
-    clearInterval(deleteInterval);
-    panel.classList.add('active');
-    
-    let timeLeft = 5;
-    numberText.textContent = timeLeft;
-    if (circle) circle.style.strokeDashoffset = "62.8";
-
-    deleteInterval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft >= 0) {
-            numberText.textContent = timeLeft;
-            if (circle) circle.style.strokeDashoffset = (62.8 * (timeLeft / 5)) + 'px';
-        }
-    }, 1000);
-
-    deleteTimeout = setTimeout(async () => {
-        clearInterval(deleteInterval);
-        panel.classList.remove('active');
-        try {
-            const textContent = messageElement.querySelector('.message-text')?.textContent || "";
-            const authorContent = messageElement.querySelector('.message-author')?.textContent.replace(':', '').trim() || "";
-            const snapshot = await db.collection("messages")
-                .where("server", "==", currentServerContext)
-                .where("channel", "==", currentChannelContext)
-                .where("author", "==", authorContent)
-                .where("text", "==", textContent).get();
-
-            snapshot.forEach(async (doc) => { await db.collection("messages").doc(doc.id).delete(); });
-            messageElement.remove();
-        } catch (err) { console.error(err); }
-    }, 5000);
-
-    cancelBtn.onclick = () => { clearTimeout(deleteTimeout); clearInterval(deleteInterval); panel.classList.remove('active'); };
-}
-
-let messagesListener = null;
-
-// === 3. КОНФИГУРАЦИЯ FIREBASE ===
-const firebaseConfig = {
-  apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
-  authDomain: "://firebaseapp.com",
-  projectId: "ds-chat78",
-  storageBucket: "://appspot.com",
-  messagingSenderId: "1071477755850",
-  appId: "1:1071477755850:web:ee611a5113d09a8ec584b4"
-};
-if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-const db = firebase.firestore();
-
-const CREATOR_NICKNAME = 'dj1ka';
-let myName = '';
-let currentServerContext = 'public';
-let currentChannelContext = 'general-chat';
-
-let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn;
-let publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
-
-// === 4. ОБРАБОТЧИКИ СОБЫТИЙ И КНОПОК ===
-document.addEventListener('DOMContentLoaded', () => {
-    authModalOverlay = document.getElementById('authModalOverlay');
-    authLoginInput = document.getElementById('authLoginInput');
-    authPasswordInput = document.getElementById('authPasswordInput');
-    authSubmitBtn = document.getElementById('authSubmitBtn');
-    publicServerBtn = document.getElementById('publicServerBtn');
-    dmServerBtn = document.getElementById('dmServerBtn');
-    serverChannelsSection = document.getElementById('serverChannelsSection');
-    dmChannelsSection = document.getElementById('dmChannelsSection');
-    chatTitle = document.getElementById('chatTitle');
-    hashtag = document.getElementById('hashtag');
-    messageInput = document.getElementById('messageInput');
-    sendBtn = document.getElementById('sendBtn');
-    messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
-
-    const openSettingsBtn = document.getElementById('openSettingsBtn');
-    const settingsSidebar = document.getElementById('settingsSidebar');
-    if (openSettingsBtn && settingsSidebar) {
-        openSettingsBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsSidebar.classList.toggle('active'); });
+    if (profileImageFileInput) {
+        profileImageFileInput.onchange = function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    base64AvatarData = e.target.result;
+                    if (modalAvatarImg && modalAvatarLetter && zoomSliderWrapper) {
+                        modalAvatarImg.src = base64AvatarData; modalAvatarImg.style.display = 'block'; modalAvatarImg.style.transform = 'translate(-50%, -50%) scale(1)';
+                        if (avatarZoomSlider) avatarZoomSlider.value = 1; modalAvatarLetter.style.display = 'none'; zoomSliderWrapper.style.display = 'flex';
+                    }
+                    if (resetAvatarFileBtn) resetAvatarFileBtn.style.display = 'block'; if (uploadAvatarFileBtn) uploadAvatarFileBtn.textContent = 'Файл выбран';
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        };
     }
-
-    const goToZonesBtn = document.getElementById('goToZonesBtn');
-    const backToMenuBtn = document.getElementById('backToMenuBtn');
-    const mainSettingsScreen = document.getElementById('mainSettingsScreen');
-    const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
-    if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) {
-        goToZonesBtn.addEventListener('click', (e) => { e.stopPropagation(); mainSettingsScreen.classList.remove('active-screen'); zoneSettingsScreen.classList.add('active-screen'); });
+    if (avatarZoomSlider && modalAvatarImg) {
+        avatarZoomSlider.oninput = function() { currentZoomScale = this.value; modalAvatarImg.style.transform = 'translate(-50%, -50%) scale(' + currentZoomScale + ')'; };
     }
-    if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) {
-        backToMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); zoneSettingsScreen.classList.remove('active-screen'); mainSettingsScreen.classList.add('active-screen'); });
+    if (resetAvatarFileBtn && modalAvatarImg && modalAvatarLetter && zoomSliderWrapper && uploadAvatarFileBtn) {
+        resetAvatarFileBtn.onclick = function() {
+            base64AvatarData = ''; modalAvatarImg.style.display = 'none'; modalAvatarLetter.style.display = 'block'; zoomSliderWrapper.style.display = 'none'; resetAvatarFileBtn.style.display = 'none'; uploadAvatarFileBtn.textContent = 'Выбрать файл'; if (profileImageFileInput) profileImageFileInput.value = '';
+        };
     }
-
-    const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
-    const zoneSelectOptions = document.getElementById('zoneSelectOptions');
-    let selectedZone = '';
-    if (zoneSelectTrigger && zoneSelectOptions) {
-        zoneSelectTrigger.addEventListener('click', (e) => { e.stopPropagation(); zoneSelectOptions.classList.toggle('active'); });
-    }
-    document.querySelectorAll('.custom-option').forEach(option => {
-        option.addEventListener('click', function(e) {
-            e.stopPropagation(); selectedZone = this.getAttribute('data-value');
-            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = this.textContent + ' <span class="select-arrow">▼</span>';
-            if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
-        });
+    document.querySelectorAll('.avatar-color-circle').forEach(circle => {
+        circle.onclick = function(e) {
+            e.stopPropagation(); document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected')); this.classList.add('selected');
+            selectedAvatarColor = this.getAttribute('data-color'); const cropBox = document.querySelector('.avatar-crop-container'); if (cropBox) cropBox.style.backgroundColor = selectedAvatarColor;
+        };
     });
 
-    const applyColorBtn = document.getElementById('applyColorBtn');
-    const customColorInput = document.getElementById('customColorInput');
-    if (applyColorBtn && customColorInput) {
-        applyColorBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; }
-            const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); }
+    const bellDropdownPanel = document.getElementById('bellDropdownPanel'); const notificationBell = document.getElementById('notificationBell');
+    document.addEventListener('click', (e) => {
+        const settingsSidebar = document.getElementById('settingsSidebar');
+        const openSettingsBtn = document.getElementById('openSettingsBtn');
+        const zoneSelectOptions = document.getElementById('zoneSelectOptions');
+        const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
+        if (settingsSidebar && !settingsSidebar.contains(e.target) && e.target !== openSettingsBtn) { settingsSidebar.classList.remove('active'); }
+        if (zoneSelectOptions && !zoneSelectOptions.contains(e.target) && e.target !== zoneSelectTrigger) { zoneSelectOptions.classList.remove('active'); }
+        if (bellDropdownPanel && !bellDropdownPanel.contains(e.target) && e.target !== notificationBell) { bellDropdownPanel.classList.remove('active'); }
+    });
+
+    if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
+    if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
+
+    if (publicServerBtn) {
+        publicServerBtn.addEventListener('click', () => {
+            document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active');
+            currentServerContext = 'public'; currentChannelContext = 'general-chat';
+            if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#';
+            if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block';
+            loadSavedMessages();
         });
     }
+    checkUserSession();
+});
 function initChatAfterAuth() {
     const topName = document.getElementById('topUserName'); if (topName) topName.textContent = myName;
     const topAvatar = document.getElementById('userAvatarHeader'); if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
@@ -403,13 +253,6 @@ function appendMessage(author, text) {
 
 function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
-    if (savedUser) {
-        myName = savedUser;
-        const authModalOverlay = document.getElementById('authModalOverlay');
-        if (authModalOverlay) authModalOverlay.classList.remove('active');
-        initChatAfterAuth();
-    } else {
-        const authModalOverlay = document.getElementById('authModalOverlay');
-        if (authModalOverlay) authModalOverlay.classList.add('active');
-    });
-  }
+    if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
+    else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+}
