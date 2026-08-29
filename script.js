@@ -406,5 +406,17 @@ function checkUserSession() {
     if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
     else { if (authModalOverlay) authModalOverlay.active = true; }
       };
-    };
-  };
+    }
+  }
+function checkUserSession() {
+    const savedUser = localStorage.getItem('chat_active_user');
+    if (savedUser) {
+        myName = savedUser;
+        const authModalOverlay = document.getElementById('authModalOverlay');
+        if (authModalOverlay) authModalOverlay.classList.remove('active');
+        initChatAfterAuth();
+    } else {
+        const authModalOverlay = document.getElementById('authModalOverlay');
+        if (authModalOverlay) authModalOverlay.classList.add('active');
+    }
+}
