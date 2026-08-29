@@ -10,6 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-firestore-compat.min.js"></script>
 </head>
 <body>
+
     <div class="guilds-sidebar" id="guildsSidebar">
         <div class="guild-icon active" id="dmServerBtn" data-type="dm">DM</div>
         <div class="guild-icon" id="publicServerBtn" data-type="server">🌐</div>
@@ -21,13 +22,13 @@
             <div class="channels-list" id="dmChannelsList"></div>
         </div>
         <div id="serverChannelsSection" style="display: none;">
-            <div class="sidebar-header" style="display:flex; justify-content:space-between; align-items:center; padding-right:8px;">
+            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding-right: 8px;">
                 <span>ТЕКСТОВЫЕ КАНАЛЫ</span>
-                <span id="openCreateChannelBtn" style="cursor:pointer; font-size:18px;">+</span>
+                <span id="openCreateChannelBtn" style="cursor: pointer; font-size: 18px;">+</span>
             </div>
             <div id="serverChannelsList">
                 <div class="custom-user-item active" data-channel="general-chat">
-                    <div class="user-avatar" style="background-color:#5865f2;">#</div>
+                    <div class="user-avatar" style="background-color: #5865f2;">#</div>
                     <span>general-chat</span>
                 </div>
             </div>
@@ -38,18 +39,18 @@
             <div class="header-left"><span class="hashtag">#</span><h3 id="chatTitle">general-chat</h3></div>
             <div class="header-right-group">
                 <span class="user-name-header" id="topUserName">User</span>
-                <div class="user-avatar-header" id="userAvatarHeader" style="background-color:#5865f2; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#fff; cursor:pointer;">U</div>
+                <div class="user-avatar-header" id="userAvatarHeader" style="background-color: #5865f2; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; cursor: pointer;">U</div>
                 <button id="notificationBell" class="notification-bell" title="Уведомления">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
                 </button>
                 <div class="bell-dropdown-panel" id="bellDropdownPanel">
-                    <h4 style="font-size:15px; font-weight:600; color:#fff; text-align:center; padding:10px 0; margin:0;">Уведомления</h4>
+                    <h4 style="font-size: 15px; font-weight: 600; color: #fff; text-align: center; padding: 10px 0; margin: 0;">Уведомления</h4>
                 </div>
                 <button id="openSettingsBtn" class="settings-gear-trigger" title="Настройки зон">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                        <path d="M19.44 12.98c.04-.32.08-.65.08-.98s-.04-.66-.08-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
-                    </svg>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.44 12.98c.04-.32.08-.65.08-.98s-.04-.66-.08-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
                 </button>
+            </div>
+        </div>
         <div class="settings-sidebar" id="settingsSidebar">
             <h2 class="modal-title">Настройки</h2>
             <div class="modal-screen active-screen" id="mainSettingsScreen"><button class="menu-nav-btn" id="goToZonesBtn">Настройка зон</button></div>
@@ -66,9 +67,8 @@
                 </div>
                 <div class="color-picker-wrapper">
                     <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
-                    <div class="color-picker-circle" id="colorPreviewCircle"></div>
                 </div>
-                <button class="menu-nav-btn" id="applyColorBtn" style="margin-top:20px; text-align:center;">Применить</button>
+                <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 20px; text-align: center;">Применить</button>
             </div>
         </div>
         <div class="messages-container" id="messagesContainer"></div>
@@ -90,72 +90,16 @@
                 <button class="send-btn" id="sendBtn" title="Send"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path></svg></button>
             </div>
         </div>
-       <!-- БОЛЬШОЕ МОДАЛЬНОЕ ОКНО НАСТРОЕК ПРОФИЛЯ С ЗУМОМ АВАТАРКИ КАК В СТИМЕ -->
-    <div class="profile-modal-overlay" id="profileModalOverlay">
-        <div class="profile-modal-window">
-            <button class="profile-modal-close" id="closeProfileModalBtn">×</button>
-            <h2 class="profile-modal-title">Настройки аккаунта</h2>
-            <div class="profile-modal-content">
-                
-                <!-- Живое превью аватарки с зумом -->
-                <div class="avatar-preview-zone" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; gap: 10px;">
-                    <div class="avatar-crop-container" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; position: relative; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: bold; border: 2px solid #232428;">
-                        <span id="modalAvatarLetter">U</span>
-                        <img id="modalAvatarImg" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); max-width: none;">
-                    </div>
-                    <!-- Ползунок приближения (Зум как в Стиме) -->
-                    <div id="zoomSliderWrapper" style="display: none; align-items: center; gap: 10px; width: 100%; max-width: 200px;">
-                        <span style="font-size: 12px; color: #b5bac1;">🔍-</span>
-                        <input type="range" id="avatarZoomSlider" min="1" max="3" step="0.05" value="1" style="flex: 1; cursor: pointer;">
-                        <span style="font-size: 12px; color: #b5bac1;">+</span>
-                    </div>
-                </div>
-
-                <div class="profile-edit-section">
-                    <label class="profile-label">Ваш никнейм</label>
-                    <input type="text" class="profile-input-field" id="profileNicknameInput" placeholder="Введите новый ник">
-                </div>
-                
-                <div class="profile-edit-section">
-                    <label class="profile-label">Цвет аватара</label>
-                    <div class="profile-color-row">
-                        <div class="avatar-color-circle" data-color="#5865f2" style="background-color: #5865f2;"></div>
-                        <div class="avatar-color-circle" data-color="#23a55a" style="background-color: #23a55a;"></div>
-                        <div class="avatar-color-circle" data-color="#f23f43" style="background-color: #f23f43;"></div>
-                        <div class="avatar-color-circle" data-color="#eb459e" style="background-color: #eb459e;"></div>
-                        <div class="avatar-color-circle" data-color="#f47fff" style="background-color: #f47fff;"></div>
-                    </div>
-                </div>
-                
-                <div class="profile-edit-section" style="margin-top: 20px;">
-                    <label class="profile-label">Загрузить фото профиля</label>
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <input type="file" id="profileImageFileInput" accept="image/*" style="display: none;">
-                        <button type="button" class="menu-nav-btn" id="uploadAvatarFileBtn" style="text-align: center; width: auto; padding: 10px 18px; margin: 0;">Выбрать файл</button>
-                        <button type="button" class="confirm-btn no-btn" id="resetAvatarFileBtn" style="display: none; padding: 10px 14px; background-color: #f23f43; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Удалить фото</button>
-                    </div>
-                </div>
-            </div>
-            <button class="profile-save-global-btn" id="saveProfileChangesBtn">Сохранить изменения</button>
-        </div>
     </div>
     <div class="auth-modal-overlay active" id="authModalOverlay">
         <div class="auth-modal-window">
             <h2 class="auth-title">С возвращением!</h2>
             <p class="auth-subtitle">Мы так рады видеть вас снова!</p>
             <div class="auth-field"><label class="profile-label">Логин *</label><input type="text" id="authLoginInput" class="profile-input-field" placeholder="Введите логин" autocomplete="new-password"></div>
-            <div class="auth-field" style="margin-top:16px;"><label class="profile-label">Пароль *</label><input type="password" id="authPasswordInput" class="profile-input-field" placeholder="Введите ваш пароль" autocomplete="new-password"></div>
-            <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top:24px; background-color:#23a55a;" onclick="window.triggerManualAuth()">Вход / Регистрация</button>
+            <div class="auth-field" style="margin-top: 16px;"><label class="profile-label">Пароль *</label><input type="password" id="authPasswordInput" class="profile-input-field" placeholder="Введите ваш пароль" autocomplete="new-password"></div>
+            <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="window.triggerManualAuth()">Вход / Регистрация</button>
         </div>
     </div>
-    <div class="server-modal-overlay" id="serverModalOverlay">
-        <div class="server-modal-window">
-            <button class="profile-modal-close" id="closeServerModalBtn">×</button>
-            <h2 class="profile-modal-title" style="text-align:center; font-size:24px;">Создайте свой сервер</h2>
-            <div class="profile-edit-section"><label class="profile-label">Имя сервера</label><input type="text" id="newServerNameInput" class="profile-input-field" placeholder="Введите имя сервера" autocomplete="off"></div>
-            <button class="profile-save-global-btn" id="submitCreateServerBtn" style="margin-top:12px;">Создать</button>
-        </div>
-    </div>
-    <script src="script.js?v=99"></script>
+    <script src="script.js?v=777"></script>
 </body>
 </html>
