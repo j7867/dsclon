@@ -545,15 +545,22 @@ body {
 }
 
 /* =======================================================
-   ЖЕСТКИЙ ВОЗВРАТ КВАДРАТОВ И СТРЕЛКИ ВЛЕВО-ВНИЗ
+   ФИКС ПАНЕЛИ: РАЗДЕЛЬНЫЕ КВАДРАТЫ И СЕРАЯ ТЕНЬ ПРИ НАВЕДЕНИИ
    ======================================================= */
 
-/* НАМЕРТВО ВЕРНУЛИ КВАДРАТНЫЕ КНОПКИ-РАМКИ ДИСКОРДА */
+/* Убираем общую рамку с главного контейнера, если она там была */
+.message-hover-actions {
+    border: none !important;
+    background-color: #313338 !important; /* Фон под цвет Дискорда */
+    gap: 4px !important; /* Делаем чёткие зазоры между кнопками, чтобы они не слипались! */
+    padding: 2px 4px !important;
+}
+
+/* Каждая кнопка — это строгий изолированный квадрат со своей рамочкой */
 .action-btn { 
     background: transparent !important; 
-    border: none !important; 
     color: #b5bac1 !important; 
-    cursor: pointer; 
+    cursor: pointer !important; 
     padding: 0 !important; 
     width: 28px !important; 
     height: 28px !important; 
@@ -561,37 +568,43 @@ body {
     display: flex !important; 
     align-items: center !important; 
     justify-content: center !important; 
-    border-radius: 4px !important; /* УБРАЛИ 50%, вернули легкий квадратный радиус */
-    border: 1px solid #232428 !important; /* Тёмная квадратная рамка по бокам */
-    margin: 0 2px !important; 
-    transition: background-color 0.1s, color 0.1s, border-color 0.1s !important; 
+    
+    border-radius: 4px !important; /* Легкое закругление углов квадрата */
+    border: 1px solid #232428 !important; /* Тонкая тёмная рамка вокруг каждого квадрата */
+    box-sizing: border-box !important;
+    transition: background-color 0.15s ease, color 0.1s, border-color 0.15s !important; 
 }
 
-.hover-edit-btn span, .hover-delete-trigger-btn span, .hover-more-btn span { 
+/* Внутренние значки */
+.hover-edit-btn span, 
+.hover-delete-trigger-btn span, 
+.hover-more-btn span { 
     display: inline-block !important; 
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; 
     pointer-events: none !important; 
 }
 
+/* ТВОЁ ТРЕБОВАНИЕ: При наведении на кнопку загорается мягкая серая тень/подложка */
+.hover-edit-btn:hover { 
+    background-color: rgba(255, 255, 255, 0.06) !important; /* Мягкая серая тень */
+    border-color: #4e5058 !important; /* Рамка становится чуть ярче */
+    color: #fff !important; 
+}
 .hover-edit-btn:hover span { 
     transform: rotate(19deg) !important; 
 }
-.hover-edit-btn:hover { 
-    background-color: #35373c !important; 
-    border-color: #4e5058 !important; 
-    color: #fff !important; 
-}
 
-.hover-delete-trigger-btn:hover span { 
-    transform: rotate(19deg) !important; 
-}
+/* Ховер для мусорки (Оставляем фирменный красный, как в Дискорде) */
 .hover-delete-trigger-btn:hover { 
     background-color: #f23f43 !important; 
     border-color: #f23f43 !important; 
     color: #fff !important; 
 }
+.hover-delete-trigger-btn:hover span { 
+    transform: rotate(19deg) !important; 
+}
 
-/* ФИКС СТРЕЛКИ: Изначально стоит ровным знаком < (влево) */
+/* Настройка стрелочки: по умолчанию ровно стоит знаком < */
 .action-dropdown-wrapper { 
     position: relative !important; 
     display: flex !important; 
@@ -599,18 +612,18 @@ body {
     height: 28px !important; 
 }
 .hover-more-btn span { 
-    transform: rotate(0deg) !important; /* Убрали 180°, так как в скрипте теперь честный < */
+    transform: rotate(0deg) !important; 
     transform-origin: center center !important; 
 }
 
-/* При наведении: плавно катится против часовой стрелки носом строго вниз (-90°) */
-.action-dropdown-wrapper:hover .hover-more-btn span { 
-    transform: rotate(-90deg) !important; 
-    color: #fff !important; 
-}
+/* ТВОЁ ТРЕБОВАНИЕ: Стрелка при наведении катится против часовой строго вниз (-90°) и включается серая тень */
 .action-dropdown-wrapper:hover .hover-more-btn { 
-    background-color: #35373c !important; 
+    background-color: rgba(255, 255, 255, 0.06) !important; /* Такая же мягкая серая тень */
     border-color: #4e5058 !important; 
+}
+.action-dropdown-wrapper:hover .hover-more-btn span { 
+    transform: rotate(-90deg) !important; /* Поворот против часовой стрелки вниз */
+    color: #fff !important; 
 }
 
 .hover-submenu { 
