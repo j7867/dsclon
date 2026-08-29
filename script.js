@@ -234,7 +234,7 @@ function appendMessage(author, text) {
             <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
             <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
             <div class="action-dropdown-wrapper">
-                <button class="action-btn hover-more-btn" title="Ещё"><span>&lt;</span></button>
+               <button class="action-btn hover-more-btn" title="Ещё"><span>&gt;</span></button>
                 <div class="hover-submenu">
                     <button class="submenu-item-btn">Добавить в друзья</button>
                 </div>
