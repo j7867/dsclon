@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="style.css?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-firestore-compat.min.js"></script>
-</head>
-<body>
-
+ </head>
+   <body>
     <div class="guilds-sidebar" id="guildsSidebar">
         <div class="guild-icon active" id="dmServerBtn" data-type="dm">DM</div>
         <div class="guild-icon" id="publicServerBtn" data-type="server">🌐</div>
@@ -26,7 +25,26 @@
                 <span>ТЕКСТОВЫЕ КАНАЛЫ</span>
                 <span id="openCreateChannelBtn" style="cursor: pointer; font-size: 18px;">+</span>
             </div>
-            <div id="serverChannelsList">
+              <div id="serverChannelsList">
+                <!-- ТЕКСТОВЫЙ КАНАЛ -->
+                <div class="custom-user-item active" data-channel="general-chat" data-type="text">
+                    <div class="user-avatar" style="background-color: #5865f2;">#</div>
+                    <span>general-chat</span>
+                </div>
+                <!-- НАСТОЯЩИЙ ГОЛОСОВОЙ КАНАЛ ДЛЯ ЗВОНКОВ И ДЕМОК -->
+                <div class="custom-user-item" data-channel="voice-room" data-type="voice">
+                    <div class="user-avatar" style="background-color: #23a55a;">🔊</div>
+                    <span>Общий голос</span>
+                </div>
+            </div>
+
+                <!-- НАСТОЯЩИЙ ГОЛОСОВОЙ КАНАЛ ДЛЯ ЗВОНКОВ И ДЕМОК -->
+                <div class="custom-user-item" data-channel="voice-room" data-type="voice">
+                    <div class="user-avatar" style="background-color: #23a55a;">🔊</div>
+                    <span>Общий голос</span>
+                </div>
+            </div>
+
                 <div class="custom-user-item active" data-channel="general-chat">
                     <div class="user-avatar" style="background-color: #5865f2;">#</div>
                     <span>general-chat</span>
