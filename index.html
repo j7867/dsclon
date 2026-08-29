@@ -90,29 +90,49 @@
                 <button class="send-btn" id="sendBtn" title="Send"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"></path></svg></button>
             </div>
         </div>
-    </div>
+       <!-- БОЛЬШОЕ МОДАЛЬНОЕ ОКНО НАСТРОЕК ПРОФИЛЯ С ЗУМОМ АВАТАРКИ КАК В СТИМЕ -->
     <div class="profile-modal-overlay" id="profileModalOverlay">
         <div class="profile-modal-window">
             <button class="profile-modal-close" id="closeProfileModalBtn">×</button>
             <h2 class="profile-modal-title">Настройки аккаунта</h2>
             <div class="profile-modal-content">
-                <div class="profile-edit-section"><label class="profile-label">Ваш никнейм</label><input type="text" class="profile-input-field" id="profileNicknameInput" placeholder="Введите новый ник"></div>
+                
+                <!-- Живое превью аватарки с зумом -->
+                <div class="avatar-preview-zone" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; gap: 10px;">
+                    <div class="avatar-crop-container" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; position: relative; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: bold; border: 2px solid #232428;">
+                        <span id="modalAvatarLetter">U</span>
+                        <img id="modalAvatarImg" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); max-width: none;">
+                    </div>
+                    <!-- Ползунок приближения (Зум как в Стиме) -->
+                    <div id="zoomSliderWrapper" style="display: none; align-items: center; gap: 10px; width: 100%; max-width: 200px;">
+                        <span style="font-size: 12px; color: #b5bac1;">🔍-</span>
+                        <input type="range" id="avatarZoomSlider" min="1" max="3" step="0.05" value="1" style="flex: 1; cursor: pointer;">
+                        <span style="font-size: 12px; color: #b5bac1;">+</span>
+                    </div>
+                </div>
+
+                <div class="profile-edit-section">
+                    <label class="profile-label">Ваш никнейм</label>
+                    <input type="text" class="profile-input-field" id="profileNicknameInput" placeholder="Введите новый ник">
+                </div>
+                
                 <div class="profile-edit-section">
                     <label class="profile-label">Цвет аватара</label>
                     <div class="profile-color-row">
-                        <div class="avatar-color-circle" data-color="#5865f2" style="background-color:#5865f2;"></div>
-                        <div class="avatar-color-circle" data-color="#23a55a" style="background-color:#23a55a;"></div>
-                        <div class="avatar-color-circle" data-color="#f23f43" style="background-color:#f23f43;"></div>
-                        <div class="avatar-color-circle" data-color="#eb459e" style="background-color:#eb459e;"></div>
-                        <div class="avatar-color-circle" data-color="#f47fff" style="background-color:#f47fff;"></div>
+                        <div class="avatar-color-circle" data-color="#5865f2" style="background-color: #5865f2;"></div>
+                        <div class="avatar-color-circle" data-color="#23a55a" style="background-color: #23a55a;"></div>
+                        <div class="avatar-color-circle" data-color="#f23f43" style="background-color: #f23f43;"></div>
+                        <div class="avatar-color-circle" data-color="#eb459e" style="background-color: #eb459e;"></div>
+                        <div class="avatar-color-circle" data-color="#f47fff" style="background-color: #f47fff;"></div>
                     </div>
                 </div>
-                <div class="profile-edit-section" style="margin-top:20px;">
+                
+                <div class="profile-edit-section" style="margin-top: 20px;">
                     <label class="profile-label">Загрузить фото профиля</label>
-                    <div style="display:flex; gap:12px; align-items:center;">
-                        <input type="file" id="profileImageFileInput" accept="image/*" style="display:none;">
-                        <button type="button" class="menu-nav-btn" id="uploadAvatarFileBtn" style="text-align:center; width:auto; padding:10px 18px;">Выбрать файл</button>
-                        <button type="button" class="confirm-btn no-btn" id="resetAvatarFileBtn" style="display:none; padding:10px 14px;">Удалить фото</button>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <input type="file" id="profileImageFileInput" accept="image/*" style="display: none;">
+                        <button type="button" class="menu-nav-btn" id="uploadAvatarFileBtn" style="text-align: center; width: auto; padding: 10px 18px; margin: 0;">Выбрать файл</button>
+                        <button type="button" class="confirm-btn no-btn" id="resetAvatarFileBtn" style="display: none; padding: 10px 14px; background-color: #f23f43; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Удалить фото</button>
                     </div>
                 </div>
             </div>
