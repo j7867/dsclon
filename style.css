@@ -723,20 +723,17 @@ html, body {
 .hover-delete-trigger-btn span {
     display: inline-block !important;
 }
-
-                                  /*ФИКС СТРЕЛОЧКИ: ПЛАВНЫЙ И ТОЧНЫЙ ПОВОРОТ НОСОМ ВНИЗ */
- 
-/*Изначальное состояние: стрелочка стоит ровно на месте */
+/* Изначальное состояние: зеркально разворачиваем стрелку влево (<) */
 .hover-more-btn span {
     display: inline-block !important;
-    transform: rotate(0deg) !important;
-    transform-origin: center center !important; /* Крутим строго вокруг своей оси, чтобы не дёргалась */
+    transform: scaleX(-1) rotate(0deg) !important; /* scaleX(-1) делает из нее < */
+    transform-origin: center center !important;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-/* При наведении: плавно разворачиваем знак < по часовой стрелке носом вниз */
+/* При наведении: плавно разворачиваем против часовой стрелки носом вниз */
 .action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: rotate(90deg) !important; /* Точный разворот на 90 градусов вниз */
+    transform: scaleX(-1) rotate(-90deg) !important; /* Уходим на -90 градусов строго вниз */
     color: #fff !important;
 }
 
