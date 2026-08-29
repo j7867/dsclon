@@ -1,4 +1,4 @@
-let selectedAvatarColor = '#5865f2';
+selectedAvatarColor = this.getAttribute('data-color');
 let base64AvatarData = '';
 // === 1. ГЛОБАЛЬНАЯ ФУНКЦИЯ АВТОРИЗАЦИИ ===
 window.triggerManualAuth = async function() {
