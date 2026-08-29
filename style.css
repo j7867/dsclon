@@ -545,34 +545,62 @@ body {
 }
 
 /* =======================================================
-   ФИКС ПАНЕЛИ: РАЗДЕЛЬНЫЕ КВАДРАТЫ И СЕРАЯ ТЕНЬ ПРИ НАВЕДЕНИИ
+   ФИНАЛЬНЫЙ СТИЛЬ DISCORD: ПАРЯЩИЕ ИКОНКИ И СПЛОШНОЙ СЕРЫЙ ХОВЕР
    ======================================================= */
 
-/* Убираем общую рамку с главного контейнера, если она там была */
+/* Общая плашка действий: сплошной тёмный фон, закруглённый по краям, БЕЗ ОБВОДОК */
 .message-hover-actions {
-    border: none !important;
-    background-color: #313338 !important; /* Фон под цвет Дискорда */
-    gap: 4px !important; /* Делаем чёткие зазоры между кнопками, чтобы они не слипались! */
-    padding: 2px 4px !important;
+    position: absolute !important;
+    right: 32px !important;
+    top: -12px !important;
+    background-color: #313338 !important; /* Родной тёмный фон Дискорда */
+    border: none !important; /* НАХУЙ УБРАЛИ ОБЩУЮ РАМКУ */
+    border-radius: 4px !important;
+    display: flex !important;
+    padding: 0 !important; /* Убираем внутренние отступы, чтобы ховер занимал всю площадь */
+    box-shadow: 0 4px 4px rgba(0,0,0,0.16) !important;
+    height: 32px !important;
+    align-items: center !important;
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: scale(0.95) !important;
+    transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s !important;
 }
 
-/* Каждая кнопка — это строгий изолированный квадрат со своей рамочкой */
+.message-item:hover .message-hover-actions {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1) !important;
+}
+
+/* Каждая кнопка занимает ровно свою треть панели (ширина 32px при высоте 32px) */
 .action-btn { 
     background: transparent !important; 
+    border: none !important; /* НАХУЙ УБРАЛИ РАМКИ С КНОПОК */
     color: #b5bac1 !important; 
     cursor: pointer !important; 
     padding: 0 !important; 
-    width: 28px !important; 
-    height: 28px !important; 
+    width: 32px !important; /* Увеличили до высоты панели, чтобы подложка была сплошной */
+    height: 32px !important; 
     font-size: 14px !important; 
     display: flex !important; 
     align-items: center !important; 
     justify-content: center !important; 
-    
-    border-radius: 4px !important; /* Легкое закругление углов квадрата */
-    border: 1px solid #232428 !important; /* Тонкая тёмная рамка вокруг каждого квадрата */
+    border-radius: 0 !important; /* Сбрасываем радиус, чтобы внутри панели подложки стыковались ровно */
     box-sizing: border-box !important;
-    transition: background-color 0.15s ease, color 0.1s, border-color 0.15s !important; 
+    transition: background-color 0.15s ease, color 0.1s !important; 
+}
+
+/* Закругляем только самые крайние углы кнопок, чтобы они не вылезали за общую панель */
+.hover-edit-btn {
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+}
+.action-dropdown-wrapper {
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
 }
 
 /* Внутренние значки */
@@ -584,51 +612,50 @@ body {
     pointer-events: none !important; 
 }
 
-/* ТВОЁ ТРЕБОВАНИЕ: При наведении на кнопку загорается мягкая серая тень/подложка */
+/* ТВОЁ ТРЕБОВАНИЕ: При наведении загорается сплошной серый фон-квадрат на треть панели */
 .hover-edit-btn:hover { 
-    background-color: rgba(255, 255, 255, 0.06) !important; /* Мягкая серая тень */
-    border-color: #4e5058 !important; /* Рамка становится чуть ярче */
+    background-color: rgba(255, 255, 255, 0.08) !important; /* Чистый сплошной серый фон */
     color: #fff !important; 
 }
 .hover-edit-btn:hover span { 
     transform: rotate(19deg) !important; 
 }
 
-/* Ховер для мусорки (Оставляем фирменный красный, как в Дискорде) */
+/* Ховер для корзины удаления (Оригинальный красный Дискорда на свою треть панели) */
 .hover-delete-trigger-btn:hover { 
     background-color: #f23f43 !important; 
-    border-color: #f23f43 !important; 
     color: #fff !important; 
 }
 .hover-delete-trigger-btn:hover span { 
     transform: rotate(19deg) !important; 
 }
 
-/* Настройка стрелочки: по умолчанию ровно стоит знаком < */
+/* Контейнер для выпадающего меню стрелочки */
 .action-dropdown-wrapper { 
     position: relative !important; 
     display: flex !important; 
     align-items: center !important; 
-    height: 28px !important; 
+    height: 32px !important; 
 }
+
 .hover-more-btn span { 
     transform: rotate(0deg) !important; 
     transform-origin: center center !important; 
 }
 
-/* ТВОЁ ТРЕБОВАНИЕ: Стрелка при наведении катится против часовой строго вниз (-90°) и включается серая тень */
+/* ТВОЁ ТРЕБОВАНИЕ: При наведении на стрелочку загорается серый квадратный фон и она крутится вниз */
 .action-dropdown-wrapper:hover .hover-more-btn { 
-    background-color: rgba(255, 255, 255, 0.06) !important; /* Такая же мягкая серая тень */
-    border-color: #4e5058 !important; 
-}
-.action-dropdown-wrapper:hover .hover-more-btn span { 
-    transform: rotate(-90deg) !important; /* Поворот против часовой стрелки вниз */
+    background-color: rgba(255, 255, 255, 0.08) !important; /* Такой же сплошной серый квадрат */
     color: #fff !important; 
 }
+.action-dropdown-wrapper:hover .hover-more-btn span { 
+    transform: rotate(-90deg) !important; /* Уход против часовой стрелки строго вниз */
+}
 
+/* Выпадающее меню друзей */
 .hover-submenu { 
     position: absolute !important; 
-    top: 34px !important; 
+    top: 36px !important; 
     right: 0 !important; 
     background-color: #111214 !important; 
     border: 1px solid #232428 !important; 
@@ -642,7 +669,6 @@ body {
     transform: translateY(-5px) !important; 
     transition: all 0.1s ease !important; 
 }
-
 .action-dropdown-wrapper:hover .hover-submenu { 
     opacity: 1 !important; 
     visibility: visible !important; 
