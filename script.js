@@ -154,11 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (inputArea) inputArea.style.display = 'none'; // НАХУЙ ПРЯЧЕМ ТЕКСТОВЫЙ ИНПУТ
                 
                 await startVoiceCall();
-            } else {
-                // Если вернулись в ТЕКСТОВЫЙ КАНАЛ
+                      } else {
                 if (hashtag) hashtag.textContent = '#';
                 if (vZone) vZone.style.display = 'none';
-                if (inputArea) inputArea.style.display = 'flex'; // ВОЗВРАЩАЕМ ИНПУТ ОБРАТНО ДЛЯ ЧАТА
+                if (inputArea) inputArea.style.display = 'flex';
                 
                 await hangUpCall();
                 loadSavedMessages();
