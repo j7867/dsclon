@@ -194,10 +194,10 @@ function appendMessage(author, text) {
             <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
             <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
             <div class="action-dropdown-wrapper">
+                           <div class="action-dropdown-wrapper">
                 <button class="action-btn hover-more-btn" title="Ещё"><span>&lt;</span></button>
                 <div class="hover-submenu"><button class="submenu-item-btn">Добавить в друзья</button></div>
             </div>
-        </div>
     `;
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
