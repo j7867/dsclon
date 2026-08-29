@@ -70,7 +70,7 @@
                 <div class="custom-select-container">
                     <div class="custom-select-trigger" id="zoneSelectTrigger">Выберите зону <span class="select-arrow">▼</span></div>
                     <div class="custom-select-options" id="zoneSelectOptions">
-                        <div class="custom-option" data-value="chatArea">Central Chat</div>
+                        <div class="custom-option" data-value="chatArea">Central Chat</div>     
                         <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
                         <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
                         <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
@@ -81,11 +81,15 @@
                 </div>
                 <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 20px; text-align: center;">Применить</button>
             </div>
-        </div>
+        </div>       
+        <!-- ЗОНА ДЛЯ ПРОСМОТРА СТРИМА ЭКРАНА ИЛИ ДЕМКИ -->
+        <div id="videoCallZone" style="display: none; padding: 10px 20px; background-color: #2b2d31; border-bottom: 1px solid #1f2023; justify-content: center; position: relative;">
+            <video id="remoteVideo" autoplay playsinline style="width: 100%; max-width: 500px; border-radius: 8px; background-color: #1e1f22; box-shadow: 0 4px 12px rgba(0,0,0,0.5);"></video>
+    </div>
         <div class="messages-container" id="messagesContainer"></div>
         <div class="input-area">
             <div id="deleteConfirmPanel" class="delete-confirm-panel">
-                <div class="delete-panel-content">
+                <div class="delete-panel-content">    
                     <span class="delete-panel-text">Вы точно хотите удалить сообщение?</span>
                     <div class="delete-panel-controls">
                         <button id="cancelDeleteBtn" class="delete-cancel-btn">Отмена</button>
