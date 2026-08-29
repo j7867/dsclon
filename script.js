@@ -39,7 +39,7 @@ window.triggerManualAuth = async function() {
     } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
 
-// === 3. КРУГОВОЙ ТАЙМЕР УДАЛЕНИЯ СООБЩЕНИЙ ===
+// === 3. КРУГОВОЙ ТАЙМЕP УДАЛЕНИЯ СООБЩЕНИЙ ===
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
@@ -109,66 +109,43 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bellDropdownPanel && !bellDropdownPanel.contains(e.target) && e.target !== notificationBell) { bellDropdownPanel.classList.remove('active'); }
     });
 
-    // === ОБРАБОТЧИКИ КНОПОК ЗВОНКА И ДЕМКИ ===
-    const startCallBtn = document.getElementById('startCallBtn'); const startScreenBtn = document.getElementById('startScreenBtn'); const endCallBtn = document.getElementById('endCallBtn'); const videoCallZone = document.getElementById('videoCallZone');
-    if (startCallBtn) {
-        startCallBtn.onclick = async (e) => {
-            e.stopPropagation();
-            if (startCallBtn) startCallBtn.style.display = 'none';
-            if (startScreenBtn) startScreenBtn.style.display = 'block';
-            if (endCallBtn) endCallBtn.style.display = 'block';
-            await startVoiceCall();
-        };
-    }
+    // === ОБРАБОТЧИКИ КНОПОК ЗВОНКА И ДЕМКИ ВНУТРИ ВЫКАТЫВАЕМОЙ ЗОНЫ ===
+    const startScreenBtn = document.getElementById('startScreenBtn'); const endCallBtn = document.getElementById('endCallBtn'); const videoCallZone = document.getElementById('videoCallZone');
     if (startScreenBtn) { startScreenBtn.onclick = async (e) => { e.stopPropagation(); await startScreenShare(); }; }
     if (endCallBtn) {
         endCallBtn.onclick = async (e) => {
             e.stopPropagation();
-            if (startCallBtn) startCallBtn.style.display = 'block';
-            if (startScreenBtn) startScreenBtn.style.display = 'none';
-            if (endCallBtn) endCallBtn.style.display = 'none';
-            if (videoCallZone) videoCallZone.style.display = 'none';
             await hangUpCall();
+            if (videoCallZone) videoCallZone.style.display = 'none';
+            const textChannel = document.querySelector('[data-channel="general-chat"]');
+            if (textChannel) textChannel.click();
         };
     }
+
     // === ОЖИВЛЯЕМ ПЕРЕКЛЮЧЕНИЕ ТЕКСТОВЫХ И ГОЛОСОВЫХ КАНАЛОВ ===
     document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
         item.onclick = async function(e) {
             e.stopPropagation();
-            
-            // Снимаем активный класс со всех каналов и даём текущему
             document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(c => c.classList.remove('active'));
             this.classList.add('active');
-            
             const channelType = this.getAttribute('data-type');
             const channelName = this.getAttribute('data-channel');
-            
             currentChannelContext = channelName;
             if (chatTitle) chatTitle.textContent = channelName;
-            
             const vZone = document.getElementById('videoCallZone');
-
-            // Если кликнули на ГОЛОСОВОЙ КАНАЛ
-                      if (channelType === 'voice') {
+            if (channelType === 'voice') {
                 if (hashtag) hashtag.textContent = '🔊';
-                if (vZone) vZone.style.display = 'flex'; // Мгновенно выкатываем нижний пульт звонка
-                
-                // Автоматически запускаем WebRTC звонок и запрашиваем микрофон
+                if (vZone) vZone.style.display = 'flex';
                 await startVoiceCall();
-            }
-                // Если вернулись на ТЕКСТОВЫЙ КАНАЛ
+            } else {
                 if (hashtag) hashtag.textContent = '#';
-                
-                // Глушим звонок и прячем пульт
                 await hangUpCall();
                 if (vZone) vZone.style.display = 'none';
-                
-                // Подгружаем историю сообщений чата
                 loadSavedMessages();
             }
         };
     });
-    
+
     if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
     if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
@@ -188,7 +165,6 @@ function loadSavedMessages() {
         realContainer.innerHTML = ''; snapshot.forEach((docSnap) => { const msg = docSnap.data(); if (msg.author && msg.text) { appendMessage(msg.author, msg.text); } });
     });
 }
-
 async function handleSendMessage() {
     if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
     try { await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); messageInput.value = ''; } catch (err) { console.error(err); }
@@ -232,7 +208,7 @@ function appendMessage(author, text) {
     }
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
-// === WEBRTC ФУНКЦИИ СИГНАЛКИ И УПРАВЛЕНИЯ ===
+
 async function startVoiceCall() {
     try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -240,7 +216,7 @@ async function startVoiceCall() {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
                 peerConnection = new RTCPeerConnection(rtcServers);
                 localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
-            } catch (mediaErr) { console.warn('Режим симуляции звонка без микрофона:', mediaErr); }
+            } catch (mediaErr) { console.warn('Симуляция без микрофона:', mediaErr); }
         }
         if (!peerConnection) { peerConnection = new RTCPeerConnection(rtcServers); }
         peerConnection.ontrack = (event) => {
@@ -261,12 +237,11 @@ async function startVoiceCall() {
 
 async function startScreenShare() {
     try {
-        if (!peerConnection) { alert('Сначала начните звонок!'); return; }
+        if (!peerConnection) { alert('Сначала подключитесь к голосу!'); return; }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
         const screenTrack = screenStream.getVideoTracks()[0];
         const senders = peerConnection.getSenders(); const sender = senders.find(s => s.track && s.track.kind === 'video');
         if (sender) { sender.replaceTrack(screenTrack); } else { peerConnection.addTrack(screenTrack, screenStream); }
-        alert('Демонстрация экрана запущена!');
     } catch (err) { console.error('Ошибка экрана:', err); }
 }
 
@@ -288,8 +263,6 @@ async function joinVoiceCall() {
         const answerDescription = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answerDescription);
         await roomRef.update({ answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
         roomRef.collection('callerCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') { peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); } }); });
-        if (startCallBtn) startCallBtn.style.display = 'none'; if (startScreenBtn) startScreenBtn.style.display = 'block'; if (endCallBtn) endCallBtn.style.display = 'block';
-        alert('Вы подключились к звонку!');
     } catch (err) { console.error('Ошибка входа:', err); }
 }
 
@@ -306,7 +279,7 @@ async function hangUpCall() {
             await roomRef.delete();
         } catch (err) { console.error(err); }
     }
-    currentRoomId = null; alert('Звонок завершён.');
+    currentRoomId = null;
 }
 
 function checkUserSession() {
