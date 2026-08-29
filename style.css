@@ -743,27 +743,53 @@ body {
     padding: 0 !important;
 }
 
-/* Центрируем сам вектор внутри кнопки */
+/* =======================================================
+   УЛЬТИМАТИВНЫЙ ФИКС ШЕСТЕРЁНКИ (ТЕКСТУРА БОЛЬШЕ НЕ РЕЖЕТСЯ)
+   ======================================================= */
+
+/* Даём кнопкам больше физического пространства вокруг */
+.notification-bell, 
+.settings-gear-trigger {
+    width: 38px !important;  
+    height: 38px !important; 
+    background: transparent !important;
+    border: none !important;
+    color: #b5bac1 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* КРИТИЧЕСКИЙ ФИКС: отменяем любую обрезку по краям родителя */
+    overflow: visible !important; 
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    margin: 0 4px !important;
+}
+
+/* Делаем сам SVG чуть компактнее внутри кнопки, чтобы зубья не бились о края */
 .notification-bell svg, 
 .settings-gear-trigger svg {
-    width: 22px !important;
-    height: 22px !important;
+    width: 18px !important;  /* Снизили с 22px до 18px — теперь иконка свободно дышит */
+    height: 18px !important; 
     display: block !important;
-    overflow: visible !important;
-    transform-origin: center center !important; /* Вращение строго по центру */
+    
+    /* КРИТИЧЕСКИЙ ФИКС: разрешаем векторам выходить за рамки */
+    overflow: visible !important; 
+    transform-origin: center center !important; 
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important;
 }
 
-/* Шестерёнка плавно делает полный оборот 360° без обрезки краев */
+/* Шестерёнка плавно делает полный оборот 360° — БЕЗ КРАСНОТЫ, БЕЗ ОБРЕЗКИ КРАЕВ */
 .settings-gear-trigger:hover svg {
     transform: rotate(360deg) !important;
-    color: #f23f43 !important; /* Окрашивается в сочный красный цвет */
+    color: #ffffff !important; /* При наведении становится чисто белой, сохраняя кастомный цвет зоны */
 }
 
-/* Колокольчик задорно покачивается вбок при наведении */
+/* Колокольчик задорно покачивается вбок */
 .notification-bell:hover svg {
     animation: bellSwing 0.4s ease-in-out !important;
-    color: #f2f3f5 !important;
+    color: #ffffff !important;
 }
 
 
