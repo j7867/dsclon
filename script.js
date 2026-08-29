@@ -7,7 +7,8 @@ let currentRoomId = null;
 
 const rtcServers = {
     iceServers: [
-        { urls: ['stun:://google.com', 'stun:://google.com'] }
+        { urls: 'stun:://google.com' },
+        { urls: 'stun:://google.com' }
     ],
     iceCandidatePoolSize: 10,
 };
