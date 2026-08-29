@@ -544,7 +544,11 @@ body {
     transform: scale(1) !important; 
 }
 
-/* ТВОЁ ТРЕБОВАНИЕ: КРУГЛЫЕ КНОПКИ С ТЁМНЫМИ РАМКАМИ ПО БОКАМ */
+/* =======================================================
+   ЖЕСТКИЙ ВОЗВРАТ КВАДРАТОВ И СТРЕЛКИ ВЛЕВО-ВНИЗ
+   ======================================================= */
+
+/* НАМЕРТВО ВЕРНУЛИ КВАДРАТНЫЕ КНОПКИ-РАМКИ ДИСКОРДА */
 .action-btn { 
     background: transparent !important; 
     border: none !important; 
@@ -557,8 +561,8 @@ body {
     display: flex !important; 
     align-items: center !important; 
     justify-content: center !important; 
-    border-radius: 50% !important; /* Делаем идеальный кружок */
-    border: 1px solid #232428 !important; /* Аккуратная рамка */
+    border-radius: 4px !important; /* УБРАЛИ 50%, вернули легкий квадратный радиус */
+    border: 1px solid #232428 !important; /* Тёмная квадратная рамка по бокам */
     margin: 0 2px !important; 
     transition: background-color 0.1s, color 0.1s, border-color 0.1s !important; 
 }
@@ -572,7 +576,6 @@ body {
 .hover-edit-btn:hover span { 
     transform: rotate(19deg) !important; 
 }
-
 .hover-edit-btn:hover { 
     background-color: #35373c !important; 
     border-color: #4e5058 !important; 
@@ -582,31 +585,29 @@ body {
 .hover-delete-trigger-btn:hover span { 
     transform: rotate(19deg) !important; 
 }
-
 .hover-delete-trigger-btn:hover { 
     background-color: #f23f43 !important; 
     border-color: #f23f43 !important; 
     color: #fff !important; 
 }
 
-/* ТВОЁ ТРЕБОВАНИЕ: СТРЕЛКА ИЗНАЧАЛЬНО СЛЕВА, ПРИ НАВЕДЕНИИ ПЛАВНО ВНИЗ ПРОТИВ ЧАСОВОЙ */
+/* ФИКС СТРЕЛКИ: Изначально стоит ровным знаком < (влево) */
 .action-dropdown-wrapper { 
     position: relative !important; 
     display: flex !important; 
     align-items: center !important; 
     height: 28px !important; 
 }
-
 .hover-more-btn span { 
-    transform: rotate(180deg) !important; /* По умолчанию знак > развернут влево < */
+    transform: rotate(0deg) !important; /* Убрали 180°, так как в скрипте теперь честный < */
     transform-origin: center center !important; 
 }
 
+/* При наведении: плавно катится против часовой стрелки носом строго вниз (-90°) */
 .action-dropdown-wrapper:hover .hover-more-btn span { 
-    transform: rotate(90deg) !important; /* Угол 90° плавно роняет её против часовой стрелки строго вниз */
+    transform: rotate(-90deg) !important; 
     color: #fff !important; 
 }
-
 .action-dropdown-wrapper:hover .hover-more-btn { 
     background-color: #35373c !important; 
     border-color: #4e5058 !important; 
