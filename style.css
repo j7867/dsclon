@@ -744,30 +744,6 @@ body {
 }
 
 /* =======================================================
-   УЛЬТИМАТИВНЫЙ ФИКС ШЕСТЕРЁНКИ (ТЕКСТУРА БОЛЬШЕ НЕ РЕЖЕТСЯ)
-   ======================================================= */
-
-/* Даём кнопкам больше физического пространства вокруг */
-.notification-bell, 
-.settings-gear-trigger {
-    width: 38px !important;  
-    height: 38px !important; 
-    background: transparent !important;
-    border: none !important;
-    color: #b5bac1 !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    
-    /* КРИТИЧЕСКИЙ ФИКС: отменяем любую обрезку по краям родителя */
-    overflow: visible !important; 
-    box-sizing: border-box !important;
-    padding: 0 !important;
-    margin: 0 4px !important;
-}
-
-/* =======================================================
    ФИНАЛЬНЫЙ РАЗЁБ ОБРЕЗКИ ШЕСТЕРЁНКИ (СДВИГ ОТ КРАЯ ЭКРАНА)
    ======================================================= */
 
