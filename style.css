@@ -716,36 +716,38 @@ html, body {
     transition: stroke-dashoffset 1s linear !important; /* Шаг за шагом заполняем его */
 }
 /* =======================================================
-   ФИКС ХОВЕР-ПАНЕЛИ: НАКЛОН 19 ГРАДУСОВ И ПОВОРОТ ВНИЗ
+   ФИКС ХОВЕР-ПАНЕЛИ: БЛОКИРОВКА РАМОК И НАКЛОНЫ ЗНАЧКОВ
    ======================================================= */
 
-/* Фикс стрелочки: так как знак изначально смотрит влево (<),
-   чтобы развернуть его носом вниз, нам нужно повернуть его строго на -90 градусов */
+/* Заставляем все внутренние значки быть блочными, чтобы они могли крутиться */
+.hover-edit-btn span,
+.hover-delete-trigger-btn span,
 .hover-more-btn span {
     display: inline-block !important;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
+
+/* Фикс стрелочки: так как символ у нас теперь оригинальный (>), 
+   чтобы он посмотрел строго вниз, его нужно повернуть ровно на 90 градусов */
 .action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: rotate(-90deg) !important; /* Насильно разворачивает знак < носом строго вниз */
+    transform: rotate(90deg) !important; 
     color: #fff !important;
 }
 
-/* Возвращаем аккуратные наклоны вместо безумного кручения в 360 градусов */
-.hover-edit-btn, 
-.hover-delete-trigger-btn {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.1s !important;
-}
-
-/* Твоё требование: Карандаш наклоняется плавно на 19 градусов при наведении */
-.hover-edit-btn:hover {
+/* Твоё требование: Сама квадратная кнопка стоит ровно, а карандаш внутри неё наклоняется на 19° */
+.hover-edit-btn:hover span {
     transform: rotate(19deg) !important;
+}
+.hover-edit-btn:hover {
     background-color: #35373c !important;
     color: #fff !important;
 }
 
-/* Твоё требование: Мусорка наклоняется плавно на 19 градусов при наведении */
-.hover-delete-trigger-btn:hover {
+/* Твоё требование: Красный квадрат стоит на месте, а мусорка внутри него наклоняется на 19° */
+.hover-delete-trigger-btn:hover span {
     transform: rotate(19deg) !important;
+}
+.hover-delete-trigger-btn:hover {
     background-color: #f23f43 !important;
     color: #fff !important;
 }
