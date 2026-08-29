@@ -1,6 +1,3 @@
-let selectedAvatarColor = '#5865f2';
-let base64AvatarData = '';
-// === 1. ГЛОБАЛЬНАЯ ФУНКЦИЯ АВТОРИЗАЦИИ ===
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
@@ -23,10 +20,9 @@ window.triggerManualAuth = async function() {
         const overlay = document.getElementById('authModalOverlay');
         if (overlay) overlay.classList.remove('active');
         initChatAfterAuth();
-    } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
+    } catch (err) { console.error(err); }
 };
 
-// === 2. ФУНКЦИЯ КРУГОВОГО ТАЙМЕРА УДАЛЕНИЯ ===
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
@@ -71,103 +67,33 @@ const db = firebase.firestore();
 const CREATOR_NICKNAME = 'dj1ka'; let myName = ''; let currentServerContext = 'public'; let currentChannelContext = 'general-chat';
 let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn, publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
 
-// === 3. ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ DOMContentLoaded ===
 document.addEventListener('DOMContentLoaded', () => {
     authModalOverlay = document.getElementById('authModalOverlay'); authLoginInput = document.getElementById('authLoginInput'); authPasswordInput = document.getElementById('authPasswordInput'); authSubmitBtn = document.getElementById('authSubmitBtn'); publicServerBtn = document.getElementById('publicServerBtn'); dmServerBtn = document.getElementById('dmServerBtn'); serverChannelsSection = document.getElementById('serverChannelsSection'); dmChannelsSection = document.getElementById('dmChannelsSection'); chatTitle = document.getElementById('chatTitle'); hashtag = document.getElementById('hashtag'); messageInput = document.getElementById('messageInput'); sendBtn = document.getElementById('sendBtn'); messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
-
     const openSettingsBtn = document.getElementById('openSettingsBtn'); const settingsSidebar = document.getElementById('settingsSidebar');
     if (openSettingsBtn && settingsSidebar) { openSettingsBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsSidebar.classList.toggle('active'); }); }
     const goToZonesBtn = document.getElementById('goToZonesBtn'); const backToMenuBtn = document.getElementById('backToMenuBtn'); const mainSettingsScreen = document.getElementById('mainSettingsScreen'); const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
     if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) { goToZonesBtn.addEventListener('click', (e) => { e.stopPropagation(); mainSettingsScreen.classList.remove('active-screen'); zoneSettingsScreen.classList.add('active-screen'); }); }
     if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) { backToMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); zoneSettingsScreen.classList.remove('active-screen'); mainSettingsScreen.classList.add('active-screen'); }); }
-
     const zoneSelectTrigger = document.getElementById('zoneSelectTrigger'); const zoneSelectOptions = document.getElementById('zoneSelectOptions'); let selectedZone = '';
     if (zoneSelectTrigger && zoneSelectOptions) { zoneSelectTrigger.addEventListener('click', (e) => { e.stopPropagation(); zoneSelectOptions.classList.toggle('active'); }); }
     document.querySelectorAll('.custom-option').forEach(option => {
-        option.addEventListener('click', function(e) {
-            e.stopPropagation(); selectedZone = this.getAttribute('data-value');
-            if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = this.textContent + ' <span class="select-arrow">▼</span>';
-            if (zoneSelectOptions) zoneSelectOptions.classList.remove('active');
-        });
+        option.addEventListener('click', function(e) { e.stopPropagation(); selectedZone = this.getAttribute('data-value'); if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = this.textContent + ' <span class="select-arrow">▼</span>'; if (zoneSelectOptions) zoneSelectOptions.classList.remove('active'); });
     });
     const applyColorBtn = document.getElementById('applyColorBtn'); const customColorInput = document.getElementById('customColorInput');
-    if (applyColorBtn && customColorInput) {
-        applyColorBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; }
-            const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); }
-        });
-    }
-    let selectedAvatarColor = '#5865f2'; let currentZoomScale = 1; let base64AvatarData = '';
-    const userAvatarHeader = document.getElementById('userAvatarHeader'); const profileModalOverlay = document.getElementById('profileModalOverlay'); const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
-    const uploadAvatarFileBtn = document.getElementById('uploadAvatarFileBtn'); const profileImageFileInput = document.getElementById('profileImageFileInput'); const modalAvatarImg = document.getElementById('modalAvatarImg');
-    const modalAvatarLetter = document.getElementById('modalAvatarLetter'); const avatarZoomSlider = document.getElementById('avatarZoomSlider'); const zoomSliderWrapper = document.getElementById('zoomSliderWrapper'); const resetAvatarFileBtn = document.getElementById('resetAvatarFileBtn');
-
-    if (userAvatarHeader && profileModalOverlay) {
-        userAvatarHeader.onclick = function(e) { e.stopPropagation(); const profileNicknameInput = document.getElementById('profileNicknameInput'); if (profileNicknameInput) profileNicknameInput.value = myName; profileModalOverlay.classList.add('active'); };
-    }
-    if (closeProfileModalBtn && profileModalOverlay) { closeProfileModalBtn.onclick = function() { profileModalOverlay.classList.remove('active'); }; }
-    if (uploadAvatarFileBtn && profileImageFileInput) { uploadAvatarFileBtn.onclick = function(e) { e.stopPropagation(); profileImageFileInput.click(); }; }
-
-    if (profileImageFileInput) {
-        profileImageFileInput.onchange = function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    base64AvatarData = e.target.result;
-                    if (modalAvatarImg && modalAvatarLetter && zoomSliderWrapper) {
-                        modalAvatarImg.src = base64AvatarData; modalAvatarImg.style.display = 'block'; modalAvatarImg.style.transform = 'translate(-50%, -50%) scale(1)';
-                        if (avatarZoomSlider) avatarZoomSlider.value = 1; modalAvatarLetter.style.display = 'none'; zoomSliderWrapper.style.display = 'flex';
-                    }
-                    if (resetAvatarFileBtn) resetAvatarFileBtn.style.display = 'block'; if (uploadAvatarFileBtn) uploadAvatarFileBtn.textContent = 'Файл выбран';
-                };
-                reader.readAsDataURL(this.files[0]);
-            }
-        };
-    }
-    if (avatarZoomSlider && modalAvatarImg) {
-        avatarZoomSlider.oninput = function() { currentZoomScale = this.value; modalAvatarImg.style.transform = 'translate(-50%, -50%) scale(' + currentZoomScale + ')'; };
-    }
-    if (resetAvatarFileBtn && modalAvatarImg && modalAvatarLetter && zoomSliderWrapper && uploadAvatarFileBtn) {
-        resetAvatarFileBtn.onclick = function() {
-            base64AvatarData = ''; modalAvatarImg.style.display = 'none'; modalAvatarLetter.style.display = 'block'; zoomSliderWrapper.style.display = 'none'; resetAvatarFileBtn.style.display = 'none'; uploadAvatarFileBtn.textContent = 'Выбрать файл'; if (profileImageFileInput) profileImageFileInput.value = '';
-        };
-    }
-        document.querySelectorAll('.avatar-color-circle').forEach(circle => {
-        circle.onclick = function(e) {
-            e.stopPropagation();
-            document.querySelectorAll('.avatar-color-circle').forEach(c => c.classList.remove('selected'));
-            e.currentTarget.classList.add('selected');
-            selectedAvatarColor = e.currentTarget.getAttribute('data-color');
-            const cropBox = document.querySelector('.avatar-crop-container');
-            if (cropBox) cropBox.style.backgroundColor = selectedAvatarColor;
-        };
-    });
-
+    if (applyColorBtn && customColorInput) { applyColorBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; } const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); } }); }
     const bellDropdownPanel = document.getElementById('bellDropdownPanel'); const notificationBell = document.getElementById('notificationBell');
+    if (notificationBell && bellDropdownPanel) { notificationBell.addEventListener('click', (e) => { e.stopPropagation(); bellDropdownPanel.classList.toggle('active'); if (settingsSidebar) settingsSidebar.classList.remove('active'); }); }
     document.addEventListener('click', (e) => {
-        const settingsSidebar = document.getElementById('settingsSidebar');
-        const openSettingsBtn = document.getElementById('openSettingsBtn');
-        const zoneSelectOptions = document.getElementById('zoneSelectOptions');
-        const zoneSelectTrigger = document.getElementById('zoneSelectTrigger');
         if (settingsSidebar && !settingsSidebar.contains(e.target) && e.target !== openSettingsBtn) { settingsSidebar.classList.remove('active'); }
         if (zoneSelectOptions && !zoneSelectOptions.contains(e.target) && e.target !== zoneSelectTrigger) { zoneSelectOptions.classList.remove('active'); }
         if (bellDropdownPanel && !bellDropdownPanel.contains(e.target) && e.target !== notificationBell) { bellDropdownPanel.classList.remove('active'); }
     });
-
     if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
-
-    if (publicServerBtn) {
-        publicServerBtn.addEventListener('click', () => {
-            document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active');
-            currentServerContext = 'public'; currentChannelContext = 'general-chat';
-            if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#';
-            if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block';
-            loadSavedMessages();
-        });
-    }
+    if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
     checkUserSession();
 });
+
 function initChatAfterAuth() {
     const topName = document.getElementById('topUserName'); if (topName) topName.textContent = myName;
     const topAvatar = document.getElementById('userAvatarHeader'); if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
@@ -184,15 +110,14 @@ function loadSavedMessages() {
 
 async function handleSendMessage() {
     if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
-    try {
-        await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-        messageInput.value = '';
-    } catch (err) { console.error(err); }
+    try { await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); messageInput.value = ''; } catch (err) { console.error(err); }
 }
 
 function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
+    
+    // ВЁРСТКА: Кнопки-кружочки с тегом span внутри
     messageElement.innerHTML = `
         <div class="message-content"><span class="message-author">${author}:</span><span class="message-text">${text}</span></div>
         <div class="message-hover-actions">
@@ -207,12 +132,8 @@ function appendMessage(author, text) {
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
     const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
-    if (addFriendBtn) { 
-        addFriendBtn.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
-            alert('Заявка в друзья пользователю ' + author + ' успешно отправлена!'); 
-        }); 
-    }
+    if (addFriendBtn) { addFriendBtn.addEventListener('click', (e) => { e.stopPropagation(); alert('Заявка отправлена!'); }); }
+    
     const editBtn = messageElement.querySelector('.hover-edit-btn');
     if (editBtn) {
         editBtn.addEventListener('click', (e) => {
@@ -230,29 +151,6 @@ function appendMessage(author, text) {
             });
             cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
         });
-    }
-
-    const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
-    const profileNicknameInput = document.getElementById('profileNicknameInput');
-    const profileModalOverlay = document.getElementById('profileModalOverlay');
-    if (saveProfileChangesBtn) {
-        saveProfileChangesBtn.onclick = function() {
-            const newNick = profileNicknameInput ? profileNicknameInput.value.trim() : '';
-            if (newNick) { myName = newNick; localStorage.setItem('chat_active_user', myName); }
-            const topName = document.getElementById('topUserName'); const topAvatar = document.getElementById('userAvatarHeader');
-            if (topName) topName.textContent = myName;
-            if (topAvatar) {
-                topAvatar.style.backgroundColor = selectedAvatarColor;
-                if (base64AvatarData) {
-                    topAvatar.textContent = ''; topAvatar.style.backgroundImage = 'url(' + base64AvatarData + ')';
-                    topAvatar.style.backgroundSize = 'cover'; topAvatar.style.backgroundPosition = 'center';
-                } else {
-                    topAvatar.style.backgroundImage = 'none'; topAvatar.textContent = myName.charAt(0).toUpperCase();
-                }
-            }
-            if (profileModalOverlay) profileModalOverlay.classList.remove('active');
-            alert('Профиль успешно обновлен!');
-        };
     }
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
