@@ -767,23 +767,56 @@ body {
     margin: 0 4px !important;
 }
 
-/* Делаем сам SVG чуть компактнее внутри кнопки, чтобы зубья не бились о края */
+/* =======================================================
+   ФИНАЛЬНЫЙ РАЗЁБ ОБРЕЗКИ ШЕСТЕРЁНКИ (СДВИГ ОТ КРАЯ ЭКРАНА)
+   ======================================================= */
+
+/* Запрещаем правому блоку шапки чата отпиливать текстуры */
+.header-right-group {
+    overflow: visible !important;
+}
+
+/* Настройка кнопок: добавили правый маргин, чтобы увести шестерёнку из зоны обрезки */
+.notification-bell, 
+.settings-gear-trigger {
+    width: 32px !important;  
+    height: 32px !important; 
+    background: transparent !important;
+    border: none !important;
+    color: #b5bac1 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important; 
+    box-sizing: border-box !important;
+    padding: 0 !important;
+}
+
+/* Твоё требование: Шестерёнка сдвигается влево от края экрана на 12 пикселей */
+.settings-gear-trigger {
+    margin-right: 12px !important; 
+}
+
+.notification-bell {
+    margin-right: 4px !important;
+}
+
+/* Сам SVG-значок свободно крутится внутри своей безопасной зоны */
 .notification-bell svg, 
 .settings-gear-trigger svg {
-    width: 18px !important;  /* Снизили с 22px до 18px — теперь иконка свободно дышит */
-    height: 18px !important; 
+    width: 20px !important;  
+    height: 20px !important; 
     display: block !important;
-    
-    /* КРИТИЧЕСКИЙ ФИКС: разрешаем векторам выходить за рамки */
     overflow: visible !important; 
     transform-origin: center center !important; 
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important;
 }
 
-/* Шестерёнка плавно делает полный оборот 360° — БЕЗ КРАСНОТЫ, БЕЗ ОБРЕЗКИ КРАЕВ */
+/* Шестерёнка плавно делает полный оборот 360° — ИДЕАЛЬНО ЦЕЛАЯ, БЕЗ ОБРЕЗКОВ */
 .settings-gear-trigger:hover svg {
     transform: rotate(360deg) !important;
-    color: #ffffff !important; /* При наведении становится чисто белой, сохраняя кастомный цвет зоны */
+    color: #ffffff !important; /* Становится белой при наведении */
 }
 
 /* Колокольчик задорно покачивается вбок */
@@ -792,8 +825,6 @@ body {
     color: #ffffff !important;
 }
 
-
-/* Эффект маятника для колокольчика */
 @keyframes bellSwing {
     0% { transform: rotate(0); }
     20% { transform: rotate(15deg); }
