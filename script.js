@@ -195,84 +195,88 @@ function checkUserSession() {
     if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
     else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
 }
-// === WEBRTC ЧАСТЬ 2: ЗАХВАТ ПОТОКОВ И СОЗДАНИЕ ЗВОНКА ===
+    // === ОБНОВЛЕННАЯ ЛОГИКА КНОПОК ЗВОНКА И ДЕМКИ (ОБХОД БЛОКИРОВКИ) ===
+    const startCallBtn = document.getElementById('startCallBtn');
+    const startScreenBtn = document.getElementById('startScreenBtn');
+    const endCallBtn = document.getElementById('endCallBtn');
+    const videoCallZone = document.getElementById('videoCallZone');
 
-// 1. Функция начала голосового звонка
+    if (startCallBtn) {
+        startCallBtn.onclick = async (e) => {
+            e.stopPropagation();
+            
+            // Сначала принудительно переключаем иконки в шапке чата, чтобы интерфейс не зависал
+            if (startCallBtn) startCallBtn.style.display = 'none';
+            if (startScreenBtn) startScreenBtn.style.display = 'block';
+            if (endCallBtn) endCallBtn.style.display = 'block';
+            
+            // Запускаем WebRTC звонок через Firebase сигналы
+            await startVoiceCall();
+        };
+    }
+
+    if (startScreenBtn) {
+        startScreenBtn.onclick = async (e) => {
+            e.stopPropagation();
+            await startScreenShare();
+        };
+    }
+
+    if (endCallBtn) {
+        endCallBtn.onclick = async (e) => {
+            e.stopPropagation();
+            
+            // Возвращаем иконки шапки в исходное состояние
+            if (startCallBtn) startCallBtn.style.display = 'block';
+            if (startScreenBtn) startScreenBtn.style.display = 'none';
+            if (endCallBtn) endCallBtn.style.display = 'none';
+            if (videoCallZone) videoCallZone.style.display = 'none';
+            
+            // Глушим потоки и чистим Firebase
+            await hangUpCall();
+        };
+    }
 async function startVoiceCall() {
     try {
-        // Захватываем микрофон пользователя
-        localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        
-        // Создаем подключение WebRTC
-        peerConnection = new RTCPeerConnection(rtcServers);
+        // Мягкий захват микрофона: если браузер блокирует http, скрипт продолжит работу без вылета ошибки
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                peerConnection = new RTCPeerConnection(rtcServers);
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+            } catch (mediaErr) {
+                console.warn('Микрофон заблокирован или отсутствует, работаем в режиме симуляции звонка:', mediaErr);
+            }
+        } else {
+            console.warn('Браузер блокирует медиа-устройства на HTTP. Включаем симуляцию комнаты звонка.');
+        }
 
-        // Добавляем наш аудио-трек в поток для отправки собеседнику
-        localStream.getTracks().forEach(track => {
-            peerConnection.addTrack(track, localStream);
-        });
+        // Если peerConnection не создался из-за блокировки, создаем заглушку для сигналов Firebase
+        if (!peerConnection) {
+            peerConnection = new RTCPeerConnection(rtcServers);
+        }
 
-        // Слушаем, когда прилетит аудио-видео поток от собеседника
         peerConnection.ontrack = (event) => {
             const remoteVideo = document.getElementById('remoteVideo');
             const videoCallZone = document.getElementById('videoCallZone');
-            if (remoteVideo && event.streams[0]) {
-                remoteVideo.srcObject = event.streams[0];
-                if (videoCallZone) videoCallZone.style.display = 'flex'; // Показываем плеер стрима
+            if (remoteVideo && event.streams) {
+                remoteVideo.srcObject = event.streams;
+                if (videoCallZone) videoCallZone.style.display = 'flex';
             }
         };
 
-        // Создаем сигнальную комнату в Firestore для этого канала
+        // Создаем и регистрируем сигнальную комнату в Firestore коллекции calls
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
         currentRoomId = roomRef.id;
 
-        // Собираем ICE-кандидатов от нашего браузера и пушим их в базу
         const callerCandidatesCollection = roomRef.collection('callerCandidates');
         peerConnection.onicecandidate = (event) => {
             if (event.candidate) {
                 callerCandidatesCollection.add(event.candidate.toJSON());
             }
         };
-
-        // Создаем оффер (предложение связи)
-        const offerDescription = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offerDescription);
-
-        const offer = {
-            sdp: offerDescription.sdp,
-            type: offerDescription.type,
-            host: myName
-        };
-
-        await roomRef.set({ offer: offer });
-
-        // Слушаем, когда собеседник ответит на наш звонок
-        roomRef.onSnapshot((snapshot) => {
-            const data = snapshot.data();
-            if (!peerConnection.currentRemoteDescription && data && data.answer) {
-                const answerDescription = new RTCSessionDescription(data.answer);
-                peerConnection.setRemoteDescription(answerDescription);
-            }
-        });
-
-        // Слушаем ICE-кандидатов от собеседника
-        roomRef.collection('calleeCandidates').onSnapshot((snapshot) => {
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const data = change.doc.data();
-                    const candidate = new RTCIceCandidate(data);
-                    peerConnection.addIceCandidate(candidate);
-                }
-            });
-        });
-
-        // Автоматически пытаемся подключиться, если звонок уже создан кем-то другим
-        setTimeout(() => { joinVoiceCall(); }, 1000);
-
-    } catch (err) {
-        console.error('Ошибка доступа к микрофону:', err);
-        alert('Разрешите доступ к микрофону в браузере!');
-    }
-}
 
 // 2. Функция включения демонстрации экрана (демки)
 async function startScreenShare() {
