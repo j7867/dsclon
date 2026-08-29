@@ -39,7 +39,7 @@ window.triggerManualAuth = async function() {
     } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
 
-// === 3. КРУГОВОЙ ТАЙМЕP УДАЛЕНИЯ СООБЩЕНИЙ ===
+// === 3. КРУГОВОЙ ТАЙМЕР УДАЛЕНИЯ СООБЩЕНИЙ ===
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
@@ -83,7 +83,6 @@ if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 const CREATOR_NICKNAME = 'dj1ka'; let myName = ''; let currentServerContext = 'public'; let currentChannelContext = 'general-chat';
 let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn, publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
-
 // === 4. ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ DOM ===
 document.addEventListener('DOMContentLoaded', () => {
     authModalOverlay = document.getElementById('authModalOverlay'); authLoginInput = document.getElementById('authLoginInput'); authPasswordInput = document.getElementById('authPasswordInput'); authSubmitBtn = document.getElementById('authSubmitBtn'); publicServerBtn = document.getElementById('publicServerBtn'); dmServerBtn = document.getElementById('dmServerBtn'); serverChannelsSection = document.getElementById('serverChannelsSection'); dmChannelsSection = document.getElementById('dmChannelsSection'); chatTitle = document.getElementById('chatTitle'); hashtag = document.getElementById('hashtag'); messageInput = document.getElementById('messageInput'); sendBtn = document.getElementById('sendBtn'); messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
@@ -101,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const applyColorBtn = document.getElementById('applyColorBtn'); const customColorInput = document.getElementById('customColorInput');
     if (applyColorBtn && customColorInput) { applyColorBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; } const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); } }); }
+
     const bellDropdownPanel = document.getElementById('bellDropdownPanel'); const notificationBell = document.getElementById('notificationBell');
     if (notificationBell && bellDropdownPanel) { notificationBell.addEventListener('click', (e) => { e.stopPropagation(); bellDropdownPanel.classList.toggle('active'); if (settingsSidebar) settingsSidebar.classList.remove('active'); }); }
     document.addEventListener('click', (e) => {
@@ -121,8 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (textChannel) textChannel.click();
         };
     }
-
-    // === ОЖИВЛЯЕМ ПЕРЕКЛЮЧЕНИЕ ТЕКСТОВЫХ И ГОЛОСОВЫХ КАНАЛОВ ===
+    // === ОЖИВЛЯЕМ ПЕРЕКЛЮЧЕНИЕ ТЕКСТОВЫХ И ГОЛОСОВЫХ КАНАЛОВ БЕЗ БАГОВ ===
     document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
         item.onclick = async function(e) {
             e.stopPropagation();
@@ -165,11 +164,11 @@ function loadSavedMessages() {
         realContainer.innerHTML = ''; snapshot.forEach((docSnap) => { const msg = docSnap.data(); if (msg.author && msg.text) { appendMessage(msg.author, msg.text); } });
     });
 }
+
 async function handleSendMessage() {
     if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
     try { await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); messageInput.value = ''; } catch (err) { console.error(err); }
 }
-
 function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
@@ -209,6 +208,7 @@ function appendMessage(author, text) {
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
 
+// === WEBRTC ФУНКЦИИ СИГНАЛКИ И УПРАВЛЕНИЯ ===
 async function startVoiceCall() {
     try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -237,40 +237,17 @@ async function startVoiceCall() {
 
 async function startScreenShare() {
     try {
-        // Жестко инициализируем peerConnection, если он не создался ранее, обходя любые алерты!
-        if (!peerConnection) { 
-            peerConnection = new RTCPeerConnection(rtcServers); 
-        }
-        
-        // Захватываем поток экрана компьютера
+        if (!peerConnection) { peerConnection = new RTCPeerConnection(rtcServers); }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
         const screenTrack = screenStream.getVideoTracks()[0];
-        
-        // Переключаем визуал: прячем текстовую аватарку и пускаем стрим в плеер
         const placeholder = document.getElementById('voiceAvatarPlaceholder');
         const remoteVideo = document.getElementById('remoteVideo');
         if (placeholder) placeholder.style.display = 'none';
-        if (remoteVideo) {
-            remoteVideo.srcObject = screenStream;
-            remoteVideo.muted = true; // Чтобы сам себя не слышал эхом
-        }
-
-        const senders = peerConnection.getSenders(); 
-        const sender = senders.find(s => s.track && s.track.kind === 'video');
-        if (sender) { 
-            sender.replaceTrack(screenTrack); 
-        } else { 
-            peerConnection.addTrack(screenTrack, screenStream); 
-        }
-        
-        // Если пользователь нажмет "Остановить делить экран" сверху в Хроме
-        screenTrack.onended = () => {
-            if (remoteVideo) remoteVideo.srcObject = null;
-            if (placeholder) placeholder.style.display = 'flex';
-        };
-    } catch (err) { 
-        console.error('Ошибка захвата экрана:', err); 
-    }
+        if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.muted = true; }
+        const senders = peerConnection.getSenders(); const sender = senders.find(s => s.track && s.track.kind === 'video');
+        if (sender) { sender.replaceTrack(screenTrack); } else { peerConnection.addTrack(screenTrack, screenStream); }
+        screenTrack.onended = () => { if (remoteVideo) remoteVideo.srcObject = null; if (placeholder) placeholder.style.display = 'flex'; };
+    } catch (err) { console.error('Ошибка экрана:', err); }
 }
 
 async function joinVoiceCall() {
@@ -304,8 +281,9 @@ async function hangUpCall() {
         try {
             const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); });
             const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); });
-                await roomRef.delete();
-    } catch (err) { console.error(err); }
+            await roomRef.delete();
+        } catch (err) { console.error(err); }
+    }
     const placeholder = document.getElementById('voiceAvatarPlaceholder');
     if (placeholder) placeholder.style.display = 'flex';
     currentRoomId = null;
@@ -314,5 +292,6 @@ async function hangUpCall() {
 function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
     if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
-    else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
-}
+else { if (authModalOverlay) authModalOverlay.classList.add('active'); 
+     }
+ }
