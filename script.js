@@ -132,14 +132,35 @@ document.addEventListener('DOMContentLoaded', () => {
             currentChannelContext = channelName;
             if (chatTitle) chatTitle.textContent = channelName;
             const vZone = document.getElementById('videoCallZone');
+               // === ОБНОВЛЕННОЕ ПЕРЕКЛЮЧЕНИЕ КАНАЛОВ СО СКРЫТИЕМ ИНПУТА ===
+    document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
+        item.onclick = async function(e) {
+            e.stopPropagation();
+            document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            
+            const channelType = this.getAttribute('data-type');
+            const channelName = this.getAttribute('data-channel');
+            currentChannelContext = channelName;
+            if (chatTitle) chatTitle.textContent = channelName;
+            
+            const vZone = document.getElementById('videoCallZone');
+            const inputArea = document.querySelector('.input-area'); // Находим нижнюю панель ввода
+
+            // ТВОЁ ТРЕБОВАНИЕ: Если зашли в ГОЛОСОВОЙ КАНАЛ
             if (channelType === 'voice') {
                 if (hashtag) hashtag.textContent = '🔊';
                 if (vZone) vZone.style.display = 'flex';
+                if (inputArea) inputArea.style.display = 'none'; // НАХУЙ ПРЯЧЕМ ТЕКСТОВЫЙ ИНПУТ
+                
                 await startVoiceCall();
             } else {
+                // Если вернулись в ТЕКСТОВЫЙ КАНАЛ
                 if (hashtag) hashtag.textContent = '#';
-                await hangUpCall();
                 if (vZone) vZone.style.display = 'none';
+                if (inputArea) inputArea.style.display = 'flex'; // ВОЗВРАЩАЕМ ИНПУТ ОБРАТНО ДЛЯ ЧАТА
+                
+                await hangUpCall();
                 loadSavedMessages();
             }
         };
