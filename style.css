@@ -157,20 +157,13 @@ body {
     font-weight: 500; 
     color: #f2f3f5; 
 }
-/* =======================================================
-   ОРИГИНАЛЬНАЯ ПАРЯЩАЯ ПОДСВЕТКА ШЕСТЕРЁНКИ И КОЛОКОЛЬЧИКА
-   ======================================================= */
 
-.notification-bell, 
-.settings-gear-trigger { 
+.notification-bell, .settings-gear-trigger { 
     width: 34px !important; 
     height: 34px !important; 
     background: transparent !important; 
-    
-    /* УБРАЛИ РАМКИ: делаем чистые парящие круги */
     border: none !important; 
     border-radius: 50% !important; 
-    
     color: #b5bac1 !important; 
     cursor: pointer !important; 
     display: flex !important; 
@@ -179,20 +172,15 @@ body {
     overflow: visible !important; 
     box-sizing: border-box !important; 
     padding: 0 !important; 
-    margin: 0 2px !important;
-    
-    /* Плавное появление круглой подложки */
-    transition: background-color 0.2s ease, color 0.15s ease !important;
+    margin: 0 2px !important; 
+    transition: background-color 0.2s ease, color 0.15s ease !important; 
 }
 
-/* Сдвиг шестерёнки от края экрана для безопасности */
 .settings-gear-trigger { 
     margin-right: 12px !important; 
 }
 
-/* Настройка самих SVG иконок внутри круга */
-.notification-bell svg, 
-.settings-gear-trigger svg { 
+.notification-bell svg, .settings-gear-trigger svg { 
     width: 20px !important; 
     height: 20px !important; 
     display: block !important; 
@@ -201,19 +189,19 @@ body {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important; 
 }
 
-/* Твоё требование: При наведении плавно загорается мягкий круглый фон Дискорда */
-.settings-gear-trigger:hover {
-    background-color: rgba(255, 255, 255, 0.06) !important; /* Полупрозрачный круг */
+.settings-gear-trigger:hover { 
+    background-color: rgba(255, 255, 255, 0.06) !important; 
 }
+
 .settings-gear-trigger:hover svg { 
-    transform: rotate(360deg) !important; /* Крутится на 360° */
+    transform: rotate(360deg) !important; 
     color: #f2f3f5 !important; 
 }
 
-/* Такой же круглый ховер для колокольчика */
-.notification-bell:hover {
-    background-color: rgba(255, 255, 255, 0.06) !important;
+.notification-bell:hover { 
+    background-color: rgba(255, 255, 255, 0.06) !important; 
 }
+
 .notification-bell:hover svg { 
     animation: bellSwing 0.4s ease-in-out !important; 
     color: #f2f3f5 !important; 
@@ -404,7 +392,6 @@ body {
     color: #f2f3f5; 
 }
 
-/* ИСПРАВЛЕННЫЙ ТАЙМЕР: Маленькая чёрная плашка с неоновым красным контуром */
 .delete-confirm-panel { 
     display: none; 
     background-color: #1e1f22 !important; 
@@ -518,15 +505,16 @@ body {
     font-size: 15px; 
 }
 
+/* Общая плашка действий: ЧИСТАЯ, БЕЗ ОБВОДОК И БЕЗ РАМОК ВООБЩЕ */
 .message-hover-actions { 
     position: absolute !important; 
     right: 32px !important; 
     top: -12px !important; 
     background-color: #313338 !important; 
-    border: 1px solid #232428 !important; 
+    border: none !important; /* УБРАЛИ РАМКИ */
     border-radius: 4px !important; 
     display: flex !important; 
-    padding: 2px !important; 
+    padding: 0 !important; /* Ховер займет всю площадь */
     box-shadow: 0 4px 4px rgba(0,0,0,0.16) !important; 
     height: 32px !important; 
     align-items: center !important; 
@@ -544,31 +532,51 @@ body {
     transform: scale(1) !important; 
 }
 
-/* =======================================================
-   ФИКС ХОВЕРА: БОЛЕЕ ТЁМНЫЙ СЕРЫЙ ЦВЕТ И ЗАКРУГЛЕНИЕ КРАЕВ
-   ======================================================= */
+/* Каждая отдельная кнопка — ЧИСТАЯ НА СТАРТЕ, БЕЗ ОБВОДОК */
+.action-btn { 
+    background: transparent !important; 
+    border: none !important; /* НАГЛУХО УБРАЛИ ОБВОДКИ КНОПОК */
+    color: #b5bac1 !important; 
+    cursor: pointer !important; 
+    padding: 0 !important; 
+    width: 32px !important; /* Ровно треть панели */
+    height: 32px !important; 
+    font-size: 14px !important; 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important; 
+    border-radius: 0 !important; 
+    box-sizing: border-box !important; 
+    transition: background-color 0.15s ease, color 0.1s, border-radius 0.15s ease !important; 
+}
 
-/* ТВОЁ ТРЕБОВАНИЕ: При наведении загорается ТЁМНЫЙ серый фон-квадрат со слегка закругленными краями */
+.hover-edit-btn span, .hover-delete-trigger-btn span, .hover-more-btn span { 
+    display: inline-block !important; 
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; 
+    pointer-events: none !important; 
+}
+
+/* ИСПРАВЛЕНО: ТЁМНО-СЕРЫЙ фон со слегка закруглёнными краями */
 .hover-edit-btn:hover { 
-    background-color: #35373c !important; /* Сделали темнее (фирменный серый цвет Discord вместо прозрачного) */
-    border-radius: 4px !important; /* ТВОЁ ТРЕБОВАНИЕ: Слегка закруглили края ховера */
+    background-color: #35373c !important; /* Плотный тёмно-серый Discord-цвет */
+    border-radius: 4px !important; /* СЛЕГКА ЗАКРУГЛИЛИ КРАЯ */
     color: #fff !important; 
 }
+
 .hover-edit-btn:hover span { 
     transform: rotate(19deg) !important; 
 }
 
-/* Ховер для корзины удаления (Оставляем оригинальный красный, но тоже слегка закругляем края) */
 .hover-delete-trigger-btn:hover { 
     background-color: #f23f43 !important; 
-    border-radius: 4px !important; /* Слегка закруглили края ховера корзины */
+    border-radius: 4px !important; /* ЗАКРУГЛИЛИ КРАЯ ДЛЯ КОРЗИНЫ */
     color: #fff !important; 
 }
+
 .hover-delete-trigger-btn:hover span { 
     transform: rotate(19deg) !important; 
 }
 
-/* Контейнер для выпадающего меню стрелочки */
 .action-dropdown-wrapper { 
     position: relative !important; 
     display: flex !important; 
@@ -581,17 +589,17 @@ body {
     transform-origin: center center !important; 
 }
 
-/* ТВОЁ ТРЕБОВАНИЕ: При наведении на стрелочку загорается ТЁМНЫЙ серый ховер с закруглением, и она крутится вниз */
+/* ИСПРАВЛЕНО: ТЁМНО-СЕРЫЙ ховер для стрелочки с закруглением */
 .action-dropdown-wrapper:hover .hover-more-btn { 
-    background-color: #35373c !important; /* Сделали темнее под цвет карандаша */
-    border-radius: 4px !important; /* ТВОЁ ТРЕБОВАНИЕ: Слегка закруглили края ховера стрелочки */
+    background-color: #35373c !important; /* Тёмный цвет */
+    border-radius: 4px !important; /* СЛЕГКА ЗАКРУГЛИЛИ КРАЯ */
     color: #fff !important; 
 }
+
 .action-dropdown-wrapper:hover .hover-more-btn span { 
-    transform: rotate(-90deg) !important; /* Уход против часовой стрелки строго вниз */
+    transform: rotate(-90deg) !important; /* Поворот против часовой стрелки строго вниз */
 }
 
-/* Выпадающее меню друзей */
 .hover-submenu { 
     position: absolute !important; 
     top: 36px !important; 
@@ -608,6 +616,7 @@ body {
     transform: translateY(-5px) !important; 
     transition: all 0.1s ease !important; 
 }
+
 .action-dropdown-wrapper:hover .hover-submenu { 
     opacity: 1 !important; 
     visibility: visible !important; 
