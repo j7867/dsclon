@@ -64,6 +64,18 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
+// === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ WEBRTC ЗВОНКОВ И ДЕМКИ ===
+let localStream = null;
+let screenStream = null;
+let peerConnection = null;
+let currentRoomId = null;
+
+const rtcServers = {
+    iceServers: [
+        { urls: ['stun:://google.com', 'stun:://google.com'] }
+    ],
+    iceCandidatePoolSize: 10,
+};
 const CREATOR_NICKNAME = 'dj1ka'; let myName = ''; let currentServerContext = 'public'; let currentChannelContext = 'general-chat';
 let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn, publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
 
@@ -182,4 +194,236 @@ function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
     if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
     else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+}
+// === WEBRTC ЧАСТЬ 2: ЗАХВАТ ПОТОКОВ И СОЗДАНИЕ ЗВОНКА ===
+
+// 1. Функция начала голосового звонка
+async function startVoiceCall() {
+    try {
+        // Захватываем микрофон пользователя
+        localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        
+        // Создаем подключение WebRTC
+        peerConnection = new RTCPeerConnection(rtcServers);
+
+        // Добавляем наш аудио-трек в поток для отправки собеседнику
+        localStream.getTracks().forEach(track => {
+            peerConnection.addTrack(track, localStream);
+        });
+
+        // Слушаем, когда прилетит аудио-видео поток от собеседника
+        peerConnection.ontrack = (event) => {
+            const remoteVideo = document.getElementById('remoteVideo');
+            const videoCallZone = document.getElementById('videoCallZone');
+            if (remoteVideo && event.streams[0]) {
+                remoteVideo.srcObject = event.streams[0];
+                if (videoCallZone) videoCallZone.style.display = 'flex'; // Показываем плеер стрима
+            }
+        };
+
+        // Создаем сигнальную комнату в Firestore для этого канала
+        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+        currentRoomId = roomRef.id;
+
+        // Собираем ICE-кандидатов от нашего браузера и пушим их в базу
+        const callerCandidatesCollection = roomRef.collection('callerCandidates');
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                callerCandidatesCollection.add(event.candidate.toJSON());
+            }
+        };
+
+        // Создаем оффер (предложение связи)
+        const offerDescription = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offerDescription);
+
+        const offer = {
+            sdp: offerDescription.sdp,
+            type: offerDescription.type,
+            host: myName
+        };
+
+        await roomRef.set({ offer: offer });
+
+        // Слушаем, когда собеседник ответит на наш звонок
+        roomRef.onSnapshot((snapshot) => {
+            const data = snapshot.data();
+            if (!peerConnection.currentRemoteDescription && data && data.answer) {
+                const answerDescription = new RTCSessionDescription(data.answer);
+                peerConnection.setRemoteDescription(answerDescription);
+            }
+        });
+
+        // Слушаем ICE-кандидатов от собеседника
+        roomRef.collection('calleeCandidates').onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added') {
+                    const data = change.doc.data();
+                    const candidate = new RTCIceCandidate(data);
+                    peerConnection.addIceCandidate(candidate);
+                }
+            });
+        });
+
+        // Автоматически пытаемся подключиться, если звонок уже создан кем-то другим
+        setTimeout(() => { joinVoiceCall(); }, 1000);
+
+    } catch (err) {
+        console.error('Ошибка доступа к микрофону:', err);
+        alert('Разрешите доступ к микрофону в браузере!');
+    }
+}
+
+// 2. Функция включения демонстрации экрана (демки)
+async function startScreenShare() {
+    try {
+        if (!peerConnection) { alert('Сначала начните звонок!'); return; }
+
+        // Захватываем экран компьютера пользователя
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        
+        // Находим видео-трек нашего экрана
+        const screenTrack = screenStream.getVideoTracks()[0];
+        
+        // Заменяем текущий пустой трек на трансляцию экрана для собеседника
+        const senders = peerConnection.getSenders();
+        const sender = senders.find(s => s.track && s.track.kind === 'video');
+        
+        if (sender) {
+            sender.replaceTrack(screenTrack);
+        } else {
+            peerConnection.addTrack(screenTrack, screenStream);
+        }
+
+        // Если стрим экрана закроется кнопкой в браузере — возвращаем звук назад
+        screenTrack.onended = () => {
+            if (localStream) {
+                const audioTrack = localStream.getAudioTracks()[0];
+                const vSender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                if (vSender) peerConnection.removeTrack(vSender);
+            }
+        };
+
+        alert('Демонстрация экрана запущена успешно!');
+    } catch (err) {
+        console.error('Ошибка захвата экрана:', err);
+    }
+}
+// === WEBRTC ЧАСТЬ 3: ПОДКЛЮЧЕНИЕ СЛУШАТЕЛЯ И ЗАВЕРШЕНИЕ ЗВОНКА ===
+
+// 3. Функция автоматического подключения второго участника к звонку
+async function joinVoiceCall() {
+    const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+    const roomSnapshot = await roomRef.get();
+    
+    if (!roomSnapshot.exists) return; // Если комнаты ещё нет, значит мы первые и просто ждём
+    const data = roomSnapshot.data();
+    if (!data || !data.offer || data.offer.host === myName) return; // Если мы сами хозяева звонка, выходим
+
+    try {
+        if (!peerConnection) {
+            peerConnection = new RTCPeerConnection(rtcServers);
+            
+            if (localStream) {
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+            }
+
+            peerConnection.ontrack = (event) => {
+                const remoteVideo = document.getElementById('remoteVideo');
+                const videoCallZone = document.getElementById('videoCallZone');
+                if (remoteVideo && event.streams && event.streams[0]) {
+                    remoteVideo.srcObject = event.streams[0];
+                    if (videoCallZone) videoCallZone.style.display = 'flex';
+                }
+            };
+        }
+
+        // Собираем ICE-кандидаты от второго участника
+        const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate) {
+                calleeCandidatesCollection.add(event.candidate.toJSON());
+            }
+        };
+
+        // Записываем оффер создателя звонка
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+        
+        // Создаем наш ответный SDP (Answer)
+        const answerDescription = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answerDescription);
+
+        const answer = {
+            type: answerDescription.type,
+            sdp: answerDescription.sdp
+        };
+        
+        // Отправляем ответ в Firebase
+        await roomRef.update({ answer: answer });
+
+        // Слушаем ICE-кандидаты от создателя звонка
+        roomRef.collection('callerCandidates').onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === 'added') {
+                    const candidateData = change.doc.data();
+                    peerConnection.addIceCandidate(new RTCIceCandidate(candidateData));
+                }
+            });
+        });
+
+        // Насильно переключаем кнопки звонка для второго участника чата
+        const startCallBtn = document.getElementById('startCallBtn');
+        const startScreenBtn = document.getElementById('startScreenBtn');
+        const endCallBtn = document.getElementById('endCallBtn');
+        if (startCallBtn) startCallBtn.style.display = 'none';
+        if (startScreenBtn) startScreenBtn.style.display = 'block';
+        if (endCallBtn) endCallBtn.style.display = 'block';
+
+        alert('Вы успешно подключились к голосовому звонку!');
+    } catch (err) {
+        console.error('Ошибка подключения к звонку:', err);
+    }
+}
+
+// 4. Функция сброса трубки и очистки данных звонка
+async function hangUpCall() {
+    // Выключаем камеру/микрофон/демку экрана, чтобы не горели индикаторы
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+    if (screenStream) {
+        screenStream.getTracks().forEach(track => track.stop());
+        screenStream = null;
+    }
+    if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+    }
+
+    // Полностью сбрасываем плеер в HTML
+    const remoteVideo = document.getElementById('remoteVideo');
+    if (remoteVideo) remoteVideo.srcObject = null;
+
+    // Стираем комнату звонка из Firebase, чтобы другие могли позвонить заново
+    if (currentServerContext && currentChannelContext) {
+        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+        try {
+            // Удаляем вложенные коллекции ICE-кандидатов
+            const callers = await roomRef.collection('callerCandidates').get();
+            callers.forEach(async (doc) => { await doc.ref.delete(); });
+            
+            const callees = await roomRef.collection('calleeCandidates').get();
+            callees.forEach(async (doc) => { await doc.ref.delete(); });
+            
+            // Удаляем саму комнату
+            await roomRef.delete();
+        } catch (err) {
+            console.error('Ошибка очистки звонка в Firebase:', err);
+        }
+    }
+    currentRoomId = null;
+    alert('Звонок завершён.');
 }
