@@ -157,16 +157,19 @@ body {
     font-weight: 500; 
     color: #f2f3f5; 
 }
+/* =======================================================
+   ОРИГИНАЛЬНАЯ ПАРЯЩАЯ ПОДСВЕТКА ШЕСТЕРЁНКИ И КОЛОКОЛЬЧИКА
+   ======================================================= */
 
 .notification-bell, 
 .settings-gear-trigger { 
-    width: 32px !important; 
-    height: 32px !important; 
+    width: 34px !important; 
+    height: 34px !important; 
     background: transparent !important; 
     
-    /* Твоё требование: делаем кнопки идеально круглыми с рамкой, как на ховере сообщений */
+    /* УБРАЛИ РАМКИ: делаем чистые парящие круги */
+    border: none !important; 
     border-radius: 50% !important; 
-    border: 1px solid #232428 !important; 
     
     color: #b5bac1 !important; 
     cursor: pointer !important; 
@@ -176,38 +179,44 @@ body {
     overflow: visible !important; 
     box-sizing: border-box !important; 
     padding: 0 !important; 
-    margin: 0 4px !important;
-    transition: background-color 0.1s, color 0.1s, border-color 0.1s !important;
+    margin: 0 2px !important;
+    
+    /* Плавное появление круглой подложки */
+    transition: background-color 0.2s ease, color 0.15s ease !important;
 }
 
-/* Подготовка иконок к плавному центрированному движению внутри кружочка */
+/* Сдвиг шестерёнки от края экрана для безопасности */
+.settings-gear-trigger { 
+    margin-right: 12px !important; 
+}
+
+/* Настройка самих SVG иконок внутри круга */
 .notification-bell svg, 
 .settings-gear-trigger svg { 
-    width: 18px !important; 
-    height: 18px !important; 
+    width: 20px !important; 
+    height: 20px !important; 
     display: block !important; 
     overflow: visible !important; 
     transform-origin: center center !important; 
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important; 
 }
 
-/* Ховер для круглых рамок шапки */
+/* Твоё требование: При наведении плавно загорается мягкий круглый фон Дискорда */
 .settings-gear-trigger:hover {
-    background-color: #35373c !important; 
-    border-color: #4e5058 !important;
+    background-color: rgba(255, 255, 255, 0.06) !important; /* Полупрозрачный круг */
 }
 .settings-gear-trigger:hover svg { 
-    transform: rotate(360deg) !important; 
-    color: #ffffff !important; 
+    transform: rotate(360deg) !important; /* Крутится на 360° */
+    color: #f2f3f5 !important; 
 }
 
+/* Такой же круглый ховер для колокольчика */
 .notification-bell:hover {
-    background-color: #35373c !important; 
-    border-color: #4e5058 !important;
+    background-color: rgba(255, 255, 255, 0.06) !important;
 }
 .notification-bell:hover svg { 
     animation: bellSwing 0.4s ease-in-out !important; 
-    color: #ffffff !important; 
+    color: #f2f3f5 !important; 
 }
 
 @keyframes bellSwing { 
