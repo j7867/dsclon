@@ -223,7 +223,9 @@ function appendMessage(author, text) {
     
     const messageElement = document.createElement('div'); 
     messageElement.className = 'message-item message';
-          messageElement.innerHTML = `
+    
+    // Вёрстка: стрелочка заменена на &lt; (<)
+    messageElement.innerHTML = `
         <div class="message-content">
             <span class="message-author">${author}:</span>
             <span class="message-text">${text}</span>
@@ -239,7 +241,8 @@ function appendMessage(author, text) {
             </div>
         </div>
     `;
-
+    
+    // 1. ЛОГИКА ТАЙМЕРА УДАЛЕНИЯ (МУСОРКА)
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) { 
         timerDeleteBtn.addEventListener('click', (e) => { 
@@ -247,8 +250,8 @@ function appendMessage(author, text) {
             initiateMessageDelete(messageElement); 
         }); 
     }
-
     
+    // 2. ЛОГИКА ДОБАВЛЕНИЯ В ДРУЗЬЯ (СТРЕЛОЧКА)
     const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
     if (addFriendBtn) { 
         addFriendBtn.addEventListener('click', (e) => { 
@@ -256,10 +259,70 @@ function appendMessage(author, text) {
             alert('Заявка в друзья пользователю ' + author + ' успешно отправлена!'); 
         }); 
     }
+
+    // 3. ЛОГИКА РЕДАКТИРОВАНИЯ СООБЩЕНИЯ (КАРАНДАШ)
+    const editBtn = messageElement.querySelector('.hover-edit-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const textSpan = messageElement.querySelector('.message-text');
+            if (!textSpan || messageElement.classList.contains('editing')) return;
+
+            messageElement.classList.add('editing');
+            const originalText = textSpan.textContent;
+
+            // Подменяем текст на инпут и кнопки управления
+            textSpan.innerHTML = `
+                <div class="edit-mode-container" style="display:inline-flex; gap:8px; align-items:center; width:100%; margin-top:4px;">
+                    <input type="text" class="edit-msg-input" value="${originalText}" style="flex:1; background-color:#383a40; border:none; outline:none; color:#f2f3f5; padding:6px 10px; border-radius:4px; font-size:14px;">
+                    <button class="save-edit-btn" style="background-color:#23a55a; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold;">Сохранить</button>
+                    <button class="cancel-edit-btn" style="background:transparent; color:#fff; border:none; cursor:pointer; font-size:12px;">Отмена</button>
+                </div>
+            `;
+
+            const saveBtn = textSpan.querySelector('.save-edit-btn');
+            const cancelBtn = textSpan.querySelector('.cancel-edit-btn');
+            const editInput = textSpan.querySelector('.edit-msg-input');
+
+            // Сохранение изменений в Firebase
+            if (saveBtn && editInput) {
+                saveBtn.addEventListener('click', async (evt) => {
+                    evt.stopPropagation();
+                    const newText = editInput.value.trim();
+                    if (!newText) return;
+
+                    try {
+                        const snapshot = await db.collection("messages")
+                            .where("server", "==", currentServerContext)
+                            .where("channel", "==", currentChannelContext)
+                            .where("author", "==", author)
+                            .where("text", "==", originalText).get();
+
+                        snapshot.forEach(async (doc) => {
+                            await db.collection("messages").doc(doc.id).update({ text: newText });
+                        });
+
+                        textSpan.textContent = newText;
+                        messageElement.classList.remove('editing');
+                    } catch (err) { console.error("Ошибка обновления:", err); }
+                });
+            }
+
+            // Отмена редактирования
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', (evt) => {
+                    evt.stopPropagation();
+                    textSpan.textContent = originalText;
+                    messageElement.classList.remove('editing');
+                });
+            }
+        });
+    }
     
     realMessagesArea.appendChild(messageElement); 
     realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
+
 
 function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
