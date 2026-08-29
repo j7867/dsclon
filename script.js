@@ -411,6 +411,5 @@ function checkUserSession() {
     } else {
         const authModalOverlay = document.getElementById('authModalOverlay');
         if (authModalOverlay) authModalOverlay.classList.add('active');
-    }
+    });
   }
-}
