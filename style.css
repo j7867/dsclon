@@ -726,11 +726,9 @@ html, body {
     display: inline-block !important;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
-
-/* Фикс стрелочки: так как символ у нас теперь оригинальный (>), 
-   чтобы он посмотрел строго вниз, его нужно повернуть ровно на 90 градусов */
+/* Стрелочка изначально смотрит влево (<), при наведении плавно разворачивается строго вниз */
 .action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: rotate(90deg) !important; 
+    transform: rotate(-90deg) !important; 
     color: #fff !important;
 }
 
