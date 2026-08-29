@@ -720,3 +720,35 @@ body {
     from { transform: translateY(10px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+/* =======================================================
+   АНИМАЦИИ ДЛЯ КНОПОК ШАПКИ: ШЕСТЕРЁНКА И КОЛОКОЛЬЧИК
+   ======================================================= */
+
+/* Подготовка иконок шапки к плавным поворотам */
+.notification-bell svg, 
+.settings-gear-trigger svg {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    transform-origin: center center !important;
+}
+
+/* Твоё требование: Шестерёнка плавно делает полный оборот 360° при наведении */
+.settings-gear-trigger:hover svg {
+    transform: rotate(360deg) !important;
+    color: #f2f3f5 !important;
+}
+
+/* Твоё требование: Колокольчик задорно покачивается вбок при наведении мыши */
+.notification-bell:hover svg {
+    animation: bellSwing 0.4s ease-in-out !important;
+    color: #f2f3f5 !important;
+}
+
+/* Эффект маятника для колокольчика */
+@keyframes bellSwing {
+    0% { transform: rotate(0); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-15deg); }
+    60% { transform: rotate(10deg); }
+    80% { transform: rotate(-10deg); }
+    100% { transform: rotate(0); }
+}
