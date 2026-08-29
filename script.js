@@ -117,7 +117,7 @@ function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
     
-    // ВЁРСТКА: Кнопки-кружочки с тегом span внутри
+    // ВЕРСТКА: Вернули чистый знак &lt; (<)
     messageElement.innerHTML = `
         <div class="message-content"><span class="message-author">${author}:</span><span class="message-text">${text}</span></div>
         <div class="message-hover-actions">
@@ -151,6 +151,29 @@ function appendMessage(author, text) {
             });
             cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
         });
+    }
+
+    const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
+    const profileNicknameInput = document.getElementById('profileNicknameInput');
+    const profileModalOverlay = document.getElementById('profileModalOverlay');
+    if (saveProfileChangesBtn) {
+        saveProfileChangesBtn.onclick = function() {
+            const newNick = profileNicknameInput ? profileNicknameInput.value.trim() : '';
+            if (newNick) { myName = newNick; localStorage.setItem('chat_active_user', myName); }
+            const topName = document.getElementById('topUserName'); const topAvatar = document.getElementById('userAvatarHeader');
+            if (topName) topName.textContent = myName;
+            if (topAvatar) {
+                topAvatar.style.backgroundColor = selectedAvatarColor;
+                if (base64AvatarData) {
+                    topAvatar.textContent = ''; topAvatar.style.backgroundImage = 'url(' + base64AvatarData + ')';
+                    topAvatar.style.backgroundSize = 'cover'; topAvatar.style.backgroundPosition = 'center';
+                } else {
+                    topAvatar.style.backgroundImage = 'none'; topAvatar.textContent = myName.charAt(0).toUpperCase();
+                }
+            }
+            if (profileModalOverlay) profileModalOverlay.classList.remove('active');
+            alert('Профиль успешно обновлен!');
+        };
     }
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
