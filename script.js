@@ -223,25 +223,25 @@ function appendMessage(author, text) {
     
     const messageElement = document.createElement('div'); 
     messageElement.className = 'message-item message';
-       messageElement.innerHTML = `
+         messageElement.innerHTML = `
         <div class="message-content">
             <span class="message-author">${author}:</span>
             <span class="message-text">${text}</span>
         </div>
-        <!-- Стрелочка встала в самый правый край по чертежу -->
+        <!-- Каждому значку внутри кнопок добавили тег span для независимого кручения -->
         <div class="message-hover-actions">
-            <button class="action-btn hover-edit-btn" title="Редактировать сообщение">✏️</button>
-            <button class="action-btn hover-delete-trigger-btn" title="Удалить">🗑️</button>
+            <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
+            <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
             
             <div class="action-dropdown-wrapper">
-                <button class="action-btn hover-more-btn"><span>&gt;</span></button>
+                <button class="action-btn hover-more-btn" title="Ещё"><span>&gt;</span></button>
                 <div class="hover-submenu">
                     <button class="submenu-item-btn">Добавить в друзья</button>
                 </div>
             </div>
         </div>
     `;
-    
+
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) { 
         timerDeleteBtn.addEventListener('click', (e) => { 
