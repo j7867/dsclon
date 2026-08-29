@@ -224,7 +224,6 @@ function appendMessage(author, text) {
     const messageElement = document.createElement('div'); 
     messageElement.className = 'message-item message';
     
-    // Вёрстка: стрелочка заменена на &lt; (<)
     messageElement.innerHTML = `
         <div class="message-content">
             <span class="message-author">${author}:</span>
@@ -233,16 +232,13 @@ function appendMessage(author, text) {
         <div class="message-hover-actions">
             <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
             <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
-            <div class="action-dropdown-wrapper">
-               <button class="action-btn hover-more-btn" title="Ещё"><span>&gt;</span></button>
-                <div class="hover-submenu">
-                    <button class="submenu-item-btn">Добавить в друзья</button>
-                </div>
+            <button class="action-btn hover-more-btn" title="Ещё"><span>&lt;</span></button>
+            <div class="hover-submenu" id="msgSubmenu">
+                <button class="submenu-item-btn">Добавить в друзья</button>
             </div>
         </div>
     `;
     
-    // 1. ЛОГИКА ТАЙМЕРА УДАЛЕНИЯ (МУСОРКА)
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) { 
         timerDeleteBtn.addEventListener('click', (e) => { 
@@ -251,16 +247,35 @@ function appendMessage(author, text) {
         }); 
     }
     
-    // 2. ЛОГИКА ДОБАВЛЕНИЯ В ДРУЗЬЯ (СТРЕЛОЧКА)
+    // ОЖИВЛЯЕМ СТРЕЛОЧКУ СТРОГО ПО КЛИКУ (УБИВАЕМ ДЁРГАНИЕ НАМЕРТВО)
+    const moreBtn = messageElement.querySelector('.hover-more-btn');
+    const submenu = messageElement.querySelector('.hover-submenu');
+    
+    if (moreBtn && submenu) {
+        moreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            moreBtn.classList.toggle('active');
+            submenu.classList.toggle('active');
+        });
+    }
+    
     const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
     if (addFriendBtn) { 
         addFriendBtn.addEventListener('click', (e) => { 
             e.stopPropagation(); 
             alert('Заявка в друзья пользователю ' + author + ' успешно отправлена!'); 
+            if (moreBtn) moreBtn.classList.remove('active');
+            if (submenu) submenu.classList.remove('active');
         }); 
     }
+    
+    // Глобальный клик для закрытия подменю друзей при клике в любое место
+    document.addEventListener('click', () => {
+        if (moreBtn) moreBtn.classList.remove('active');
+        if (submenu) submenu.classList.remove('active');
+    });
 
-    // 3. ЛОГИКА РЕДАКТИРОВАНИЯ СООБЩЕНИЯ (КАРАНДАШ)
+    // ЛОГИКА РЕДАКТИРОВАНИЯ СООБЩЕНИЯ (КАРАНДАШ)
     const editBtn = messageElement.querySelector('.hover-edit-btn');
     if (editBtn) {
         editBtn.addEventListener('click', (e) => {
@@ -271,7 +286,6 @@ function appendMessage(author, text) {
             messageElement.classList.add('editing');
             const originalText = textSpan.textContent;
 
-            // Подменяем текст на инпут и кнопки управления
             textSpan.innerHTML = `
                 <div class="edit-mode-container" style="display:inline-flex; gap:8px; align-items:center; width:100%; margin-top:4px;">
                     <input type="text" class="edit-msg-input" value="${originalText}" style="flex:1; background-color:#383a40; border:none; outline:none; color:#f2f3f5; padding:6px 10px; border-radius:4px; font-size:14px;">
@@ -284,31 +298,25 @@ function appendMessage(author, text) {
             const cancelBtn = textSpan.querySelector('.cancel-edit-btn');
             const editInput = textSpan.querySelector('.edit-msg-input');
 
-            // Сохранение изменений в Firebase
             if (saveBtn && editInput) {
                 saveBtn.addEventListener('click', async (evt) => {
                     evt.stopPropagation();
                     const newText = editInput.value.trim();
                     if (!newText) return;
-
                     try {
                         const snapshot = await db.collection("messages")
                             .where("server", "==", currentServerContext)
                             .where("channel", "==", currentChannelContext)
                             .where("author", "==", author)
                             .where("text", "==", originalText).get();
-
                         snapshot.forEach(async (doc) => {
                             await db.collection("messages").doc(doc.id).update({ text: newText });
                         });
-
                         textSpan.textContent = newText;
                         messageElement.classList.remove('editing');
-                    } catch (err) { console.error("Ошибка обновления:", err); }
+                    } catch (err) { console.error(err); }
                 });
             }
-
-            // Отмена редактирования
             if (cancelBtn) {
                 cancelBtn.addEventListener('click', (evt) => {
                     evt.stopPropagation();
