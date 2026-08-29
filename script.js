@@ -5,14 +5,6 @@ let screenStream = null;
 let peerConnection = null;
 let currentRoomId = null;
 
-const rtcServers = {
-    iceServers: [
-        { urls: 'stun:://google.com' },
-        { urls: 'stun:://google.com' }
-    ],
-    iceCandidatePoolSize: 10,
-};
-
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
@@ -119,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // === ОБНОВЛЕННОЕ ПЕРЕКЛЮЧЕНИЕ КАНАЛОВ СО СКРЫТИЕМ ИНПУТА ===
+    // === ОЖИВЛЯЕМ ПЕРЕКЛЮЧЕНИЕ ТЕКСТОВЫХ И ГОЛОСОВЫХ КАНАЛОВ СО СКРЫТИЕМ ИНПУТА ===
     document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
         item.onclick = async function(e) {
             e.stopPropagation();
@@ -165,6 +157,7 @@ function loadSavedMessages() {
         realContainer.innerHTML = ''; snapshot.forEach((docSnap) => { const msg = docSnap.data(); if (msg.author && msg.text) { appendMessage(msg.author, msg.text); } });
     });
 }
+
 async function handleSendMessage() {
     if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
     try { await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); messageInput.value = ''; } catch (err) { console.error(err); }
@@ -201,14 +194,13 @@ function appendMessage(author, text) {
                 try {
                     const snap = await db.collection("messages").where("server","==",currentServerContext).where("channel","==",currentChannelContext).where("author","==",author).where("text","==",originalText).get();
                     snap.forEach(async(doc)=>{await db.collection("messages").doc(doc.id).update({text:nt});}); textSpan.textContent = nt; messageElement.classList.remove('editing');
-                } catch(err){console.error(err);}
+                } catch(err){document.error(err);}
             });
             cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
         });
     }
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
-
 // === WEBRTC ФУНКЦИИ СИГНАЛКИ И УПРАВЛЕНИЯ С ЖЕСТКИМ ИНЛАЙН-КОНФИГОМ ===
 async function startVoiceCall() {
     try {
