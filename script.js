@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
+       if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
     if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
     checkUserSession();
