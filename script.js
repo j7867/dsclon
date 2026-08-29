@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cropBox) cropBox.style.backgroundColor = selectedAvatarColor;
         };
     });
-    // ОЖИВЛЯЕМ КНОПКУ «СОХРАНИТЬ ИЗМЕНЕНИЯ» ПРОФИЛЯ С КРАСКАМИ И АВАТАРКОЙ
+       // ОЖИВЛЯЕМ КНОПКУ «СОХРАНИТЬ ИЗМЕНЕНИЯ» ПРОФИЛЯ С КРАСКАМИ И АВАТАРКОЙ
     const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
     const profileNicknameInput = document.getElementById('profileNicknameInput');
     const profileModalOverlay = document.getElementById('profileModalOverlay');
@@ -179,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 }
+
 function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
     if (savedUser) { 
