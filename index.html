@@ -25,29 +25,16 @@
                 <span>ТЕКСТОВЫЕ КАНАЛЫ</span>
                 <span id="openCreateChannelBtn" style="cursor: pointer; font-size: 18px;">+</span>
             </div>
-              <div id="serverChannelsList">
+            <div id="serverChannelsList">
                 <!-- ТЕКСТОВЫЙ КАНАЛ -->
                 <div class="custom-user-item active" data-channel="general-chat" data-type="text">
                     <div class="user-avatar" style="background-color: #5865f2;">#</div>
                     <span>general-chat</span>
                 </div>
-                <!-- НАСТОЯЩИЙ ГОЛОСОВОЙ КАНАЛ ДЛЯ ЗВОНКОВ И ДЕМОК -->
+                <!-- ОФИЦИАЛЬНЫЙ ГОЛОСОВОЙ КАНАЛ ДЛЯ ЗВОНКОВ И ДЕМОК -->
                 <div class="custom-user-item" data-channel="voice-room" data-type="voice">
                     <div class="user-avatar" style="background-color: #23a55a;">🔊</div>
                     <span>Общий голос</span>
-                </div>
-            </div>
-
-                <!-- НАСТОЯЩИЙ ГОЛОСОВОЙ КАНАЛ ДЛЯ ЗВОНКОВ И ДЕМОК -->
-                <div class="custom-user-item" data-channel="voice-room" data-type="voice">
-                    <div class="user-avatar" style="background-color: #23a55a;">🔊</div>
-                    <span>Общий голос</span>
-                </div>
-            </div>
-
-                <div class="custom-user-item active" data-channel="general-chat">
-                    <div class="user-avatar" style="background-color: #5865f2;">#</div>
-                    <span>general-chat</span>
                 </div>
             </div>
         </div>
@@ -55,18 +42,8 @@
     <div class="chat-area" id="chatArea">
         <div class="chat-header">
             <div class="header-left"><span class="hashtag">#</span><h3 id="chatTitle">general-chat</h3></div>
-                       <div class="header-right-group">
-                <!-- КНОПКИ ЗВОНКОВ И ДЕМКИ В ШАПКЕ -->
-                <button id="startCallBtn" class="notification-bell" title="Начать голосовой звонок">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 2.62 4.27 5.45 5.71l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-16-7.61-16-16 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>
-                </button>
-                <button id="startScreenBtn" class="notification-bell" title="Демонстрация экрана" style="display: none;">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"></path></svg>
-                </button>
-                <button id="endCallBtn" class="notification-bell" title="Положить трубку" style="display: none; color: #f23f43 !important;">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.58.9c-1 .47-1.92 1.13-2.73 1.93-.2.2-.53.25-.78.1L.47 14.1c-.28-.16-.47-.44-.47-.77 0-.42.17-.82.46-1.12 3.08-3.05 7.15-4.71 11.54-4.71s8.46 1.66 11.54 4.71c.29.3.46.7.46 1.12 0 .33-.19.61-.47.77l-2.85 1.67c-.25.15-.57.1-.78-.1-.8-.8-1.73-1.45-2.73-1.92-.35-.17-.58-.52-.58-.91v-3.1C15.15 9.25 13.6 9 12 9z"></path></svg>
-                </button>
-
+            <div class="header-right-group">
+                <!-- ЧИСТАЯ ШАПКА: УБРАЛИ ЛИШНИЕ КНОПКИ ЗВОНКА ОТСЮДА -->
                 <span class="user-name-header" id="topUserName">User</span>
                 <div class="user-avatar-header" id="userAvatarHeader" style="background-color: #5865f2; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; cursor: pointer;">U</div>
                 <button id="notificationBell" class="notification-bell" title="Уведомления">
@@ -88,7 +65,7 @@
                 <div class="custom-select-container">
                     <div class="custom-select-trigger" id="zoneSelectTrigger">Выберите зону <span class="select-arrow">▼</span></div>
                     <div class="custom-select-options" id="zoneSelectOptions">
-                        <div class="custom-option" data-value="chatArea">Central Chat</div>     
+                        <div class="custom-option" data-value="chatArea">Central Chat</div>
                         <div class="custom-option" data-value="channelsSidebar">Channels Sidebar</div>
                         <div class="custom-option" data-value="guildsSidebar">Left Guilds Sidebar</div>
                         <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
@@ -99,15 +76,28 @@
                 </div>
                 <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 20px; text-align: center;">Применить</button>
             </div>
-        </div>       
-        <!-- ЗОНА ДЛЯ ПРОСМОТРА СТРИМА ЭКРАНА ИЛИ ДЕМКИ -->
-        <div id="videoCallZone" style="display: none; padding: 10px 20px; background-color: #2b2d31; border-bottom: 1px solid #1f2023; justify-content: center; position: relative;">
-            <video id="remoteVideo" autoplay playsinline style="width: 100%; max-width: 500px; border-radius: 8px; background-color: #1e1f22; box-shadow: 0 4px 12px rgba(0,0,0,0.5);"></video>
-    </div>
+        </div>
+        
         <div class="messages-container" id="messagesContainer"></div>
+
+        <!-- ЗОНА ДЛЯ ПРОСМОТРА СТРИМА И ПАНЕЛЬ УПРАВЛЕНИЯ ЗВОНКОМ -->
+        <div id="videoCallZone" style="display: none; padding: 15px 20px; background-color: #2b2d31; border-bottom: 1px solid #1f2023; flex-direction: column; align-items: center; gap: 12px; position: relative;">
+            <video id="remoteVideo" autoplay playsinline style="width: 100%; max-width: 500px; border-radius: 8px; background-color: #1e1f22; box-shadow: 0 4px 12px rgba(0,0,0,0.5);"></video>
+            <div style="display: flex; gap: 16px;">
+                <button id="startScreenBtn" class="notification-bell" title="Демонстрация экрана" style="border: 1px solid #4e5058 !important; border-radius: 4px !important; padding: 6px 12px !important; height: auto !important; width: auto !important;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="margin-right: 6px; display: inline-block; vertical-align: middle;"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"></path></svg>
+                    <span style="font-size: 13px; font-weight: 500; color: #dbdee1;">Трансляция экрана</span>
+                </button>
+                <button id="endCallBtn" class="notification-bell" title="Положить трубку" style="background-color: #f23f43 !important; border-radius: 4px !important; padding: 6px 12px !important; height: auto !important; width: auto !important; color: #fff !important;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="margin-right: 6px; display: inline-block; vertical-align: middle;"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.58.9c-1 .47-1.92 1.13-2.73 1.93-.2.2-.53.25-.78.1L.47 14.1c-.28-.16-.47-.44-.47-.77 0-.42.17-.82.46-1.12 3.08-3.05 7.15-4.71 11.54-4.71s8.46 1.66 11.54 4.71c.29.3.46.7.46 1.12 0 .33-.19.61-.47.77l-2.85 1.67c-.25.15-.57.1-.78-.1-.8-.8-1.73-1.45-2.73-1.92-.35-.17-.58-.52-.58-.91v-3.1C15.15 9.25 13.6 9 12 9z"></path></svg>
+                    <span style="font-size: 13px; font-weight: 500;">Отключиться</span>
+                </button>
+            </div>
+        </div>
+
         <div class="input-area">
             <div id="deleteConfirmPanel" class="delete-confirm-panel">
-                <div class="delete-panel-content">    
+                <div class="delete-panel-content">
                     <span class="delete-panel-text">Вы точно хотите удалить сообщение?</span>
                     <div class="delete-panel-controls">
                         <button id="cancelDeleteBtn" class="delete-cancel-btn">Отмена</button>
@@ -133,6 +123,6 @@
             <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="window.triggerManualAuth()">Вход / Регистрация</button>
         </div>
     </div>
-    <script src="script.js?v=777"></script>
+    <script src="script.js?v=888"></script>
 </body>
 </html>
