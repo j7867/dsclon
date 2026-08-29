@@ -723,18 +723,24 @@ html, body {
 .hover-delete-trigger-btn span {
     display: inline-block !important;
 }
-/* Изначальное состояние: зеркально разворачиваем стрелку влево (<) */
+/* =======================================================
+   ФИНАЛЬНЫЙ АБСОЛЮТНЫЙ ГРАДУСНЫЙ ПОВОРОТ СТРЕЛКИ ВНИЗ
+   ======================================================= */
+
+/* Изначальное состояние: разворачиваем исходный знак > влево на 180 градусов */
 .hover-more-btn span {
     display: inline-block !important;
-    transform: scaleX(-1) rotate(0deg) !important; /* scaleX(-1) делает из нее < */
-    transform-origin: center center !important;
+    transform: rotate(180deg) !important; /* Насильно делает из нее знак < */
+    transform-origin: center center !important; /* Вращение строго по центру значка */
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
-/* При наведении: за счёт scaleX зеркальности угол 90deg плавно уронит её против часовой стрелки строго вниз */
+
+/* При наведении: катимся ПРОТИВ часовой стрелки (уменьшаем градусы с 180 до 90) носом вниз */
 .action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: scaleX(-1) rotate(90deg) !important; 
+    transform: rotate(90deg) !important; /* Чистый, плавный и точный взгляд строго в пол */
     color: #fff !important;
 }
+
 /* Твоё требование: Сама квадратная кнопка стоит ровно, а карандаш внутри неё наклоняется на 19° */
 .hover-edit-btn:hover span {
     transform: rotate(19deg) !important;
