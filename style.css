@@ -628,31 +628,42 @@ html, body {
     color: #fff !important;
 }
 
-/* Скрытое подменю, где теперь прячется кнопка "Добавить в друзья" */
+/* =======================================================
+   БРОНЕБОЙНЫЙ ФИКС ДЁРГАНИЯ И ИЗОЛЯЦИЯ ПОДМЕНЮ ДРУЗЕЙ
+   ======================================================= */
+
+/* Оформляем скрытое подменю и изолируем его от зоны ховера самой кнопки */
 .hover-submenu {
     position: absolute !important;
-    top: 100% !important;
+    top: 32px !important; /* Сдвигаем строго ниже кнопки, чтобы они не слипались в кашу! */
     right: 0 !important;
-    background-color: #111214 !important; /* Глубокий темный цвет меню */
+    background-color: #111214 !important;
     border: 1px solid #232428 !important;
     border-radius: 4px !important;
     padding: 4px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
     z-index: 1000 !important;
-    width: 160px !important;
+    width: 140px !important;
+    pointer-events: auto !important; /* Разрешаем кликать по кнопкам внутри меню */
     
-    /* Плавное появление при наведении на обертку стрелочки */
+    /* Плавное проявление плашки */
     opacity: 0 !important;
     visibility: hidden !important;
     transform: translateY(-5px) !important;
     transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s !important;
 }
 
-/* Показываем подменю при наведении на блок стрелочки */
+/* Показываем меню ТОЛЬКО тогда, когда мышка наведена на всю зону dropdown */
 .action-dropdown-wrapper:hover .hover-submenu {
     opacity: 1 !important;
     visibility: visible !important;
-    transform: translateY(2px) !important;
+    transform: translateY(0) !important;
+}
+
+/* Фикс дёргания стрелочки при наведении */
+.action-dropdown-wrapper:hover .hover-more-btn span {
+    transform: rotate(90deg) !important; /* Уверенно ложится носом строго вниз */
+    color: #fff !important;
 }
 
 /* Стили кнопки внутри подменю */
