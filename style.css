@@ -501,6 +501,11 @@ html, body {
     background-color: rgba(255, 255, 255, 0.02) !important;
 }
 
+/* =======================================================
+   БРОНЕБОЙНЫЙ ВЫПРЯМИТЕЛЬ СТРЕЛОЧКИ И КЛИКОВ (ФИНАЛ)
+   ======================================================= */
+
+/* Фикс невидимой стены: вытаскиваем всю панель кнопок на самый передний план */
 .message-hover-actions {
     position: absolute !important;
     right: 32px !important;
@@ -511,219 +516,28 @@ html, body {
     display: flex !important;
     padding: 2px !important;
     box-shadow: 0 4px 4px rgba(0,0,0,0.16) !important;
-    z-index: 50 !important;
-    
-    /* Скрыта по умолчанию, проявляется плавно */
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transform: scale(0.95) !important;
-    transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s !important;
-}
-
-/* Показываем панель только при наведении на конкретную строчку сообщения */
-.message-item:hover .message-hover-actions {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: scale(1) !important;
-}
-
-.action-btn {
-    background: transparent !important;
-    border: none !important;
-    color: #b5bac1 !important;
-    cursor: pointer !important;
-    padding: 4px 8px !important;
-    font-size: 14px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 4px !important;
-    transition: background-color 0.1s, color 0.1s !important;
-}
-.action-btn:hover {
-    background-color: #35373c !important;
-    color: #fff !important;
-}
-.hover-delete-trigger-btn:hover {
-    background-color: #f23f43 !important;
-    color: #fff !important;
-}
-
-/* ПЛАВНОСТЬ ДЛЯ ВСЕХ МОДАЛОК (ВКЛЮЧАЯ ПРОФИЛЬ ПО ЦЕНТРУ ЭКРАНА) */
-.profile-modal-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    z-index: 1000000 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    
-    /* Плавное проявление */
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transition: opacity 0.2s ease, visibility 0.2s !important;
-}
-
-.profile-modal-overlay.active {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-.profile-modal-window {
-    background-color: #313338 !important;
-    padding: 24px !important;
-    border-radius: 8px !important;
-    width: 400px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
-    transform: scale(0.9) !important;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important;
-}
-.profile-modal-overlay.active .profile-modal-window {
-    transform: scale(1) !important;
-}
-
-/* Стили заголовков и текста внутри сообщений */
-.message-author {
-    font-weight: 600 !important;
-    color: #fff !important;
-    margin-right: 8px;
-    font-size: 15px;
-}
-.message-text {
-    color: #dbdee1 !important;
-    font-size: 15px;
-}
-/* =======================================================
-   ФИКС: ОБВОДКА СООБЩЕНИЙ, СТРЕЛОЧКА И СКРЫТОЕ ПОДМЕНЮ
-   ======================================================= */
-
-/* Твоё требование: При наведении на сообщение делаем красивую обводку всей строки */
-.message-item {
-    border: 1px solid transparent !important;
-    border-radius: 4px !important;
-    padding: 8px 12px !important;
-    transition: background-color 0.1s ease, border-color 0.1s ease !important;
-}
-.message-item:hover {
-    background-color: rgba(255, 255, 255, 0.02) !important;
-    border-color: #4e5058 !important; /* Серый аккуратный контур в стиле Discord */
-}
-
-/* Контейнер для стрелочки и подменю */
-.action-dropdown-wrapper {
-    position: relative !important;
-    display: inline-block !important;
-}
-
-/* Твоё требование: анимация поворота стрелочки > вниз */
-.hover-more-btn {
-    transition: transform 0.2s ease !important;
-}
-.action-dropdown-wrapper:hover .hover-more-btn {
-    transform: rotate(90deg) !important; /* Разворачивает стрелочку > строго вниз */
-    color: #fff !important;
-}
-
-/* =======================================================
-   БРОНЕБОЙНЫЙ ФИКС ДЁРГАНИЯ И ИЗОЛЯЦИЯ ПОДМЕНЮ ДРУЗЕЙ
-   ======================================================= */
-
-/* Оформляем скрытое подменю и изолируем его от зоны ховера самой кнопки */
-.hover-submenu {
-    position: absolute !important;
-    top: 32px !important; /* Сдвигаем строго ниже кнопки, чтобы они не слипались в кашу! */
-    right: 0 !important;
-    background-color: #111214 !important;
-    border: 1px solid #232428 !important;
-    border-radius: 4px !important;
-    padding: 4px !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
-    z-index: 1000 !important;
-    width: 140px !important;
-    pointer-events: auto !important; /* Разрешаем кликать по кнопкам внутри меню */
-    
-    /* Плавное проявление плашки */
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transform: translateY(-5px) !important;
-    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s !important;
-}
-
-/* Показываем меню ТОЛЬКО тогда, когда мышка наведена на всю зону dropdown */
-.action-dropdown-wrapper:hover .hover-submenu {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) !important;
-}
-
-/* Фикс дёргания стрелочки при наведении */
-.action-dropdown-wrapper:hover .hover-more-btn span {
-    transform: rotate(90deg) !important; /* Уверенно ложится носом строго вниз */
-    color: #fff !important;
-}
-
-/* Стили кнопки внутри подменю */
-.submenu-item-btn {
-    width: 100% !important;
-    background: transparent !important;
-    border: none !important;
-    color: #b5bac1 !important;
-    padding: 6px 10px !important;
-    text-align: left !important;
-    font-size: 13px !important;
-    cursor: pointer !important;
-    border-radius: 2px !important;
-    transition: background-color 0.1s, color 0.1s !important;
-}
-/* =======================================================
-   ЕДИНЫЙ ИЗОЛИРОВАННЫЙ БЛОК ХОВЕР-ПАНЕЛИ (БЕЗ ДЁРГАНИЯ)
-   ======================================================= */
-
-/* 1. Настройка строки сообщения и обводки */
-.message-item {
-    position: relative !important;
-    border: 1px solid transparent !important;
-    border-radius: 4px !important;
-    padding: 8px 12px !important;
-    transition: background-color 0.1s ease, border-color 0.1s ease !important;
-}
-.message-item:hover {
-    background-color: rgba(255, 255, 255, 0.02) !important;
-    border-color: #4e5058 !important; /* Серый аккуратный контур Дискорда */
-}
-
-/* 2. Сама всплывающая панель действий справа */
-.message-hover-actions {
-    position: absolute !important;
-    right: 32px !important;
-    top: -12px !important;
-    background-color: #313338 !important;
-    border: 1px solid #232428 !important;
-    border-radius: 4px !important;
-    display: flex !important;
-    padding: 2px !important;
-    box-shadow: 0 4px 4px rgba(0,0,0,0.16) !important;
-    z-index: 9999 !important;
     height: 32px !important;
     align-items: center !important;
     
-    /* Плавное проявление панели */
+    /* Вытаскиваем поверх любых прозрачных слоев чата */
+    z-index: 999999 !important; 
+    pointer-events: auto !important; /* Насильно разрешаем кликать и наводить */
+    
+    /* Плавное появление всей панельки при наведении на строчку чата */
     opacity: 0 !important;
     visibility: hidden !important;
     transform: scale(0.95) !important;
     transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s !important;
 }
+
+/* Показываем панель действий при наведении на сообщение */
 .message-item:hover .message-hover-actions {
     opacity: 1 !important;
     visibility: visible !important;
     transform: scale(1) !important;
 }
 
-/* 3. Квадратные кнопки-рамки (Стоят МЁРТВО на месте) */
+/* Квадратные кнопки внутри панели */
 .action-btn {
     background: transparent !important;
     border: none !important;
@@ -740,57 +554,54 @@ html, body {
     transition: background-color 0.1s, color 0.1s !important;
 }
 
-/* 4. Внутренние значки в кнопках (Только они наклоняются на 19°) */
+/* Внутренние значки в кнопках */
 .hover-edit-btn span,
 .hover-delete-trigger-btn span,
 .hover-more-btn span {
     display: inline-block !important;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    pointer-events: none !important; /* Иконки не воруют клик у самой кнопки */
 }
 
+/* Плавный наклон карандаша и мусорки строго на 19 градусов */
 .hover-edit-btn:hover span { transform: rotate(19deg) !important; }
 .hover-edit-btn:hover { background-color: #35373c !important; color: #fff !important; }
 
 .hover-delete-trigger-btn:hover span { transform: rotate(19deg) !important; }
 .hover-delete-trigger-btn:hover { background-color: #f23f43 !important; color: #fff !important; }
 
-/* 5. Контейнер для выпадающего меню стрелочки */
-.action-dropdown-wrapper {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    height: 28px !important;
-}
-
-/* ФИКС СТРЕЛКИ: Изначальное состояние (Развернута влево на 180°) */
+/* ИЗНАЧАЛЬНОЕ СОСТОЯНИЕ СТРЕЛОЧКИ: принудительно разворачиваем влево (<) */
 .hover-more-btn span {
     transform: rotate(180deg) !important;
     transform-origin: center center !important;
 }
 
-/* Твоё требование: При наведении плавно катится против часовой строго вниз до 90° */
-.action-dropdown-wrapper:hover .hover-more-btn span {
+/* СОСТОЯНИЕ КЛИКА: когда скрипт дает класс active, стрелочка плавно катится против часовой строго вниз */
+.hover-more-btn.active span {
     transform: rotate(90deg) !important;
     color: #fff !important;
 }
 
-/* 6. Скрытая плашка "Добавить в друзья" (Вынесена из потока ховера!) */
+/* Выпадающее подменю друзей: позиционируем под кнопкой */
 .hover-submenu {
-    position: fixed !important; /* Переключили на fixed, чтобы она ВООБЩЕ не влияла на размеры кнопок! */
-    margin-top: 34px !important; /* Четкий зазор снизу */
+    position: absolute !important;
+    top: 34px !important;
+    right: 0 !important;
     background-color: #111214 !important;
     border: 1px solid #232428 !important;
     border-radius: 4px !important;
     padding: 4px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
-    z-index: 100000 !important;
+    z-index: 999999 !important;
     width: 140px !important;
     
-    /* Полное скрытие по умолчанию */
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transform: translateY(-5px) !important;
-    transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s !important;
+    /* Изначально скрыто */
+    display: none !important;
+}
+
+/* Показываем синюю плашку меню только по активному клику */
+.hover-submenu.active {
+    display: block !important;
 }
 
 /* Показываем синюю менюшку только при наведении на блок dropdown */
