@@ -241,15 +241,13 @@ function appendMessage(author, text) {
     `;
 
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
-
-
-    const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) { 
         timerDeleteBtn.addEventListener('click', (e) => { 
             e.stopPropagation(); 
             initiateMessageDelete(messageElement); 
         }); 
     }
+
     
     const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
     if (addFriendBtn) { 
