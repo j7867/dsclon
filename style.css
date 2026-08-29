@@ -158,40 +158,53 @@ body {
     color: #f2f3f5; 
 }
 
-/* Настройка кнопок колокольчика и шестерёнки */
-.notification-bell, .settings-gear-trigger { 
+.notification-bell, 
+.settings-gear-trigger { 
     width: 32px !important; 
     height: 32px !important; 
     background: transparent !important; 
-    border: none !important; 
+    
+    /* Твоё требование: делаем кнопки идеально круглыми с рамкой, как на ховере сообщений */
+    border-radius: 50% !important; 
+    border: 1px solid #232428 !important; 
+    
     color: #b5bac1 !important; 
-    cursor: pointer; 
+    cursor: pointer !important; 
     display: flex !important; 
     align-items: center !important; 
     justify-content: center !important; 
     overflow: visible !important; 
     box-sizing: border-box !important; 
     padding: 0 !important; 
+    margin: 0 4px !important;
+    transition: background-color 0.1s, color 0.1s, border-color 0.1s !important;
 }
 
-.settings-gear-trigger { 
-    margin-right: 12px !important; 
-}
-
-.notification-bell svg, .settings-gear-trigger svg { 
-    width: 20px !important; 
-    height: 20px !important; 
+/* Подготовка иконок к плавному центрированному движению внутри кружочка */
+.notification-bell svg, 
+.settings-gear-trigger svg { 
+    width: 18px !important; 
+    height: 18px !important; 
     display: block !important; 
     overflow: visible !important; 
     transform-origin: center center !important; 
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important; 
 }
 
+/* Ховер для круглых рамок шапки */
+.settings-gear-trigger:hover {
+    background-color: #35373c !important; 
+    border-color: #4e5058 !important;
+}
 .settings-gear-trigger:hover svg { 
     transform: rotate(360deg) !important; 
     color: #ffffff !important; 
 }
 
+.notification-bell:hover {
+    background-color: #35373c !important; 
+    border-color: #4e5058 !important;
+}
 .notification-bell:hover svg { 
     animation: bellSwing 0.4s ease-in-out !important; 
     color: #ffffff !important; 
