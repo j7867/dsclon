@@ -65,12 +65,11 @@ body {
     background-color: #2b2d31; 
     display: flex; 
     flex-direction: column; 
-    padding-top: 12px; 
     flex-shrink: 0; 
 }
 
 .sidebar-header { 
-    padding: 0 16px 12px 16px; 
+    padding: 12px 16px; 
     font-size: 12px; 
     font-weight: bold; 
     color: #949ba4; 
@@ -82,7 +81,7 @@ body {
     align-items: center; 
     gap: 8px; 
     padding: 8px 16px; 
-    margin: 0 8px; 
+    margin: 2px 8px; 
     border-radius: 4px; 
     cursor: pointer; 
     color: #949ba4; 
@@ -113,19 +112,14 @@ body {
     min-width: 0; 
 }
 
-/* =======================================================
-   ЖЕСТКАЯ ФЛЕКС-РАСТЯЖКА ШАПКИ ЧАТА ПО КPАЯМ ЭКPАНА
-   ======================================================= */
-
+/* Насильно расталкиваем элементы шапки чата по углам */
 .chat-header { 
     height: 48px !important; 
     border-bottom: 1px solid #1f2023 !important; 
-    
-    /* Главный секрет: включаем флекс и расталкиваем элементы в противоположные углы */
     display: flex !important; 
     align-items: center !important; 
+    padding: 0 16px !important; 
     justify-content: space-between !important; 
-    
     flex-shrink: 0 !important; 
     box-sizing: border-box !important; 
     background-color: #313338 !important; 
@@ -136,14 +130,6 @@ body {
     display: flex !important; 
     align-items: center !important; 
     gap: 8px !important; 
-}
-
-.header-right-group { 
-    display: flex !important; 
-    align-items: center !important; 
-    gap: 8px !important; /* Кнопки стоят поближе */
-    margin-left: auto !important; /* Страховка выталкивания вправо */
-    overflow: visible !important; 
 }
 
 .hashtag { 
@@ -159,26 +145,29 @@ body {
     color: #f2f3f5; 
 }
 
+.header-right-group { 
+    display: flex !important; 
+    align-items: center !important; 
+    gap: 8px !important; 
+    margin-left: auto !important; 
+    overflow: visible !important; 
+}
+
 .user-name-header { 
     font-size: 14px; 
     font-weight: 500; 
     color: #f2f3f5; 
+    margin-right: 4px;
 }
 
-/* =======================================================
-   ФИКС ШАПКИ: ПОБЛИЖЕ ДРУГ К ДРУГУ И ЧУТЬ СВЕТЛЕЕ ПОДЛОЖКА
-   ======================================================= */
-
+/* ТВОЁ ТРЕБОВАНИЕ: Сочные, светлые и постоянные кружочки-подложки в шапке сайта */
 .notification-bell, 
 .settings-gear-trigger { 
     width: 34px !important; 
     height: 34px !important; 
-    
-    /* ТВОЁ ТРЕБОВАНИЕ: Сделали цвет подложки более светлым и заметным */
     background-color: #383a40 !important; 
     border-radius: 50% !important; 
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important; 
-    
     border: none !important; 
     color: #dbdee1 !important; 
     cursor: pointer !important; 
@@ -188,19 +177,14 @@ body {
     overflow: visible !important; 
     box-sizing: border-box !important; 
     padding: 0 !important; 
-    
-    /* ТВОЁ ТРЕБОВАНИЕ: Сблизили кнопки поближе друг к другу (отступ всего 2px вместо 6px) */
     margin: 0 2px !important; 
-    
     transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s !important;
 }
 
-/* Финальный отступ шестеренки от края экрана */
 .settings-gear-trigger { 
     margin-right: 10px !important; 
 }
 
-/* Настройка центрирования SVG иконки внутри круга */
 .notification-bell svg, 
 .settings-gear-trigger svg { 
     width: 18px !important; 
@@ -208,41 +192,22 @@ body {
     display: block !important; 
     overflow: visible !important; 
     transform-origin: center center !important; 
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important; 
+    transition: transform 0.2s ease, color 0.15s !important; 
 }
 
-/* =======================================================
-   ФИКС ХОВЕРА: КРУЖОК СТОИТ НА МЕСТЕ, ПРИБЛИЖАЮТСЯ ИКОНКИ
-   ======================================================= */
-
-/* =======================================================
-   ПЛАВНЫЙ ПОВОРОТ НА 17° И ПРИБЛИЖЕНИЕ ИКОНОК ВНУТРИ КРУГА
-   ======================================================= */
-
-/* Подложки-кружки намертво стоят на месте при наведении */
+/* Кружки при наведении стоят на месте, а иконки внутри плавно крутятся на 17 градусов и ПPИБЛИЖАЮТСЯ */
 .settings-gear-trigger:hover,
 .notification-bell:hover {
     background-color: #4e5058 !important; 
     color: #ffffff !important;
 }
 
-/*Шестерёнка плавно крутится на 17 градусов и приближается (scale 1.18) */
 .settings-gear-trigger:hover svg { 
-    transform: rotate(60deg) scale(1.12) !important; 
+    transform: rotate(17deg) scale(1.18) !important; 
 }
 
-/*Колокольчик плавно крутится на 17 градусов и приближается (scale 1.18) */
 .notification-bell:hover svg { 
-    transform: rotate(17deg) scale(1.12) !important; 
-}
-
-@keyframes bellSwing { 
-    0% { transform: rotate(0) scale(1.15); } 
-    20% { transform: rotate(15deg) scale(1.15); } 
-    40% { transform: rotate(-15deg) scale(1.15); } 
-    60% { transform: rotate(10deg) scale(1.15); } 
-    80% { transform: rotate(-10deg) scale(1.15); } 
-    100% { transform: rotate(0) scale(1.15); } 
+    transform: rotate(17deg) scale(1.18) !important; 
 }
 
 .bell-dropdown-panel { 
@@ -275,8 +240,6 @@ body {
     border: 1px solid #1f2023 !important; 
     border-radius: 8px !important; 
     padding: 16px !important; 
-    width: 240px !important; 
-    height: auto !important; 
     z-index: 99999 !important; 
     box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; 
     color: #f2f3f5 !important; 
@@ -290,6 +253,27 @@ body {
     opacity: 1 !important; 
     visibility: visible !important; 
     transform: translateY(0) scale(1) !important; 
+}
+
+/* Стилизация красивых ползунков 0-300% звука */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #1e1f22;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #23a55a;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
 
 .modal-screen { 
@@ -311,7 +295,6 @@ body {
     font-size: 13px; 
     font-weight: 500; 
     text-align: center; 
-    margin-top: 8px; 
 }
 
 .custom-select-trigger { 
@@ -357,7 +340,6 @@ body {
     display: flex; 
     align-items: center; 
     gap: 12px; 
-    margin-top: 12px; 
 }
 
 .color-picker-input { 
@@ -367,7 +349,6 @@ body {
     width: 40px; 
     height: 32px; 
 }
-
 .messages-container { 
     flex: 1; 
     display: flex; 
@@ -421,94 +402,6 @@ body {
     color: #f2f3f5; 
 }
 
-.delete-confirm-panel { 
-    display: none; 
-    background-color: #1e1f22 !important; 
-    border: 1px solid #f23f43 !important; 
-    padding: 10px 16px !important; 
-    border-radius: 8px !important; 
-    margin-bottom: 12px !important; 
-    width: fit-content !important; 
-    max-width: 400px !important; 
-    align-self: flex-end !important; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important; 
-    animation: slideUp 0.15s ease-out forwards; 
-}
-
-.delete-confirm-panel.active { 
-    display: block !important; 
-}
-
-.delete-panel-content { 
-    display: flex !important; 
-    align-items: center !important; 
-    gap: 16px !important; 
-}
-
-.delete-panel-text { 
-    font-size: 14px !important; 
-    font-weight: 500 !important; 
-    color: #dbdee1 !important; 
-    white-space: nowrap !important; 
-}
-
-.delete-panel-controls { 
-    display: flex !important; 
-    align-items: center !important; 
-    gap: 12px !important; 
-}
-
-.delete-cancel-btn { 
-    background-color: #4e5058 !important; 
-    color: #fff !important; 
-    border: none !important; 
-    padding: 6px 12px !important; 
-    border-radius: 4px !important; 
-    cursor: pointer; 
-    font-size: 13px !important; 
-    font-weight: 500 !important; 
-}
-
-.delete-cancel-btn:hover { 
-    background-color: #6d6f78 !important; 
-}
-
-.countdown-wrapper { 
-    display: flex !important; 
-    align-items: center !important; 
-    position: relative !important; 
-    width: 24px !important; 
-    height: 24px !important; 
-}
-
-.countdown-svg { 
-    transform: rotate(-90deg) !important; 
-}
-
-#countdownCircle { 
-    fill: none !important; 
-    stroke: #f23f43 !important; 
-    stroke-width: 2 !important; 
-    stroke-dasharray: 62.8 !important; 
-    stroke-dashoffset: 62.8 !important; 
-    transition: stroke-dashoffset 1s linear !important; 
-}
-
-.countdown-circle-bg { 
-    fill: none !important; 
-    stroke: #35373c !important; 
-    stroke-width: 2 !important; 
-}
-
-.countdown-number { 
-    position: absolute !important; 
-    left: 50% !important; 
-    top: 50% !important; 
-    transform: translate(-50%, -50%) !important; 
-    font-size: 11px !important; 
-    font-weight: bold !important; 
-    color: #f23f43 !important; 
-}
 .message-item { 
     position: relative !important; 
     border: 1px solid transparent !important; 
@@ -547,7 +440,6 @@ body {
     height: 32px !important; 
     align-items: center !important; 
     z-index: 999999 !important; 
-    pointer-events: auto !important; 
     opacity: 0 !important; 
     visibility: hidden !important; 
     transform: scale(0.95) !important; 
@@ -565,155 +457,38 @@ body {
     border: none !important; 
     color: #b5bac1 !important; 
     cursor: pointer !important; 
-    padding: 0 !important; 
     width: 32px !important; 
     height: 32px !important; 
     font-size: 14px !important; 
     display: flex !important; 
     align-items: center !important; 
     justify-content: center !important; 
-    border-radius: 0 !important; 
-    box-sizing: border-box !important; 
-    transition: background-color 0.15s ease, color 0.1s, border-radius 0.15s ease !important; 
 }
 
-.hover-edit-btn span, .hover-delete-trigger-btn span, .hover-more-btn span { 
-    display: inline-block !important; 
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; 
-    pointer-events: none !important; 
-}
+.hover-edit-btn:hover { background-color: #35373c !important; border-radius: 4px !important; color: #fff !important; }
+.hover-delete-trigger-btn:hover { background-color: #f23f43 !important; border-radius: 4px !important; color: #fff !important; }
+.action-dropdown-wrapper { position: relative !important; display: flex !important; align-items: center !important; height: 32px !important; }
+.action-dropdown-wrapper:hover .hover-more-btn { background-color: #35373c !important; border-radius: 4px !important; color: #fff !important; }
+.hover-submenu { position: absolute !important; top: 36px !important; right: 0 !important; background-color: #111214 !important; border: 1px solid #232428 !important; border-radius: 4px !important; padding: 4px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; z-index: 999999 !important; width: 140px !important; opacity: 0 !important; visibility: hidden !important; transform: translateY(-5px) !important; transition: all 0.1s ease !important; }
+.action-dropdown-wrapper:hover .hover-submenu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; }
+.submenu-item-btn { width: 100% !important; background: transparent !important; border: none !important; color: #b5bac1 !important; padding: 6px 10px !important; text-align: left !important; font-size: 13px !important; cursor: pointer !important; }
+.submenu-item-btn:hover { background-color: #5865f2 !important; color: #fff !important; }
 
-.hover-edit-btn:hover { 
-    background-color: #35373c !important; 
-    border-radius: 4px !important; 
-    color: #fff !important; 
-}
+.delete-confirm-panel { display: none; background-color: #1e1f22 !important; border: 1px solid #f23f43 !important; padding: 10px 16px !important; border-radius: 8px !important; margin-bottom: 12px !important; width: fit-content !important; align-self: flex-end !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important; }
+.delete-confirm-panel.active { display: block !important; }
+.delete-panel-content { display: flex !important; align-items: center !important; gap: 16px !important; }
+.delete-panel-text { font-size: 14px !important; font-weight: 500 !important; color: #dbdee1 !important; }
+.delete-panel-controls { display: flex !important; align-items: center !important; gap: 12px !important; }
+.delete-cancel-btn { background-color: #4e5058 !important; color: #fff !important; border: none !important; padding: 6px 12px !important; border-radius: 4px !important; font-size: 13px !important; }
+.delete-cancel-btn:hover { background-color: #6d6f78 !important; }
+.countdown-wrapper { display: flex !important; align-items: center !important; position: relative !important; width: 24px !important; height: 24px !important; }
+.countdown-svg { transform: rotate(-90deg) !important; }
+#countdownCircle { fill: none !important; stroke: #f23f43 !important; stroke-width: 2 !important; stroke-dasharray: 62.8 !important; stroke-dashoffset: 62.8 !important; transition: stroke-dashoffset 1s linear !important; }
+.countdown-circle-bg { fill: none !important; stroke: #35373c !important; stroke-width: 2 !important; }
+.countdown-number { position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; font-size: 11px !important; font-weight: bold !important; color: #f23f43 !important; }
 
-.hover-edit-btn:hover span { 
-    transform: rotate(19deg) !important; 
-}
-
-.hover-delete-trigger-btn:hover { 
-    background-color: #f23f43 !important; 
-    border-radius: 4px !important; 
-    color: #fff !important; 
-}
-
-.hover-delete-trigger-btn:hover span { 
-    transform: rotate(19deg) !important; 
-}
-
-.action-dropdown-wrapper { 
-    position: relative !important; 
-    display: flex !important; 
-    align-items: center !important; 
-    height: 32px !important; 
-}
-
-.hover-more-btn span { 
-    transform: rotate(0deg) !important; 
-    transform-origin: center center !important; 
-}
-
-.action-dropdown-wrapper:hover .hover-more-btn { 
-    background-color: #35373c !important; 
-    border-radius: 4px !important; 
-    color: #fff !important; 
-}
-
-.action-dropdown-wrapper:hover .hover-more-btn span { 
-    transform: rotate(-90deg) !important; 
-}
-
-.hover-submenu { 
-    position: absolute !important; 
-    top: 36px !important; 
-    right: 0 !important; 
-    background-color: #111214 !important; 
-    border: 1px solid #232428 !important; 
-    border-radius: 4px !important; 
-    padding: 4px !important; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; 
-    z-index: 999999 !important; 
-    width: 140px !important; 
-    opacity: 0 !important; 
-    visibility: hidden !important; 
-    transform: translateY(-5px) !important; 
-    transition: all 0.1s ease !important; 
-}
-
-.action-dropdown-wrapper:hover .hover-submenu { 
-    opacity: 1 !important; 
-    visibility: visible !important; 
-    transform: translateY(0) !important; 
-}
-
-.submenu-item-btn { 
-    width: 100% !important; 
-    background: transparent !important; 
-    border: none !important; 
-    color: #b5bac1 !important; 
-    padding: 6px 10px !important; 
-    text-align: left !important; 
-    font-size: 13px !important; 
-    cursor: pointer !important; 
-    border-radius: 2px !important; 
-}
-
-.submenu-item-btn:hover { 
-    background-color: #5865f2 !important; 
-    color: #fff !important; 
-}
-
-.auth-modal-overlay { 
-    position: fixed !important; 
-    top: 0; 
-    left: 0; 
-    width: 100vw; 
-    height: 100vh; 
-    background-color: rgba(0,0,0,0.7); 
-    z-index: 1000000; 
-    display: none !important; 
-    align-items: center; 
-    justify-content: center; 
-}
-
-.auth-modal-overlay.active { 
-    display: flex !important; 
-}
-
-.auth-modal-window { 
-    background-color: #313338; 
-    padding: 24px; 
-    border-radius: 8px; 
-    width: 360px; 
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6); 
-    color: #fff; 
-}
-
-.profile-input-field { 
-    width: 100%; 
-    background-color: #1e1f22; 
-    border: none; 
-    padding: 10px; 
-    border-radius: 4px; 
-    color: #fff; 
-    box-sizing: border-box; 
-}
-
-.profile-save-global-btn { 
-    width: 100%; 
-    background-color: #5865f2; 
-    color: #fff; 
-    border: none; 
-    padding: 12px; 
-    border-radius: 4px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    margin-top: 16px; 
-}
-
-@keyframes slideUp { 
-    from { transform: translateY(10px); opacity: 0; } 
-    to { transform: translateY(0); opacity: 1; } 
-}
+.auth-modal-overlay { position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.7); z-index: 1000000; display: none !important; align-items: center; justify-content: center; }
+.auth-modal-overlay.active { display: flex !important; }
+.auth-modal-window { background-color: #313338; padding: 24px; border-radius: 8px; width: 360px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); color: #fff; }
+.profile-input-field { width: 100%; background-color: #1e1f22; border: none; padding: 10px; border-radius: 4px; color: #fff; box-sizing: border-box; }
+.profile-save-global-btn { width: 100%; background-color: #5865f2; color: #fff; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 16px; }
