@@ -340,8 +340,19 @@ async function hangUpCall() {
     currentRoomId = null;
 }
 
-function checkUserSession() {
+async function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
-    if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
-    else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+    if (savedUser) {
+        try {
+            const userSnap = await db.collection("users").doc(savedUser).get();
+            if (userSnap.exists && userSnap.data().status === 'approved') {
+                myName = savedUser;
+                if (authModalOverlay) authModalOverlay.classList.remove('active');
+                initChatAfterAuth();
+                return;
+            }
+        } catch(e) { console.error(e); }
+        localStorage.removeItem('chat_active_user');
+    }
+    if (authModalOverlay) authModalOverlay.classList.add('active');
 }
