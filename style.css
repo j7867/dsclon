@@ -203,11 +203,11 @@ body {
 }
 
 .settings-gear-trigger:hover svg { 
-    transform: rotate(17deg) scale(1.18) !important; 
+    transform: rotate(65deg) scale(1.12) !important; 
 }
 
 .notification-bell:hover svg { 
-    transform: rotate(17deg) scale(1.18) !important; 
+    transform: rotate(17deg) scale(1.12) !important; 
 }
 
 .bell-dropdown-panel { 
