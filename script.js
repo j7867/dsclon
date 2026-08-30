@@ -284,10 +284,8 @@ async function hangUpCall() {
     currentRoomId = null;
 }
 
-function checkUserSession() {
+ function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
     if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
-    else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
-}
-List.add('active'); }
-}
+  else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+ }
