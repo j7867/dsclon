@@ -8,38 +8,55 @@
     <link rel="stylesheet" href="style.css?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-firestore-compat.min.js"></script>
-    
     <div class="guilds-sidebar" id="guildsSidebar">
         <div class="guild-icon active" id="dmServerBtn" data-type="dm">DM</div>
         <div class="guild-icon" id="publicServerBtn" data-type="server">🌐</div>
         <div class="add-server-btn-sidebar" id="addServerBtnTrigger">+</div>
     </div>
-    <div class="channels-sidebar" id="channelsSidebar">
-        <div id="dmChannelsSection">
-            <div class="sidebar-header">ЛИЧНЫЕ СООБЩЕНИЯ</div>
-            <div class="channels-list" id="dmChannelsList"></div>
-        </div>
-        <div id="serverChannelsSection" style="display: none;">
-            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding-right: 8px;">
-                <span>ТЕКСТОВЫЕ КАНАЛЫ</span>
-                <span id="openCreateChannelBtn" style="cursor: pointer; font-size: 18px;">+</span>
+    <div class="channels-sidebar" id="channelsSidebar" style="position: relative; display: flex; flex-direction: column; justify-content: space-between;">
+        <div id="channelsMainContent" style="flex: 1;">
+            <div id="dmChannelsSection">
+                <div class="sidebar-header">ЛИЧНЫЕ СООБЩЕНИЯ</div>
+                <div class="channels-list" id="dmChannelsList"></div>
             </div>
-            <div id="serverChannelsList">
-                <!-- ТЕКСТОВЫЙ КАНАЛ -->
-                <div class="custom-user-item active" data-channel="general-chat" data-type="text">
-                    <div class="user-avatar" style="background-color: #5865f2;">#</div>
-                    <span>general-chat</span>
+            <div id="serverChannelsSection" style="display: none;">
+                <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; padding-right: 8px;">
+                    <span>ТЕКСТОВЫЕ КАНАЛЫ</span>
+                    <span id="openCreateChannelBtn" style="cursor: pointer; font-size: 18px;">+</span>
                 </div>
-                <!-- ГОЛОСОВОЙ КАНАЛ ДЛЯ ПОЛНОЭКРАННЫХ ЗВОНКОВ -->
-                <div class="custom-user-item" data-channel="voice-room" data-type="voice">
-                    <div class="user-avatar" style="background-color: #23a55a;">🔊</div>
-                    <span>Общий голос</span>
+                <div id="serverChannelsList">
+                    <div class="custom-user-item active" data-channel="general-chat" data-type="text">
+                        <div class="user-avatar" style="background-color: #5865f2;">#</div>
+                        <span>general-chat</span>
+                    </div>
+                    <div class="custom-user-item" data-channel="voice-room" data-type="voice">
+                        <div class="user-avatar" style="background-color: #23a55a;">🔊</div>
+                        <span>Общий голос</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ТВОЁ ТРЕБОВАНИЕ: НИЖНИЙ ПУЛЬТ СВЯЗИ ДИСКОРДА С ЦВЕТНЫМИ АНТЕННАМИ ПИНГА -->
+        <div id="voiceStatusPanel" style="background-color: #232428; padding: 10px; border-top: 1px solid #1f2023; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="pingRadarCircle" style="width: 10px; height: 10px; background-color: #23a55a; border-radius: 50%; box-shadow: 0 0 8px #23a55a; transition: all 0.3s ease;"></div>
+                    <span id="pingStatusText" style="font-size: 13px; font-weight: 600; color: #23a55a; transition: all 0.3s ease;">Голос подключен</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span id="pingMsValue" style="font-size: 11px; color: #23a55a; font-family: monospace; font-weight: bold; background-color: rgba(35,165,90,0.1); padding: 2px 6px; border-radius: 3px; transition: all 0.3s ease;">10ms</span>
+                    <div id="pingBarsContainer" style="display: flex; align-items: flex-end; gap: 2px; height: 12px; width: 14px;">
+                        <div class="ping-bar" style="width: 3px; height: 4px; background-color: #23a55a; border-radius: 1px; transition: all 0.3s ease;"></div>
+                        <div class="ping-bar" style="width: 3px; height: 8px; background-color: #23a55a; border-radius: 1px; transition: all 0.3s ease;"></div>
+                        <div class="ping-bar" style="width: 3px; height: 12px; background-color: #23a55a; border-radius: 1px; transition: all 0.3s ease;"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="chat-area" id="chatArea">
-               <div class="chat-header">
+        <div class="chat-header">
             <div class="header-left"><span class="hashtag">#</span><h3 id="chatTitle">general-chat</h3></div>
             <div class="header-right-group">
                 <span class="user-name-header" id="topUserName">dj1ka</span>
@@ -55,11 +72,37 @@
                 </button>
             </div>
         </div>
-        <div class="settings-sidebar" id="settingsSidebar">
-            <h2 class="modal-title">Настройки</h2>
-            <div class="modal-screen active-screen" id="mainSettingsScreen"><button class="menu-nav-btn" id="goToZonesBtn">Настройка зон</button></div>
+        
+        <div class="settings-sidebar" id="settingsSidebar" style="width: 260px !important;">
+            <h2 class="modal-title" style="margin-bottom: 12px;">Настройки</h2>
+            <div class="modal-screen active-screen" id="mainSettingsScreen" style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="menu-nav-btn" id="goToZonesBtn">Настройка зон сайта</button>
+                <hr style="border: none; border-top: 1px solid #3f4147; margin: 8px 0;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #b5bac1;">
+                        <span>ГРОМКОСТЬ МИКРОФОНА</span>
+                        <span id="micVolValue">100%</span>
+                    </div>
+                    <input type="range" id="micVolumeSlider" min="0" max="300" value="100" style="width: 100%; accent-color: #23a55a; cursor: pointer;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #b5bac1;">
+                        <span>ЗВУК САЙТА (СТРИМ)</span>
+                        <span id="siteVolValue">100%</span>
+                    </div>
+                    <input type="range" id="siteVolumeSlider" min="0" max="300" value="100" style="width: 100%; accent-color: #23a55a; cursor: pointer;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 12px;">
+                    <label style="font-size: 12px; font-weight: bold; color: #b5bac1;">ПРОФИЛЬ ОБРАБОТКИ ЗВУКА</label>
+                    <select id="audioProfileSelect" style="width: 100%; background-color: #1e1f22; color: #dbdee1; border: 1px solid #1f2023; padding: 6px; border-radius: 4px; outline: none; font-size: 13px; cursor: pointer; margin-top: 4px;">
+                        <option value="clean">Профиль 1: Чистый звук (Без обработок)</option>
+                        <option value="basic" selected>Профиль 2: Базовый шумодав (От стуков)</option>
+                        <option value="max">Профиль 3: Макс шумодав (Эхоподавление)</option>
+                    </select>
+                </div>
+            </div>
             <div class="modal-screen" id="zoneSettingsScreen">
-                <button class="back-menu-nav-btn" id="backToMenuBtn">← Назад</button>
+                <button class="back-menu-nav-btn" id="backToMenuBtn" style="margin-bottom: 8px;">← Назад</button>
                 <div class="custom-select-container">
                     <div class="custom-select-trigger" id="zoneSelectTrigger">Выберите зону <span class="select-arrow">▼</span></div>
                     <div class="custom-select-options" id="zoneSelectOptions">
@@ -69,38 +112,29 @@
                         <div class="custom-option" data-value="settingsSidebar">Right Settings Sidebar</div>
                     </div>
                 </div>
-                <div class="color-picker-wrapper">
-                    <input type="color" class="color-picker-input" id="customColorInput" value="#313338">
-                </div>
-                <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 20px; text-align: center;">Применить</button>
+                <div class="color-picker-wrapper" style="margin-top: 12px;"><input type="color" class="color-picker-input" id="customColorInput" value="#313338"></div>
+                <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 12px;">Применить</button>
             </div>
         </div>
         
-        <!-- ТЕКСТОВЫЕ СООБЩЕНИЯ -->
         <div class="messages-container" id="messagesContainer"></div>
 
-        <!-- ОГРОМНАЯ ГОЛОСОВАЯ КОМНАТА НА ВЕСЬ ЭКРАН (VOICE ROOM КАК В ДС) -->
         <div id="videoCallZone" style="display: none; position: absolute; top: 48px; left: 0; width: 100%; height: calc(100vh - 48px); background-color: #111214; z-index: 99; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 20px;">
             <div style="flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; position: relative;">
                 <video id="remoteVideo" autoplay playsinline style="width: 100%; height: 100%; max-height: 75vh; border-radius: 12px; background-color: #1e1f22; object-fit: contain; box-shadow: 0 8px 24px rgba(0,0,0,0.6);"></video>
-                <!-- Заглушка: аватарка по центру -->
-                <div id="voiceAvatarPlaceholder" style="position: absolute; width: 120px; height: 120px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: #fff; box-shadow: 0 0 20px rgba(88,101,242,0.4);">
-                    V
-                </div>
+                <div id="voiceAvatarPlaceholder" style="position: absolute; width: 120px; height: 120px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: #fff; box-shadow: 0 0 20px rgba(88,101,242,0.4);">D</div>
             </div>
-            <!-- ПУЛЬТ УПРАВЛЕНИЯ ЗВOНКОМ -->
             <div style="display: flex; gap: 16px; margin-top: 16px; padding: 12px 24px; background-color: #1e1f22; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 100;">
                 <button id="startScreenBtn" class="notification-bell" title="Трансляция экрана" style="border: 1px solid #4e5058 !important; border-radius: 4px !important; padding: 8px 16px !important; height: auto !important; width: auto !important; display: flex; align-items: center; gap: 8px; background-color: #313338 !important;">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:middle;"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"></path></svg>
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"></path></svg>
                     <span style="font-size: 13px; font-weight: 500; color: #dbdee1;">Экран</span>
                 </button>
                 <button id="endCallBtn" class="notification-bell" title="Отключиться" style="background-color: #f23f43 !important; border-radius: 4px !important; padding: 8px 16px !important; height: auto !important; width: auto !important; color: #fff !important; display: flex; align-items: center; gap: 8px;">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:middle;"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.58.9c-1 .47-1.92 1.13-2.73 1.93-.2.2-.53.25-.78.1L.47 14.1c-.28-.16-.47-.44-.47-.77 0-.42.17-.82.46-1.12 3.08-3.05 7.15-4.71 11.54-4.71s8.46 1.66 11.54 4.71c.29.3.46.7.46 1.12 0 .33-.19.61-.47.77l-2.85 1.67c-.25.15-.57.1-.78-.1-.8-.8-1.73-1.45-2.73-1.92-.35-.17-.58-.52-.58-.91v-3.1C15.15 9.25 13.6 9 12 9z"></path></svg>
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.58.9c-1 .47-1.92 1.13-2.73 1.93-.2.2-.53.25-.78.1L.47 14.1c-.28-.16-.47-.44-.47-.77 0-.42.17-.82.46-1.12 3.08-3.05 7.15-4.71 11.54-4.71s8.46 1.66 11.54 4.71c.29.3.46.7.46 1.12 0 .33-.19.61-.47.77l-2.85 1.67c-.25.15-.57.1-.78-.1-.8-.8-1.73-1.45-2.73-1.92-.35-.17-.58-.52-.58-.91v-3.1C15.15 9.25 13.6 9 12 9z"></path></svg>
                     <span style="font-size: 13px; font-weight: 500;">Выйти</span>
                 </button>
             </div>
         </div>
-
         <div class="input-area">
             <div id="deleteConfirmPanel" class="delete-confirm-panel">
                 <div class="delete-panel-content">
@@ -129,6 +163,6 @@
             <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="window.triggerManualAuth()">Вход / Регистрация</button>
         </div>
     </div>
-    <script src="script.js?v=1122"></script>
+    <script src="script.js?v=9991"></script>
 </body>
 </html>
