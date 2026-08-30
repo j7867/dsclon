@@ -145,10 +145,10 @@ body {
 }
 
 .header-right-group { 
-    display: flex; 
-    align-items: center; 
-    gap: 16px; 
-    margin-left: auto; 
+    display: flex !important; 
+    align-items: center !important; 
+    gap: 8px !important; /* Небольшой аккуратный зазор между элементами */
+    margin-left: auto !important; /* ТВОЁ ТРЕБОВАНИЕ: Жестко выталкивает весь блок в самый ПPАВЫЙ угол! */
     overflow: visible !important; 
 }
 
