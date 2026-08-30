@@ -21,9 +21,19 @@ window.triggerManualAuth = async function() {
         if (userSnap.exists) {
             const userData = userSnap.data();
             if (userData.password !== password) { alert('Неверный пароль!'); return; }
+            
+            // ЖЕСТКИЙ БЛОК: Если друг в ожидании — не даем зайти!
+            if (userData.status === 'pending' && login !== CREATOR_NICKNAME) {
+                alert('Ошибка доступа: Ваша учётная запись ожидает одобрения администратором dj1ka!');
+                return;
+            }
         } else {
             const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
             await userRef.set({ username: login, password: password, status: initialStatus });
+            if (initialStatus === 'pending') {
+                alert('Регистрация успешна! Ожидайте, пока dj1ka одобрит ваш профиль.');
+                return;
+            }
         }
         localStorage.setItem('chat_active_user', login);
         myName = login;
@@ -32,6 +42,7 @@ window.triggerManualAuth = async function() {
         initChatAfterAuth();
     } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
+
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
