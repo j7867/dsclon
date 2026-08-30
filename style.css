@@ -464,9 +464,32 @@ input[type="range"]::-webkit-slider-thumb {
     align-items: center !important; 
     justify-content: center !important; 
 }
+/* =======================================================
+   ФИКС СООБЩЕНИЙ: ПЛАВНЫЙ ПОВОPОТ ИКОНОК НА 17 ГPАДУСОВ
+   ======================================================= */
 
-.hover-edit-btn:hover { background-color: #35373c !important; border-radius: 4px !important; color: #fff !important; }
-.hover-delete-trigger-btn:hover { background-color: #f23f43 !important; border-radius: 4px !important; color: #fff !important; }
+.hover-edit-btn:hover { 
+    background-color: #35373c !important; 
+    border-radius: 4px !important; 
+    color: #fff !important; 
+}
+
+/* ТВОЁ ТРЕБОВАНИЕ: При наведении на карандаш — он плавно поворачивается строго на 17 градусов */
+.hover-edit-btn:hover span { 
+    transform: rotate(17deg) !important; 
+}
+
+.hover-delete-trigger-btn:hover { 
+    background-color: #f23f43 !important; 
+    border-radius: 4px !important; 
+    color: #fff !important; 
+}
+
+/* ТВОЁ ТРЕБОВАНИЕ: При наведении на мусорку — она плавно поворачивается строго на 17 градусов */
+.hover-delete-trigger-btn:hover span { 
+    transform: rotate(17deg) !important; 
+}
+
 .action-dropdown-wrapper { position: relative !important; display: flex !important; align-items: center !important; height: 32px !important; }
 .action-dropdown-wrapper:hover .hover-more-btn { background-color: #35373c !important; border-radius: 4px !important; color: #fff !important; }
 .hover-submenu { position: absolute !important; top: 36px !important; right: 0 !important; background-color: #111214 !important; border: 1px solid #232428 !important; border-radius: 4px !important; padding: 4px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; z-index: 999999 !important; width: 140px !important; opacity: 0 !important; visibility: hidden !important; transform: translateY(-5px) !important; transition: all 0.1s ease !important; }
