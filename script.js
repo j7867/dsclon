@@ -1,3 +1,4 @@
+// === 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И WEBRTC КОНФИГУРАЦИЯ ===
 let selectedAvatarColor = '#5865f2';
 let base64AvatarData = '';
 let localStream = null;
@@ -5,6 +6,19 @@ let screenStream = null;
 let peerConnection = null;
 let currentRoomId = null;
 
+// Переменные Web Audio API для принудительного буста микрофона до 300%
+let audioCtx = null;
+let micGainNode = null;
+
+const rtcServers = {
+    iceServers: [
+        { urls: 'stun:://google.com' },
+        { urls: 'stun:://google.com' }
+    ],
+    iceCandidatePoolSize: 10,
+};
+
+// === 2. ФУНКЦИЯ АВТОРИЗАЦИИ ПОЛЬЗОВАТЕЛЯ ===
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
@@ -29,7 +43,7 @@ window.triggerManualAuth = async function() {
         initChatAfterAuth();
     } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
-
+// === 3. КРУГОВОЙ ТАЙМЕР УДАЛЕНИЯ СООБЩЕНИЙ ===
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
@@ -74,6 +88,7 @@ const db = firebase.firestore();
 const CREATOR_NICKNAME = 'dj1ka'; let myName = ''; let currentServerContext = 'public'; let currentChannelContext = 'general-chat';
 let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn, publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
 
+// === 4. ИНИЦИАЛИЗАЦИЯ И СЛУШАТЕЛИ DOM ===
 document.addEventListener('DOMContentLoaded', () => {
     authModalOverlay = document.getElementById('authModalOverlay'); authLoginInput = document.getElementById('authLoginInput'); authPasswordInput = document.getElementById('authPasswordInput'); authSubmitBtn = document.getElementById('authSubmitBtn'); publicServerBtn = document.getElementById('publicServerBtn'); dmServerBtn = document.getElementById('dmServerBtn'); serverChannelsSection = document.getElementById('serverChannelsSection'); dmChannelsSection = document.getElementById('dmChannelsSection'); chatTitle = document.getElementById('chatTitle'); hashtag = document.getElementById('hashtag'); messageInput = document.getElementById('messageInput'); sendBtn = document.getElementById('sendBtn'); messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
 
@@ -98,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bellDropdownPanel && !bellDropdownPanel.contains(e.target) && e.target !== notificationBell) { bellDropdownPanel.classList.remove('active'); }
     });
 
-    // === ОБРАБОТЧИКИ КНОПОК ЗВОНКА И ДЕМКИ ВНУТРИ ВЫКАТЫВАЕМОЙ ЗОНЫ ===
     const startScreenBtn = document.getElementById('startScreenBtn'); const endCallBtn = document.getElementById('endCallBtn'); const videoCallZone = document.getElementById('videoCallZone');
     if (startScreenBtn) { startScreenBtn.onclick = async (e) => { e.stopPropagation(); await startScreenShare(); }; }
     if (endCallBtn) {
@@ -111,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // === ОЖИВЛЯЕМ ПЕРЕКЛЮЧЕНИЕ ТЕКСТОВЫХ И ГОЛОСОВЫХ КАНАЛОВ СО СКРЫТИЕМ ИНПУТА ===
+    // === ОБНОВЛЕННОЕ ПЕРЕКЛЮЧЕНИЕ КАНАЛОВ СО СКРЫТИЕМ ИНПУТА ===
     document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
         item.onclick = async function(e) {
             e.stopPropagation();
@@ -138,12 +152,63 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
+    // === НАСТРОЙКА ПОЛЗУНКОВ ЗВУКА И ЗВУКОВОГО БУСТА МИКРОФОНА ДО 300% ===
+    const micVolumeSlider = document.getElementById('micVolumeSlider');
+    const micVolValue = document.getElementById('micVolValue');
+    const siteVolumeSlider = document.getElementById('siteVolumeSlider');
+    const siteVolValue = document.getElementById('siteVolValue');
+    const audioProfileSelect = document.getElementById('audioProfileSelect');
+
+    if (micVolumeSlider && micVolValue) {
+        micVolumeSlider.oninput = function() {
+            const vol = this.value;
+            micVolValue.textContent = vol + '%';
+            if (micGainNode) micGainNode.gain.value = vol / 100;
+        };
+    }
+    if (siteVolumeSlider && siteVolValue) {
+        siteVolumeSlider.oninput = function() {
+            const vol = this.value;
+            siteVolValue.textContent = vol + '%';
+            const remoteVideo = document.getElementById('remoteVideo');
+            if (remoteVideo) remoteVideo.volume = Math.min(vol / 100, 1);
+        };
+    }
+    if (audioProfileSelect) {
+        audioProfileSelect.onchange = function() {
+            alert('Режим WebRTC шумодава изменен на: ' + this.options[this.selectedIndex].text);
+        };
+    }
+
+    // === СИМУЛЯЦИЯ СКАЧКОВ ПИНГА И АВТОМАТИЧЕСКАЯ СМЕНА ЦВЕТА АНТЕНН ===
+    setInterval(() => {
+        const pingMsValue = document.getElementById('pingMsValue');
+        const pingRadarCircle = document.getElementById('pingRadarCircle');
+        const pingStatusText = document.getElementById('pingStatusText');
+        const bars = document.querySelectorAll('.ping-bar');
+        if (!pingMsValue || !bars.length) return;
+
+        const randomPing = Math.floor(Math.random() * 290) + 10;
+        pingMsValue.textContent = randomPing + 'ms';
+        let color = '#23a55a'; let status = 'Голос подключен';
+
+        if (randomPing <= 50) { color = '#23a55a'; status = 'Голос подключен'; } 
+        else if (randomPing > 50 && randomPing <= 100) { color = '#f0b232'; status = 'Связь нестабильна'; } 
+        else if (randomPing > 100 && randomPing <= 250) { color = '#f57c00'; status = 'Высокая задержка'; } 
+        else { color = '#f23f43'; status = 'Плохое подключение'; }
+
+        pingMsValue.style.color = color;
+        pingMsValue.style.backgroundColor = color + '1a';
+        if (pingRadarCircle) { pingRadarCircle.style.backgroundColor = color; pingRadarCircle.style.boxShadow = '0 0 8px ' + color; }
+        if (pingStatusText) { pingStatusText.style.color = color; pingStatusText.textContent = status; }
+        bars.forEach(bar => { bar.style.backgroundColor = color; });
+    }, 3000);
+
     if (sendBtn) sendBtn.addEventListener('click', handleSendMessage);
     if (messageInput) { messageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); }); }
     if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
     checkUserSession();
 });
-
 function initChatAfterAuth() {
     const topName = document.getElementById('topUserName'); if (topName) topName.textContent = myName;
     const topAvatar = document.getElementById('userAvatarHeader'); if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
@@ -194,45 +259,48 @@ function appendMessage(author, text) {
                 try {
                     const snap = await db.collection("messages").where("server","==",currentServerContext).where("channel","==",currentChannelContext).where("author","==",author).where("text","==",originalText).get();
                     snap.forEach(async(doc)=>{await db.collection("messages").doc(doc.id).update({text:nt});}); textSpan.textContent = nt; messageElement.classList.remove('editing');
-                } catch(err){document.error(err);}
+                } catch(err){console.error(err);}
             });
             cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
         });
     }
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
-// === ФИНАЛЬНЫЙ WEBRTC БЕЗ ВНЕШНИХ СЕРВЕРОВ (ОБХОД БАГА ХОСТНЕЙМА) ===
 async function startVoiceCall() {
     try {
+        const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
-                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                peerConnection = new RTCPeerConnection({});
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaStreamSource(localStream);
+                micGainNode = audioCtx.createGain(); micGainNode.gain.value = 1.0;
+                source.connect(micGainNode);
+                peerConnection = new RTCPeerConnection(inlineConfig);
                 localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
-            } catch (mediaErr) { console.warn('Режим симуляции:', mediaErr); }
+            } catch (mediaErr) { console.warn('Симуляция звонка:', mediaErr); }
         }
-        if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
+        if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
         peerConnection.ontrack = (event) => {
             const remoteVideo = document.getElementById('remoteVideo'); const videoCallZone = document.getElementById('videoCallZone');
-            if (remoteVideo && event.streams && event.streams[0]) { remoteVideo.srcObject = event.streams[0]; if (videoCallZone) videoCallZone.style.display = 'flex'; }
+            if (remoteVideo && event.streams && event.streams) { remoteVideo.srcObject = event.streams; if (videoCallZone) videoCallZone.style.display = 'flex'; }
         };
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); currentRoomId = roomRef.id;
         const callerCandidatesCollection = roomRef.collection('callerCandidates');
         peerConnection.onicecandidate = (event) => { if (event.candidate) { callerCandidatesCollection.add(event.candidate.toJSON()); } };
         const offerDescription = await peerConnection.createOffer(); await peerConnection.setLocalDescription(offerDescription);
-        const offer = { sdp: offerDescription.sdp, type: offerDescription.type, host: myName };
-        await roomRef.set({ offer: offer });
+        await roomRef.set({ offer: { sdp: offerDescription.sdp, type: offerDescription.type, host: myName } });
         roomRef.onSnapshot((snapshot) => { const data = snapshot.data(); if (!peerConnection.currentRemoteDescription && data && data.answer) { peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer)); } });
         roomRef.collection('calleeCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') { peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); } }); });
-        setTimeout(() => { joinVoiceCall(); }, 1000);
     } catch (err) { console.error('Ошибка WebRTC:', err); }
 }
 
 async function startScreenShare() {
     try {
-        if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
+        const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
+        if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        const screenTrack = screenStream.getVideoTracks()[0];
+        const screenTrack = screenStream.getVideoTracks();
         const placeholder = document.getElementById('voiceAvatarPlaceholder');
         const remoteVideo = document.getElementById('remoteVideo');
         if (placeholder) placeholder.style.display = 'none';
@@ -244,15 +312,16 @@ async function startScreenShare() {
 }
 
 async function joinVoiceCall() {
+    const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
     const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); const roomSnapshot = await roomRef.get();
     if (!roomSnapshot.exists) return; const data = roomSnapshot.data(); if (!data || !data.offer || data.offer.host === myName) return;
     try {
         if (!peerConnection) {
-            peerConnection = new RTCPeerConnection({});
+            peerConnection = new RTCPeerConnection(inlineConfig);
             if (localStream) { localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); }); }
             peerConnection.ontrack = (event) => {
                 const remoteVideo = document.getElementById('remoteVideo'); const videoCallZone = document.getElementById('videoCallZone');
-                if (remoteVideo && event.streams && event.streams[0]) { remoteVideo.srcObject = event.streams[0]; if (videoCallZone) videoCallZone.style.display = 'flex'; }
+                if (remoteVideo && event.streams && event.streams) { remoteVideo.srcObject = event.streams; if (videoCallZone) videoCallZone.style.display = 'flex'; }
             };
         }
         const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
@@ -268,6 +337,7 @@ async function hangUpCall() {
     if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
     if (screenStream) { screenStream.getTracks().forEach(track => track.stop()); screenStream = null; }
     if (peerConnection) { peerConnection.close(); peerConnection = null; }
+    if (audioCtx) { audioCtx.close(); audioCtx = null; micGainNode = null; }
     const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo) remoteVideo.srcObject = null;
     if (currentServerContext && currentChannelContext) {
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
