@@ -113,22 +113,37 @@ body {
     min-width: 0; 
 }
 
+/* =======================================================
+   ЖЕСТКАЯ ФЛЕКС-РАСТЯЖКА ШАПКИ ЧАТА ПО КPАЯМ ЭКPАНА
+   ======================================================= */
+
 .chat-header { 
-    height: 48px; 
-    border-bottom: 1px solid #1f2023; 
-    display: flex; 
-    align-items: center; 
-    padding: 0 16px; 
-    justify-content: space-between; 
-    flex-shrink: 0; 
-    box-sizing: border-box; 
-    background-color: #313338; 
+    height: 48px !important; 
+    border-bottom: 1px solid #1f2023 !important; 
+    
+    /* Главный секрет: включаем флекс и расталкиваем элементы в противоположные углы */
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: space-between !important; 
+    
+    flex-shrink: 0 !important; 
+    box-sizing: border-box !important; 
+    background-color: #313338 !important; 
+    width: 100% !important;
 }
 
 .header-left { 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
+    display: flex !important; 
+    align-items: center !important; 
+    gap: 8px !important; 
+}
+
+.header-right-group { 
+    display: flex !important; 
+    align-items: center !important; 
+    gap: 8px !important; /* Кнопки стоят поближе */
+    margin-left: auto !important; /* Страховка выталкивания вправо */
+    overflow: visible !important; 
 }
 
 .hashtag { 
@@ -142,14 +157,6 @@ body {
     font-size: 16px; 
     font-weight: 600; 
     color: #f2f3f5; 
-}
-
-.header-right-group { 
-    display: flex !important; 
-    align-items: center !important; 
-    gap: 8px !important; /* Небольшой аккуратный зазор между элементами */
-    margin-left: auto !important; /* ТВОЁ ТРЕБОВАНИЕ: Жестко выталкивает весь блок в самый ПPАВЫЙ угол! */
-    overflow: visible !important; 
 }
 
 .user-name-header { 
