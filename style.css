@@ -158,14 +158,20 @@ body {
     color: #f2f3f5; 
 }
 
-/* ТВОЁ ТРЕБОВАНИЕ: Фиксируем сочные постоянные круглые тёмные подложки в шапке (ГОPЯТ ВСЕГДА) */
+/* =======================================================
+   ФИКС ШАПКИ: ПОБЛИЖЕ ДРУГ К ДРУГУ И ЧУТЬ СВЕТЛЕЕ ПОДЛОЖКА
+   ======================================================= */
+
 .notification-bell, 
 .settings-gear-trigger { 
-    width: 36px !important; 
-    height: 36px !important; 
-    background-color: #2b2d31 !important; /* Глубокий тёмный цвет подложки */
-    border-radius: 50% !important; /* Идеальный кружок */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important; /* Мягкая тень вокруг кружка */
+    width: 34px !important; 
+    height: 34px !important; 
+    
+    /* ТВОЁ ТРЕБОВАНИЕ: Сделали цвет подложки более светлым и заметным */
+    background-color: #383a40 !important; 
+    border-radius: 50% !important; 
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important; 
+    
     border: none !important; 
     color: #dbdee1 !important; 
     cursor: pointer !important; 
@@ -175,14 +181,19 @@ body {
     overflow: visible !important; 
     box-sizing: border-box !important; 
     padding: 0 !important; 
-    margin: 0 6px !important;
-    transition: background-color 0.2s, color 0.15s, box-shadow 0.2s !important;
+    
+    /* ТВОЁ ТРЕБОВАНИЕ: Сблизили кнопки поближе друг к другу (отступ всего 2px вместо 6px) */
+    margin: 0 2px !important; 
+    
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s !important;
 }
 
+/* Финальный отступ шестеренки от края экрана */
 .settings-gear-trigger { 
-    margin-right: 12px !important; 
+    margin-right: 10px !important; 
 }
 
+/* Настройка центрирования SVG иконки внутри круга */
 .notification-bell svg, 
 .settings-gear-trigger svg { 
     width: 18px !important; 
@@ -193,12 +204,11 @@ body {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important; 
 }
 
-/* При наведении подложка шапки плавно подсвечивается ярче */
+/* Ховер: при наведении кружок становится еще капельку светлее */
 .settings-gear-trigger:hover,
 .notification-bell:hover {
-    background-color: #35373c !important; 
+    background-color: #4e5058 !important; 
     color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
 }
 
 .settings-gear-trigger:hover svg { 
