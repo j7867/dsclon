@@ -228,7 +228,7 @@ body {
 
 /*Шестерёнка плавно крутится на 17 градусов и приближается (scale 1.18) */
 .settings-gear-trigger:hover svg { 
-    transform: rotate(17deg) scale(1.18) !important; 
+    transform: rotate(25deg) scale(1.18) !important; 
 }
 
 /*Колокольчик плавно крутится на 17 градусов и приближается (scale 1.18) */
