@@ -195,7 +195,7 @@ body {
     transition: transform 0.2s ease, color 0.15s !important; 
 }
 
-/* Кружки при наведении стоят на месте, а иконки внутри плавно крутятся на 17 градусов и ПPИБЛИЖАЮТСЯ */
+/* Кружки при наведении стоят на месте, а иконки внутри плавно крутятся и ПPИБЛИЖАЮТСЯ */
 .settings-gear-trigger:hover,
 .notification-bell:hover {
     background-color: #4e5058 !important; 
@@ -203,11 +203,11 @@ body {
 }
 
 .settings-gear-trigger:hover svg { 
-    transform: rotate(65deg) scale(1.12) !important; 
+    transform: rotate(65deg) scale(1.15) !important; 
 }
 
 .notification-bell:hover svg { 
-    transform: rotate(17deg) scale(1.12) !important; 
+    transform: rotate(17deg) scale(1.15) !important; 
 }
 
 .bell-dropdown-panel { 
