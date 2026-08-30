@@ -211,11 +211,15 @@ body {
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.15s !important; 
 }
 
-/* Ховер: при наведении кружок становится еще капельку светлее */
+/* Ховер: при наведении кружок плавно подсвечивается И ЧУТЬ ПРИБЛИЖАЕТСЯ К ЭКPАНУ */
 .settings-gear-trigger:hover,
 .notification-bell:hover {
     background-color: #4e5058 !important; 
     color: #ffffff !important;
+    
+    /* ТВОЁ ТРЕБОВАНИЕ: плавно увеличиваем кружок на 10%, создавая эффект приближения */
+    transform: scale(1.1) !important; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
 }
 
 .settings-gear-trigger:hover svg { 
