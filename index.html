@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="style.css?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-firestore-compat.min.js"></script>
- </head>
-   <body>
+    
     <div class="guilds-sidebar" id="guildsSidebar">
         <div class="guild-icon active" id="dmServerBtn" data-type="dm">DM</div>
         <div class="guild-icon" id="publicServerBtn" data-type="server">🌐</div>
@@ -42,26 +41,25 @@
     <div class="chat-area" id="chatArea">
         <div class="chat-header">
             <div class="header-left"><span class="hashtag">#</span><h3 id="chatTitle">general-chat</h3></div>
-                       <div class="header-right-group">
-                <span class="user-name-header" id="topUserName">User</span>
-                <div class="user-avatar-header" id="userAvatarHeader" style="background-color: #5865f2; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; cursor: pointer;">U</div>
-                          <div class="header-right-group">
-                <span class="user-name-header" id="topUserName">User</span>
-                <div class="user-avatar-header" id="userAvatarHeader" style="background-color: #5865f2; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; cursor: pointer;">U</div>
+            <div class="header-right-group">
+                <!-- ОДИН СИММЕТРИЧНЫЙ ПРОФИЛЬ БЕЗ РАЗДВОЕНИЯ -->
+                <span class="user-name-header" id="topUserName">dj1ka</span>
+                <div class="user-avatar-header" id="userAvatarHeader" style="background-color: #5865f2; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; cursor: pointer;">D</div>
                 
-                <!-- ВОЗВРАЩАЕМ ПАРЯЩИЙ КРУЖОЧЕК КОЛОКОЛЬЧИКА -->
+                <!-- ПАРЯЩИЙ КРУЖОЧЕК КОЛОКОЛЬЧИКА -->
                 <button id="notificationBell" class="notification-bell" title="Уведомления">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5 1.5V4c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
                 </button>
                 <div class="bell-dropdown-panel" id="bellDropdownPanel">
                     <h4 style="font-size: 15px; font-weight: 600; color: #fff; text-align: center; padding: 10px 0; margin: 0;">Уведомления</h4>
                 </div>
                 
-                <!-- ВОЗВРАЩАЕМ ПАРЯЩИЙ КРУЖОЧЕК ЦЕЛЬНОЙ ШЕСТЕРЁНКИ -->
+                <!-- ПАРЯЩИЙ КРУЖОЧЕК ЦЕЛЬНОЙ ШЕСТЕРЁНКИ -->
                 <button id="openSettingsBtn" class="settings-gear-trigger" title="Настройки зон">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.44 12.98c.04-.32.08-.65.08-.98s-.04-.66-.08-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.15c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.44 12.98c.04-.32.08-.65.08-.98s-.04-.66-.08-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73(1.69).98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
                 </button>
             </div>
+        </div>
         <div class="settings-sidebar" id="settingsSidebar">
             <h2 class="modal-title">Настройки</h2>
             <div class="modal-screen active-screen" id="mainSettingsScreen"><button class="menu-nav-btn" id="goToZonesBtn">Настройка зон</button></div>
@@ -136,6 +134,6 @@
             <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="window.triggerManualAuth()">Вход / Регистрация</button>
         </div>
     </div>
-    <script src="script.js?v=9999"></script>
+    <script src="script.js?v=1111"></script>
 </body>
 </html>
