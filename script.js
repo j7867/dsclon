@@ -201,10 +201,10 @@ function appendMessage(author, text) {
     }
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
-// === WEBRTC ФУНКЦИИ СИГНАЛКИ И УПРАВЛЕНИЯ С ЖЕСТКИМ ИНЛАЙН-КОНФИГОМ ===
+// === WEBRTC ФУНКЦИИ СИГНАЛКИ И УПРАВЛЕНИЯ (ФИКС МАССИВА URLS) ===
 async function startVoiceCall() {
     try {
-        const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
+        const inlineConfig = { iceServers: [{ urls: ['stun:://google.com'] }, { urls: ['stun:://google.com'] }], iceCandidatePoolSize: 10 };
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -215,7 +215,7 @@ async function startVoiceCall() {
         if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
         peerConnection.ontrack = (event) => {
             const remoteVideo = document.getElementById('remoteVideo'); const videoCallZone = document.getElementById('videoCallZone');
-            if (remoteVideo && event.streams && event.streams[0]) { remoteVideo.srcObject = event.streams[0]; if (videoCallZone) videoCallZone.style.display = 'flex'; }
+            if (remoteVideo && event.streams && event.streams) { remoteVideo.srcObject = event.streams; if (videoCallZone) videoCallZone.style.display = 'flex'; }
         };
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); currentRoomId = roomRef.id;
         const callerCandidatesCollection = roomRef.collection('callerCandidates');
@@ -231,10 +231,10 @@ async function startVoiceCall() {
 
 async function startScreenShare() {
     try {
-        const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
+        const inlineConfig = { iceServers: [{ urls: ['stun:://google.com'] }, { urls: ['stun:://google.com'] }], iceCandidatePoolSize: 10 };
         if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        const screenTrack = screenStream.getVideoTracks()[0];
+        const screenTrack = screenStream.getVideoTracks();
         const placeholder = document.getElementById('voiceAvatarPlaceholder');
         const remoteVideo = document.getElementById('remoteVideo');
         if (placeholder) placeholder.style.display = 'none';
@@ -246,7 +246,7 @@ async function startScreenShare() {
 }
 
 async function joinVoiceCall() {
-    const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
+    const inlineConfig = { iceServers: [{ urls: ['stun:://google.com'] }, { urls: ['stun:://google.com'] }], iceCandidatePoolSize: 10 };
     const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); const roomSnapshot = await roomRef.get();
     if (!roomSnapshot.exists) return; const data = roomSnapshot.data(); if (!data || !data.offer || data.offer.host === myName) return;
     try {
@@ -255,7 +255,7 @@ async function joinVoiceCall() {
             if (localStream) { localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); }); }
             peerConnection.ontrack = (event) => {
                 const remoteVideo = document.getElementById('remoteVideo'); const videoCallZone = document.getElementById('videoCallZone');
-                if (remoteVideo && event.streams && event.streams[0]) { remoteVideo.srcObject = event.streams[0]; if (videoCallZone) videoCallZone.style.display = 'flex'; }
+                if (remoteVideo && event.streams && event.streams) { remoteVideo.srcObject = event.streams; if (videoCallZone) videoCallZone.style.display = 'flex'; }
             };
         }
         const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
@@ -288,4 +288,6 @@ function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
     if (savedUser) { myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); }
     else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+}
+List.add('active'); }
 }
