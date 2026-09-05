@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-firestore-compat.min.js"></script>
+<body>
     <div class="guilds-sidebar" id="guildsSidebar">
         <div class="guild-icon active" id="dmServerBtn" data-type="dm">DM</div>
         <div class="guild-icon" id="publicServerBtn" data-type="server">🌐</div>
@@ -31,13 +32,13 @@
                     </div>
                     <div class="custom-user-item" data-channel="voice-room" data-type="voice">
                         <div class="user-avatar" style="background-color: #23a55a;">🔊</div>
-                        <span>#1 Rooms</span>
+                        <span>Общий голос</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ТВОЁ ТРЕБОВАНИЕ: НИЖНИЙ ПУЛЬТ СВЯЗИ ДИСКОРДА С ЦВЕТНЫМИ АНТЕННАМИ ПИНГА -->
+        <!-- ТВОЁ ТРЕБОВАНИЕ: АНТЕННЫ ПИНГА НА БЕСПЛАТНОМ ФАЙРБЕЙЗЕ -->
         <div id="voiceStatusPanel" style="background-color: #232428; padding: 10px; border-top: 1px solid #1f2023; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -65,45 +66,33 @@
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
                 </button>
                 <div class="bell-dropdown-panel" id="bellDropdownPanel">
-                    <h4 style="font-size: 15px; font-weight: 600; color: #fff; text-align: center; padding: 10px 0; margin: 0;">Уведомления</h4>
+                    <h4 style="font-size: 15px; font-weight: 600; color: #fff; text-align: center; padding: 10px 0; margin: 0; border-bottom: 1px solid #3f4147;">Запросы на вход</h4>
                 </div>
                 <button id="openSettingsBtn" class="settings-gear-trigger" title="Настройки зон">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.43-.49-.43h-3.84c-.24 0-.45.18-.48.42l-.36 2.55c-.58.24-1.12.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.06.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.43.49.43h3.84c.24 0 .45-.18.48-.42l.36-2.55c.58-.24 1.12-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path></svg>
                 </button>
             </div>
         </div>
-        
-              <!-- ПРАВАЯ ПАНЕЛЬ С ОКОННЫМИ НАСТРОЙКАМИ ЗОН И ЗВУКА -->
         <div class="settings-sidebar" id="settingsSidebar" style="width: 260px !important;">
             <h2 class="modal-title" style="margin-bottom: 12px;">Настройки</h2>
-            
-            <!-- ГЛАВНЫЙ ЭКРАН МЕНЮ -->
             <div class="modal-screen active-screen" id="mainSettingsScreen" style="display: flex; flex-direction: column; gap: 8px;">
                 <button class="menu-nav-btn" id="goToZonesBtn">Настройка зон сайта</button>
-                <!-- ТВОЁ ТРЕБОВАНИЕ: ОТДЕЛЬНАЯ КНОПКА НАСТРОЙКИ ЗВУКА -->
                 <button class="menu-nav-btn" id="goToAudioBtn" style="background-color: #23a55a !important;">Настройка звука</button>
             </div>
-            
-            <!-- ОТДЕЛЬНЫЙ ЭКРАН ДЛЯ МИКРОФОНА И ШУМОДАВА (ЧИСТОТА И ПОРЯДОК) -->
-            <div class="modal-screen" id="audioSettingsScreen" style="display: none; flex-direction: column; gap: 12px;">
+            <div class="modal-screen" id="audioSettingsScreen" style="display: none; flex-direction: column; gap: 12px; margin-top: 12px;">
                 <button class="back-menu-nav-btn" id="backToMenuFromAudioBtn" style="margin-bottom: 8px;">← Назад</button>
-                
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #b5bac1;">
-                        <span>ГРОМКОСТЬ МИКРОФОНА</span>
-                        <span id="micVolValue">100%</span>
+                        <span>ГРОМКОСТЬ МИКРОФОНА</span><span id="micVolValue">100%</span>
                     </div>
                     <input type="range" id="micVolumeSlider" min="0" max="300" value="100" style="width: 100%; accent-color: #23a55a; cursor: pointer;">
                 </div>
-                
                 <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
                     <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #b5bac1;">
-                        <span>ЗВУК САЙТА (СТРИМ)</span>
-                        <span id="siteVolValue">100%</span>
+                        <span>ЗВУК САЙТА (СТРИМ)</span><span id="siteVolValue">100%</span>
                     </div>
                     <input type="range" id="siteVolumeSlider" min="0" max="300" value="100" style="width: 100%; accent-color: #23a55a; cursor: pointer;">
                 </div>
-                
                 <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
                     <label style="font-size: 12px; font-weight: bold; color: #b5bac1;">ПРОФИЛЬ ОБРАБОТКИ ЗВУКА</label>
                     <select id="audioProfileSelect" style="width: 100%; background-color: #1e1f22; color: #dbdee1; border: 1px solid #1f2023; padding: 6px; border-radius: 4px; outline: none; font-size: 13px; cursor: pointer; margin-top: 4px;">
@@ -113,8 +102,6 @@
                     </select>
                 </div>
             </div>
-            
-            <!-- ЭКРАН ЗОН КРАСОК -->
             <div class="modal-screen" id="zoneSettingsScreen" style="display: none;">
                 <button class="back-menu-nav-btn" id="backToMenuBtn" style="margin-bottom: 8px;">← Назад</button>
                 <div class="custom-select-container">
@@ -130,9 +117,7 @@
                 <button class="menu-nav-btn" id="applyColorBtn" style="margin-top: 12px;">Применить</button>
             </div>
         </div>
-        
         <div class="messages-container" id="messagesContainer"></div>
-
         <div id="videoCallZone" style="display: none; position: absolute; top: 48px; left: 0; width: 100%; height: calc(100vh - 48px); background-color: #111214; z-index: 99; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 20px;">
             <div style="flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; position: relative;">
                 <video id="remoteVideo" autoplay playsinline style="width: 100%; height: 100%; max-height: 75vh; border-radius: 12px; background-color: #1e1f22; object-fit: contain; box-shadow: 0 8px 24px rgba(0,0,0,0.6);"></video>
@@ -177,6 +162,7 @@
             <button id="authSubmitBtn" class="profile-save-global-btn" style="margin-top: 24px; background-color: #23a55a;" onclick="window.triggerManualAuth()">Вход / Регистрация</button>
         </div>
     </div>
-    <script src="script.js?v=1478"></script>
+    <script src="script.js?v=9955"></script>
 </body>
 </html>
+
