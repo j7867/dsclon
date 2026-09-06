@@ -354,11 +354,11 @@ async function startVoiceCall() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
-                peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] });
+               peerConnection = new RTCPeerConnection({});
                 localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
             } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
         }
-        if (!peerConnection) { peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] }); }
+     if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
         
         peerConnection.ontrack = (event) => {
             const remoteAudio = document.getElementById('remoteAudio');
