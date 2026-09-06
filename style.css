@@ -608,3 +608,19 @@ input[type="range"]::-webkit-slider-thumb {
 #saveProfileChangesBtn:hover {
     background-color: #1a7f3e !important;
 }
+/* Маски-обертки для картинок аватарок */
+.user-avatar-header {
+    position: relative !important;
+    overflow: hidden !important;
+}
+.user-avatar-header img {
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transform-origin: center center !important;
+}
+#modalBigAvatarContainer:hover {
+    transform: scale(1.03) !important;
+    box-shadow: 0 0 12px rgba(88,101,242,0.5) !important;
+}
