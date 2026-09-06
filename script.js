@@ -187,19 +187,24 @@ document.addEventListener('DOMContentLoaded', () => {
     checkUserSession();
 });
 function initChatAfterAuth() {
-    // Автоматически подписываемся на живые обновления личного профиля юзера в базе данных
+    // Живой Firestore-слушатель твоего профиля
     db.collection("users").doc(myName).onSnapshot((docSnap) => {
         if (docSnap.exists) {
             const userData = docSnap.data();
-            // Если в базе прописан кастомный ник — берем его, иначе пишем логин
             const displayName = userData.nickname || myName;
-            const displayColor = userData.avatarColor || '#5865f2';
             
             const topName = document.getElementById('topUserName'); if (topName) topName.textContent = displayName;
             const topAvatar = document.getElementById('userAvatarHeader'); 
             if (topAvatar) {
-                topAvatar.textContent = displayName.charAt(0).toUpperCase();
-                topAvatar.style.setProperty('background-color', displayColor, 'important');
+                // Если юзер загрузил фотку — рендерим тег img со Steam-сдвигами!
+                if (userData.avatarBase64) {
+                    topAvatar.textContent = '';
+                    const z = userData.scale || 1; const x = userData.moveX || 0; const y = userData.moveY || 0;
+                    topAvatar.innerHTML = `<img src="${userData.avatarBase64}" style="transform: scale(${z}) translate(${x}px, ${y}px);">`;
+                } else {
+                    topAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    topAvatar.style.setProperty('background-color', '#5865f2', 'important');
+                }
             }
         }
     });
