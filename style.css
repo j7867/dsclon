@@ -488,7 +488,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 /* ТВОЁ ТРЕБОВАНИЕ: Карандаш плавно поворачивается по твоей кастомной схеме на 65 градусов */
 .hover-edit-btn:hover span { 
-    transform: rotate(17deg) scale(1.15) !important; 
+    transform: rotate(17deg) scale(1.12) !important; 
 }
 
 /* Ховер мусорки: подложка краснеет */
@@ -499,7 +499,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 /* ТВОЁ ТРЕБОВАНИЕ: Мусорка плавно поворачивается строго на 17 градусов */
 .hover-delete-trigger-btn:hover span { 
-    transform: rotate(17deg) scale(1.15) !important; 
+    transform: rotate(17deg) scale(1.12) !important; 
 }
 
 /* Ховер стрелочки Ещё */
