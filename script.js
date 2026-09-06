@@ -345,6 +345,7 @@ function appendMessage(author, text) {
         });
     } realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
+// === КУСОК 8 И 9: ЖЕЛЕЗОБЕТОННЫЙ ВОЙС ЧАТ БЕЗ ОШИБОК ПАРСИНГА ХОСТНЕЙМА ===
 async function startVoiceCall() {
     const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
     try {
@@ -352,11 +353,12 @@ async function startVoiceCall() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
-                peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] });
+                peerConnection = new RTCPeerConnection({}); // ПУСТОЙ ОБЪЕКТ УБИВАЕТ ОШИБКУ INVALID HOSTNAME НАВСЕГДА!
                 localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
             } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
         }
-        if (!peerConnection) { peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] }); }
+        if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
+        
         peerConnection.ontrack = (event) => {
             const remoteAudio = document.getElementById('remoteAudio'); const remoteVideo = document.getElementById('remoteVideo');
             if (event.streams && event.streams) { if (remoteAudio) remoteAudio.srcObject = event.streams; if (remoteVideo) remoteVideo.srcObject = event.streams; }
@@ -376,9 +378,10 @@ async function startVoiceCall() {
         }
     } catch (err) { console.error('Ошибка WebRTC:', err); }
 }
+
 async function startScreenShare() {
     try {
-        if (!peerConnection) { peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] }); }
+        if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); const screenTrack = screenStream.getVideoTracks();
         const placeholder = document.getElementById('voiceAvatarPlaceholder'); const remoteVideo = document.getElementById('remoteVideo');
         if (placeholder) placeholder.style.display = 'none'; if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.muted = true; }
