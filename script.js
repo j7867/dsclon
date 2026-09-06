@@ -359,10 +359,16 @@ async function startVoiceCall() {
         }
         if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
         
+        p        // ТВОЁ ТРЕБОВАНИЕ: Ловим массив потоков и отдаем первый элемент [0] в динамики!
         peerConnection.ontrack = (event) => {
-            const remoteAudio = document.getElementById('remoteAudio'); const remoteVideo = document.getElementById('remoteVideo');
-            if (event.streams && event.streams) { if (remoteAudio) remoteAudio.srcObject = event.streams; if (remoteVideo) remoteVideo.srcObject = event.streams; }
+            const remoteAudio = document.getElementById('remoteAudio');
+            const remoteVideo = document.getElementById('remoteVideo');
+            if (event.streams && event.streams[0]) {
+                if (remoteAudio) remoteAudio.srcObject = event.streams[0];
+                if (remoteVideo) remoteVideo.srcObject = event.streams[0];
+            }
         };
+
         const roomSnapshot = await roomRef.get();
         if (!roomSnapshot.exists || !roomSnapshot.data().offer) {
             const callerCandidatesCollection = roomRef.collection('callerCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
