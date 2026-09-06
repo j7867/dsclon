@@ -4,6 +4,184 @@ let localStream = null;
 let screenStream = null;
 let peerConnection = null;
 let currentRoomId = null;
+// === ПОЧИНЕННЫЙ WEBRTC: РАЗДЕЛЕНИЕ РОЛЕЙ И ЖИВОЙ СПИСОК УЧАСТНИКОВ ===
+let voiceUsersListener = null;
+
+async function startVoiceCall() {
+    const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
+    const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+    
+    try {
+        // Жестко фиксируем, что текущий юзер зашёл в этот войс в базе данных
+        await roomRef.collection('participants').doc(myName).set({ username: myName, isStreaming: false });
+        // Запускаем отслеживание людей в войсе, чтобы отрендерить список под каналом
+        listenVoiceParticipants();
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
+                peerConnection = new RTCPeerConnection(inlineConfig);
+                localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
+            } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
+        }
+
+        if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
+
+        peerConnection.ontrack = (event) => {
+            const remoteVideo = document.getElementById('remoteVideo');
+            if (remoteVideo && event.streams && event.streams[0]) {
+                remoteVideo.srcObject = event.streams[0];
+            }
+        };
+
+        const roomSnapshot = await roomRef.get();
+        // ЕСЛИ КОМНАТЫ НЕТ — МЫ СОЗДАТЕЛЬ (CALLER)
+        if (!roomSnapshot.exists || !roomSnapshot.data().offer) {
+            const callerCandidatesCollection = roomRef.collection('callerCandidates');
+            peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
+            
+            const offerDescription = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offerDescription);
+            await roomRef.set({ offer: { sdp: offerDescription.sdp, type: offerDescription.type, host: myName } }, { merge: true });
+            
+            roomRef.onSnapshot((snapshot) => {
+                const data = snapshot.data();
+                if (!peerConnection.currentRemoteDescription && data && data.answer) {
+                    peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                }
+            });
+            roomRef.collection('calleeCandidates').onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); });
+            });
+        } 
+        // ЕСЛИ ОФФЕР УЖЕ ЕСТЬ — МЫ ПОДКЛЮЧАЕМСЯ (CALLEE)
+        else {
+            const data = roomSnapshot.data();
+            const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
+            peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
+            
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+            const answerDescription = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answerDescription);
+            await roomRef.update({ answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
+            
+            roomRef.collection('callerCandidates').onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); });
+            });
+        }
+    } catch (err) { console.error('Ошибка WebRTC:', err); }
+}
+async function startScreenShare() {
+    try {
+        const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }], iceCandidatePoolSize: 10 };
+        if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
+        
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        const screenTrack = screenStream.getVideoTracks()[0];
+        
+        const placeholder = document.getElementById('voiceAvatarPlaceholder');
+        const remoteVideo = document.getElementById('remoteVideo');
+        if (placeholder) placeholder.style.display = 'none';
+        if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.muted = true; }
+        
+        // Переключаем плашку "В ЭФИРЕ" в сайдбаре для остальных участников
+        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+        await roomRef.collection('participants').doc(myName).update({ isStreaming: true });
+
+        const senders = peerConnection.getSenders();
+        const sender = senders.find(s => s.track && s.track.kind === 'video');
+        if (sender) { sender.replaceTrack(screenTrack); } else { peerConnection.addTrack(screenTrack, screenStream); }
+        
+        screenTrack.onended = async () => {
+            if (remoteVideo) remoteVideo.srcObject = null;
+            if (placeholder) placeholder.style.display = 'flex';
+            await roomRef.collection('participants').doc(myName).update({ isStreaming: false });
+        };
+    } catch (err) { console.error('Ошибка экрана:', err); }
+}
+
+// ЖИВОЙ СЛУШАТЕЛЬ: отрисовывает людей внутри войса прямо ПОД КАНАЛОМ
+function listenVoiceParticipants() {
+    if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
+    
+    const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+    voiceUsersListener = roomRef.collection('participants').onSnapshot((snapshot) => {
+        // Находим или создаем контейнер под голосовым каналом в HTML
+        let listContainer = document.getElementById('voiceUsersSubList');
+        if (!listContainer) {
+            const voiceChannelEl = document.querySelector('[data-type="voice"]');
+            if (!voiceChannelEl) return;
+            listContainer = document.createElement('div');
+            listContainer.id = 'voiceUsersSubList';
+            listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;";
+            voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling);
+        }
+        
+        listContainer.innerHTML = '';
+        snapshot.forEach((docSnap) => {
+            const p = docSnap.data();
+            const userRow = document.createElement('div');
+            // СТИЛИЗАЦИЯ ИЗ ТВОЕГО СКРИНШОТА: Аватарка, имя и красная плашка "В ЭФИРЕ"
+            userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
+            userRow.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 20px; height: 24px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">
+                        ${p.username.charAt(0).toUpperCase()}
+                    </div>
+                    <span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span>
+                </div>
+                ${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase; box-shadow: 0 0 6px rgba(242,63,67,0.4);">В ЭФИРЕ</span>' : ''}
+            `;
+            listContainer.appendChild(userRow);
+        });
+    });
+}
+
+async function hangUpCall() {
+    if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
+    if (screenStream) { screenStream.getTracks().forEach(track => track.stop()); screenStream = null; }
+    if (peerConnection) { peerConnection.close(); peerConnection = null; }
+    if (audioCtx) { audioCtx.close(); audioCtx = null; micGainNode = null; }
+    
+    if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
+    
+    const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo) remoteVideo.srcObject = null;
+    
+    if (currentServerContext && currentChannelContext) {
+        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+        try {
+            // Удаляем себя из списка участников комнаты звонка
+            await roomRef.collection('participants').doc(myName).delete();
+            
+            // Если в комнате больше никого нет, полностью очищаем её на Firebase
+            const partsParts = await roomRef.collection('participants').get();
+            if (partsParts.empty) {
+                const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); });
+                const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); });
+                await roomRef.delete();
+            }
+        } catch (err) { console.error(err); }
+    }
+    
+    const listContainer = document.getElementById('voiceUsersSubList');
+    if (listContainer) listContainer.remove();
+    
+    const placeholder = document.getElementById('voiceAvatarPlaceholder'); if (placeholder) placeholder.style.display = 'flex';
+    currentRoomId = null;
+}
+
+function checkUserSession() {
+    const savedUser = localStorage.getItem('chat_active_user');
+    if (savedUser) {
+        try {
+            db.collection("users").doc(savedUser).get().then((userSnap) => {
+                if (userSnap.exists && userSnap.data().status === 'approved') {
+                    myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth();
+                } else { localStorage.removeItem('chat_active_user'); if (authModalOverlay) authModalOverlay.classList.add('active'); }
+            });
+        } catch(e) { console.error(e); if (authModalOverlay) authModalOverlay.classList.add('active'); }
+    } else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+}
 
 let audioCtx = null;
 let micGainNode = null;
