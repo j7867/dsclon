@@ -239,11 +239,54 @@ async function handleSendMessage() {
     if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
     try { await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); messageInput.value = ''; } catch (err) { console.error(err); }
 }
+// === ТОЧЕЧНЫЙ ФИКС: СOХРАНЕНИЕ В БАЗУ И ОТОБРАЖЕНИЕ АВЫ В ЧАТЕ ===
+
+// 1. Исправленный блок сохранения (заменяем старый saveProfileChangesBtn.onclick)
+if (saveProfileChangesBtn) {
+    saveProfileChangesBtn.onclick = async (e) => {
+        e.stopPropagation();
+        const profileNicknameInput = document.getElementById('profileNicknameInput');
+        const newNickname = profileNicknameInput ? profileNicknameInput.value.trim() : "";
+        
+        const z = avaZoomSlider ? avaZoomSlider.value / 100 : 1;
+        const x = avaMoveXSlider ? parseInt(avaMoveXSlider.value) : 0;
+        const y = avaMoveYSlider ? parseInt(avaMoveYSlider.value) : 0;
+        
+        try {
+            // Используем .set с merge: true, чтобы намертво засейвить Base64 строку любой тяжести
+            await db.collection("users").doc(myName).set({
+                nickname: newNickname,
+                avatarBase64: currentBase64,
+                scale: z,
+                moveX: x,
+                moveY: y
+            }, { merge: true });
+            
+            alert('Профиль успешно сохранен на сайте!');
+            if (userProfileModalOverlay) userProfileModalOverlay.style.setProperty('display', 'none', 'important');
+        } catch(err) { console.error("Ошибка Firebase сейва:", err); alert('Ошибка сохранения!'); }
+    };
+}
+
+// 2. Обновленный рендеринг сообщений чата (подтягивает загруженную аву со всеми сдвигами)
 function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
+    
+    // Генерируем уникальный ID для аватарки в этой строке сообщения
+    const uniqueAvaId = 'msgAva_' + Math.random().toString(36).substr(2, 9);
+    
     messageElement.innerHTML = `
-        <div class="message-content"><span class="message-author">${author}:</span><span class="message-text">${text}</span></div>
+        <div class="message-content" style="display: flex; align-items: flex-start; gap: 12px;">
+            <!-- Кастомный круг аватарки в чате -->
+            <div id="${uniqueAvaId}" class="user-avatar-header" style="width: 32px; height: 32px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 14px; flex-shrink: 0; position: relative; overflow: hidden;">
+                ${author.charAt(0).toUpperCase()}
+            </div>
+            <div>
+                <div class="message-author" style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px;">${author}</div>
+                <div class="message-text" style="font-size: 15px; color: #dbdee1;">${text}</div>
+            </div>
+        </div>
         <div class="message-hover-actions">
             <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
             <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
@@ -253,6 +296,29 @@ function appendMessage(author, text) {
             </div>
         </div>
     `;
+
+    // Мгновенно лезем в базу данных, чтобы узнать, есть ли у автора сообщения своя фотка
+    db.collection("users").doc(author).get().then((uSnap) => {
+        if (uSnap.exists) {
+            const uData = uSnap.data();
+            const targetAvaBox = document.getElementById(uniqueAvaId);
+            if (targetAvaBox) {
+                // Если у автора сообщения ник изменен — переписываем имя над текстом
+                const authorNameEl = messageElement.querySelector('.message-author');
+                if (authorNameEl && uData.nickname) authorNameEl.textContent = uData.nickname;
+                
+                // Если есть фотка — вшиваем её со всеми сдвигами ближе/дальше!
+                if (uData.avatarBase64) {
+                    targetAvaBox.textContent = '';
+                    targetAvaBox.innerHTML = `<img src="${uData.avatarBase64}" style="position:absolute; width:100%; height:100%; object-fit:cover; transform-origin:center center; transform: scale(${uData.scale || 1}) translate(${uData.moveX || 0}px, ${uData.moveY || 0}px);">`;
+                } else if (uData.nickname) {
+                    targetAvaBox.textContent = uData.nickname.charAt(0).toUpperCase();
+                }
+            }
+        }
+    }).catch(e => console.error(e));
+
+    // Навешиваем старые стандартные обработчики кнопок ховера
     const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
     if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
     const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
