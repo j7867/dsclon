@@ -443,9 +443,18 @@ function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
     if (savedUser) {
         try {
-            db.collection("users").doc(savedUser).get().then((userSnap) => {
+            db.collection("users").doc(savedUser).get().then(async (userSnap) => {
                 if (userSnap.exists && userSnap.data().status === 'approved') {
-                    myName = savedUser; if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); return;
+                    myName = savedUser;
+                    
+                    // ТВОЁ ТРЕБОВАНИЕ: Принудительно выкидываем юзера из базы войса при загрузке сайта, чтобы список не залипал!
+                    try {
+                        await db.collection('calls').doc('public_voice-room').collection('participants').doc(myName).delete();
+                    } catch(e) { console.warn("Очистка при старте:", e); }
+                    
+                    if (authModalOverlay) authModalOverlay.classList.remove('active');
+                    initChatAfterAuth();
+                    return;
                 } else { localStorage.removeItem('chat_active_user'); if (authModalOverlay) authModalOverlay.classList.add('active'); }
             });
         } catch(e) { console.error(e); if (authModalOverlay) authModalOverlay.classList.add('active'); }
