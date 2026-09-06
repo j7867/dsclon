@@ -460,3 +460,10 @@ function checkUserSession() {
         } catch(e) { console.error(e); if (authModalOverlay) authModalOverlay.classList.add('active'); }
     } else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
 }
+// ТВОЁ ТРЕБОВАНИЕ: Авто-выход из голосового канала при закрытии вкладки или браузера!
+window.addEventListener('beforeunload', () => {
+    if (myName && currentServerContext && currentChannelContext) {
+        // Синхронно швыряем команду удаления в Firebase перед закрытием
+        db.collection('calls').doc(currentServerContext + '_' + currentChannelContext).collection('participants').doc(myName).delete();
+    }
+});
