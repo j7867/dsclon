@@ -413,18 +413,38 @@ async function startVoiceCall() {
     } catch (err) { console.error('Ошибка WebRTC:', err); }
 }
 
-async function startScreenShare() {
+aasync function startScreenShare() {
     try {
         if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
-        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); const screenTrack = screenStream.getVideoTracks();
-        const placeholder = document.getElementById('voiceAvatarPlaceholder'); const remoteVideo = document.getElementById('remoteVideo');
-        if (placeholder) placeholder.style.display = 'none'; if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.muted = true; }
-        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); await roomRef.collection('participants').doc(myName).update({ isStreaming: true });
-        const senders = peerConnection.getSenders(); const sender = senders.find(s => s.track && s.track.kind === 'video');
-        if (sender) { sender.replaceTrack(screenTrack); } else { peerConnection.addTrack(screenTrack, screenStream); }
-        screenTrack.onended = async () => { if (remoteVideo) remoteVideo.srcObject = null; if (placeholder) placeholder.style.display = 'flex'; await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); };
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); 
+        const screenTrack = screenStream.getVideoTracks();
+        
+        const placeholder = document.getElementById('voiceAvatarPlaceholder'); 
+        const remoteVideo = document.getElementById('remoteVideo');
+        if (placeholder) placeholder.style.display = 'none'; 
+        if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.muted = true; }
+        
+        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); 
+        await roomRef.collection('participants').doc(myName).update({ isStreaming: true });
+        
+        const senders = peerConnection.getSenders(); 
+        const sender = senders.find(s => s.track && s.track.kind === 'video');
+        
+        // ТВОЁ ТРЕБОВАНИЕ: Жестко передаем первый трек из массива, чтобы убрать TypeError!
+        if (sender) { 
+            sender.replaceTrack(screenTrack[0]); 
+        } else if (screenTrack && screenTrack.length > 0) { 
+            peerConnection.addTrack(screenTrack[0], screenStream); 
+        }
+        
+        screenTrack[0].onended = async () => { 
+            if (remoteVideo) remoteVideo.srcObject = null; 
+            if (placeholder) placeholder.style.display = 'flex'; 
+            await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); 
+        };
     } catch (err) { console.error('Ошибка экрана:', err); }
 }
+
 
 function listenVoiceParticipants() {
     if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
