@@ -542,9 +542,50 @@ input[type="range"]::-webkit-slider-thumb {
 .auth-modal-window { background-color: #313338; padding: 24px; border-radius: 8px; width: 360px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); color: #fff; }
 .profile-input-field { width: 100%; background-color: #1e1f22; border: none; padding: 10px; border-radius: 4px; color: #fff; box-sizing: border-box; }
 .profile-save-global-btn { width: 100%; background-color: #5865f2; color: #fff; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 16px; }
+/* =======================================================
+   ФИНАЛЬНЫЙ ФИКС: ТЕМНЫЙ БЛЮP И КPИСТАЛЬНО БЕЛЫЙ КPУГ ЛОАДЕPА
+   ======================================================= */
 
-/* АНИМАЦИЯ КРУТИЛКИ ЛОАДЕРА В СТИЛЕ WINDOWS 11 */
-@keyframes win11Spin {
+#sitePreloader {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    
+    /* Делаем фон глубоким темным Дискорд-оттенком с прозрачностью для работы блюра */
+    background-color: rgba(30, 31, 34, 0.75) !important; 
+    
+    /* ТВОЁ ТРЕБОВАНИЕ: Включаем сочный матовый туман (блюр) */
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    
+    z-index: 9999999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: opacity 0.5s ease, visibility 0.5s ease !important;
+}
+
+/* ТВОЁ ТРЕБОВАНИЕ: Создаем идеально круглый, БЕЛЫЙ неоновый лоадер */
+#sitePreloader div {
+    width: 44px !important;
+    height: 44px !important;
+    
+    /* Намертво красим круг в кристально белый цвет */
+    border: 4px solid rgba(255, 255, 255, 0.1) !important;
+    border-top: 4px solid #ffffff !important;
+    border-radius: 50% !important;
+    
+    /* Мягкое белое свечение вокруг кольца */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.35) !important;
+    
+    /* Запуск плавной виндовс-крутилки */
+    animation: win11FinalWhiteSpin 1s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite !important;
+}
+
+@keyframes win11FinalWhiteSpin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
