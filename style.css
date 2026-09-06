@@ -588,4 +588,10 @@ input[type="range"]::-webkit-slider-thumb {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
+/* Подсветка крестика в окне профиля */
+#closeProfileModalBtn:hover {
+    color: #f23f43 !important;
+}
+#logoutBtn:hover {
+    background-color: #da373c !important;
+}
