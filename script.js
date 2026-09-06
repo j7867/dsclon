@@ -219,9 +219,48 @@ async function handleSendMessage() {
 function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
-    messageElement.innerHTML = `<div class="message-content"><span class="message-author">${author}:</span><span class="message-text">${text}</span></div>`;
+    
+    // ВОЗВРАЩАЕМ ЦЕЛЬНЫЙ ИНТЕРФЕЙС ДЕЙСТВИЙ С КНОПКАМИ И СТРЕЛОЧКОЙ <
+    messageElement.innerHTML = `
+        <div class="message-content"><span class="message-author">${author}:</span><span class="message-text">${text}</span></div>
+        <div class="message-hover-actions">
+            <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
+            <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
+            <div class="action-dropdown-wrapper">
+                <button class="action-btn hover-more-btn" title="Ещё"><span>&lt;</span></button>
+                <div class="hover-submenu"><button class="submenu-item-btn">Добавить в друзья</button></div>
+            </div>
+        </div>
+    `;
+    
+    // Восстанавливаем живые обработчики кликов на новые кнопки
+    const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
+    if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
+    
+    const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
+    if (addFriendBtn) { addFriendBtn.addEventListener('click', (e) => { e.stopPropagation(); alert('Заявка отправлена!'); }); }
+    
+    const editBtn = messageElement.querySelector('.hover-edit-btn');
+    if (editBtn) {
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); const textSpan = messageElement.querySelector('.message-text');
+            if (!textSpan || messageElement.classList.contains('editing')) return;
+            messageElement.classList.add('editing'); const originalText = textSpan.textContent;
+            textSpan.innerHTML = '<div style="display:inline-flex; gap:8px; align-items:center; width:100%; margin-top:4px;"><input type="text" class="edit-input" value="' + originalText + '" style="flex:1; background-color:#383a40; border:none; outline:none; color:#fff; padding:6px; border-radius:4px;"><button class="s-btn" style="background-color:#23a55a; color:#fff; border:none; padding:6px; border-radius:4px; cursor:pointer;">Ок</button><button class="c-btn" style="background:transparent; color:#fff; border:none; cursor:pointer;">Х</button></div>';
+            const sBtn = textSpan.querySelector('.s-btn'), cBtn = textSpan.querySelector('.c-btn'), inp = textSpan.querySelector('.edit-input');
+            sBtn.addEventListener('click', async (evt) => {
+                evt.stopPropagation(); const nt = inp.value.trim(); if (!nt) return;
+                try {
+                    const snap = await db.collection("messages").where("server","==",currentServerContext).where("channel","==",currentChannelContext).where("author","==",author).where("text","==",originalText).get();
+                    snap.forEach(async(doc)=>{await db.collection("messages").doc(doc.id).update({text:nt});}); textSpan.textContent = nt; messageElement.classList.remove('editing');
+                } catch(err){console.error(err);}
+            });
+            cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
+        });
+    }
     realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
+
 
 async function startVoiceCall() {
     try {
