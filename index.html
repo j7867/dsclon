@@ -157,29 +157,45 @@
             </div>
         </div>
     </div>
-        <!-- ТВОЁ ТРЕБОВАНИЕ: МОДАЛЬНОЕ ОКНО ПРОФИЛЯ ПО ЦЕНТРУ ЭКРАНА С ВЫХОДОМ -->
+         <!-- ТВОЁ ТРЕБОВАНИЕ: ОКНО ПРОФИЛЯ С ИЗМЕНЕНИЕМ НИКА, ПАЛИТРОЙ АВАТАРОК И ЗАМОЧКОМ НА ЛОГИНЕ -->
     <div class="auth-modal-overlay" id="userProfileModalOverlay" style="display: none;">
-        <div class="auth-modal-window" style="position: relative; background-color: #1e1f22; border: 1px solid #2b2d31; width: 320px;">
-            <!-- Кнопка закрытия (крестик) -->
+        <div class="auth-modal-window" style="position: relative; background-color: #1e1f22; border: 1px solid #2b2d31; width: 340px; padding: 20px; box-sizing: border-box;">
             <button id="closeProfileModalBtn" style="position: absolute; top: 12px; right: 16px; background: transparent; border: none; color: #b5bac1; font-size: 16px; cursor: pointer; transition: color 0.15s ease;">✕</button>
             
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 10px;">
-                <!-- Большая аватарка -->
-                <div id="modalBigAvatar" style="background-color: #5865f2; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold; color: #fff; box-shadow: 0 4px 15px rgba(88,101,242,0.3);">D</div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <!-- Большая кликабельная аватарка -->
+                <div id="modalBigAvatar" title="Сменить цвет аватарки" style="background-color: #5865f2; width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold; color: #fff; cursor: pointer; box-shadow: 0 4px 15px rgba(88,101,242,0.3); transition: transform 0.15s ease;">D</div>
                 
-                <!-- Никнейм -->
-                <h2 id="modalProfileName" style="margin: 0; font-size: 20px; font-weight: 600; color: #fff;">dj1ka</h2>
-                
-                <!-- Статус -->
-                <div style="background-color: rgba(35,165,90,0.15); color: #23a55a; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 12px; border: 1px solid rgba(35,165,90,0.3);">
-                    Статус: Одобрен Admin
+                <!-- Кастомная палитра цветов Discord (появляется под аватаркой) -->
+                <div id="avatarColorPalette" style="display: flex; gap: 8px; margin-top: 4px;">
+                    <div class="palette-circle" data-color="#5865f2" style="width: 20px; height: 20px; background-color: #5865f2; border-radius: 50%; cursor: pointer; border: 2px solid #fff;"></div>
+                    <div class="palette-circle" data-color="#23a55a" style="width: 20px; height: 20px; background-color: #23a55a; border-radius: 50%; cursor: pointer;"></div>
+                    <div class="palette-circle" data-color="#f23f43" style="width: 20px; height: 20px; background-color: #f23f43; border-radius: 50%; cursor: pointer;"></div>
+                    <div class="palette-circle" data-color="#f0b232" style="width: 20px; height: 20px; background-color: #f0b232; border-radius: 50%; pointer: cursor;"></div>
+                    <div class="palette-circle" data-color="#9b59b6" style="width: 20px; height: 20px; background-color: #9b59b6; border-radius: 50%; cursor: pointer;"></div>
                 </div>
+
+                <div style="background-color: rgba(35,165,90,0.15); color: #23a55a; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(35,165,90,0.3); margin-top: 4px;">Статус: Одобрен Admin</div>
             </div>
-            
-            <!-- Кнопка Выхода -->
-            <button id="logoutBtn" style="width: 100%; background-color: #f23f43; color: #fff; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 24px; font-size: 14px; transition: background-color 0.15s ease;">
-                Выйти из аккаунта
-            </button>
+
+            <!-- ПОЛЯ РЕДАКТИРОВАНИЯ И ЗАМОЧЕК -->
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px; width: 100%;">
+                <!-- ЛОГИН (ПРОСМОТР БЕЗ ИЗМЕНЕНИЯ + ЗАМОЧЕК) -->
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 12px; font-weight: bold; color: #b5bac1;">ЛОГИН АККАУНТА (НЕИЗМЕНЯЕМЫЙ 🔒)</label>
+                    <input type="text" id="profileLoginDisplay" readonly style="width: 100%; background-color: #111214; border: 1px solid #1f2023; padding: 8px; border-radius: 4px; color: #949ba4; font-size: 14px; outline: none; cursor: not-allowed; box-sizing: border-box;" value="loading...">
+                </div>
+
+                <!-- ОТОБРАЖАЕМЫЙ НИКНЕЙМ (МОЖНО МЕНЯТЬ) -->
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 12px; font-weight: bold; color: #b5bac1;">ОТОБРАЖАЕМОЕ ИМЯ (НИКНЕЙМ)</label>
+                    <input type="text" id="profileNicknameInput" style="width: 100%; background-color: #383a40; border: none; padding: 8px; border-radius: 4px; color: #fff; font-size: 14px; outline: none; box-sizing: border-box;" placeholder="Введите новый ник">
+                </div>
+
+                <button id="saveProfileChangesBtn" style="width: 100%; background-color: #23a55a; color: #fff; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: 4px; transition: background-color 0.15s ease;">Сохранить изменения</button>
+            </div>
+
+            <button id="logoutBtn" style="width: 100%; background-color: #f23f43; color: #fff; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 16px; font-size: 13px; transition: background-color 0.15s ease;">Выйти из аккаунта</button>
         </div>
     </div>
 
