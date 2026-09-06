@@ -18,13 +18,17 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
-const CREATOR_NICKNAME = 'dj1ka';
-let myName = '';
-let currentServerContext = 'public';
+const CREATOR_NICKNAME = 'dj1ka'; 
+let myName = ''; 
+let currentServerContext = 'public'; 
 let currentChannelContext = 'general-chat';
-let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn;
-let publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection;
-let chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
+let authModalOverlay, authLoginInput;
+let authPasswordInput, authSubmitBtn;
+let publicServerBtn, dmServerBtn;
+let serverChannelsSection, dmChannelsSection;
+let chatTitle, hashtag, messagesContainer;
+let messageInput, sendBtn;
+
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
@@ -39,14 +43,14 @@ window.triggerManualAuth = async function() {
             const userData = userSnap.data();
             if (userData.password !== password) { alert('Неверный пароль!'); return; }
             if (userData.status === 'pending' && login !== CREATOR_NICKNAME) {
-                alert('Ошибка доступа: Ваша учётная запись ожидает одобрения администратором dj1ka!');
+                alert('Ошибка доступа: профиль ожидает одобрения dj1ka!');
                 return;
             }
         } else {
             const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
             await userRef.set({ username: login, password: password, status: initialStatus });
             if (initialStatus === 'pending') {
-                alert('Регистрация успешна! Ожидайте, пока dj1ka одобрит ваш профиль.');
+                alert('Регистрация успешна! Ожидайте одобрения от dj1ka.');
                 return;
             }
         }
@@ -57,6 +61,7 @@ window.triggerManualAuth = async function() {
         initChatAfterAuth();
     } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
+
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
@@ -87,34 +92,57 @@ function initiateMessageDelete(messageElement) {
     cancelBtn.onclick = () => { clearTimeout(deleteTimeout); clearInterval(deleteInterval); panel.classList.remove('active'); };
 }
 let messagesListener = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const preloader = document.getElementById('sitePreloader');
         if (preloader) { preloader.style.opacity = '0'; preloader.style.visibility = 'hidden'; setTimeout(() => { preloader.remove(); }, 500); }
     }, 3000);
 
-    authModalOverlay = document.getElementById('authModalOverlay'); authLoginInput = document.getElementById('authLoginInput'); authPasswordInput = document.getElementById('authPasswordInput'); authSubmitBtn = document.getElementById('authSubmitBtn'); publicServerBtn = document.getElementById('publicServerBtn'); dmServerBtn = document.getElementById('dmServerBtn'); serverChannelsSection = document.getElementById('serverChannelsSection'); dmChannelsSection = document.getElementById('dmChannelsSection'); chatTitle = document.getElementById('chatTitle'); hashtag = document.getElementById('hashtag'); messageInput = document.getElementById('messageInput'); sendBtn = document.getElementById('sendBtn'); messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
+    authModalOverlay = document.getElementById('authModalOverlay');
+    authLoginInput = document.getElementById('authLoginInput');
+    authPasswordInput = document.getElementById('authPasswordInput');
+    authSubmitBtn = document.getElementById('authSubmitBtn');
+    publicServerBtn = document.getElementById('publicServerBtn');
+    dmServerBtn = document.getElementById('dmServerBtn');
+    serverChannelsSection = document.getElementById('serverChannelsSection');
+    dmChannelsSection = document.getElementById('dmChannelsSection');
+    chatTitle = document.getElementById('chatTitle');
+    hashtag = document.getElementById('hashtag');
+    messageInput = document.getElementById('messageInput');
+    sendBtn = document.getElementById('sendBtn');
+    messagesContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages');
 
-    const openSettingsBtn = document.getElementById('openSettingsBtn'); const settingsSidebar = document.getElementById('settingsSidebar');
+    const openSettingsBtn = document.getElementById('openSettingsBtn'); 
+    const settingsSidebar = document.getElementById('settingsSidebar');
     if (openSettingsBtn && settingsSidebar) { openSettingsBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsSidebar.classList.toggle('active'); }); }
     
-    const goToZonesBtn = document.getElementById('goToZonesBtn'); const backToMenuBtn = document.getElementById('backToMenuBtn'); 
-    const mainSettingsScreen = document.getElementById('mainSettingsScreen'); const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
-    const goToAudioBtn = document.getElementById('goToAudioBtn'); const backToMenuFromAudioBtn = document.getElementById('backToMenuFromAudioBtn'); const audioSettingsScreen = document.getElementById('audioSettingsScreen');
+    const goToZonesBtn = document.getElementById('goToZonesBtn'); 
+    const backToMenuBtn = document.getElementById('backToMenuBtn'); 
+    const mainSettingsScreen = document.getElementById('mainSettingsScreen'); 
+    const zoneSettingsScreen = document.getElementById('zoneSettingsScreen');
+    const goToAudioBtn = document.getElementById('goToAudioBtn'); 
+    const backToMenuFromAudioBtn = document.getElementById('backToMenuFromAudioBtn'); 
+    const audioSettingsScreen = document.getElementById('audioSettingsScreen');
 
     if (goToZonesBtn && mainSettingsScreen && zoneSettingsScreen) { goToZonesBtn.addEventListener('click', (e) => { e.stopPropagation(); mainSettingsScreen.style.setProperty('display', 'none', 'important'); zoneSettingsScreen.style.setProperty('display', 'block', 'important'); }); }
     if (backToMenuBtn && mainSettingsScreen && zoneSettingsScreen) { backToMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); zoneSettingsScreen.style.setProperty('display', 'none', 'important'); mainSettingsScreen.style.setProperty('display', 'flex', 'important'); }); }
     if (goToAudioBtn && mainSettingsScreen && audioSettingsScreen) { goToAudioBtn.addEventListener('click', (e) => { e.stopPropagation(); mainSettingsScreen.style.setProperty('display', 'none', 'important'); audioSettingsScreen.style.setProperty('display', 'flex', 'important'); }); }
     if (backToMenuFromAudioBtn && mainSettingsScreen && audioSettingsScreen) { backToMenuFromAudioBtn.addEventListener('click', (e) => { e.stopPropagation(); audioSettingsScreen.style.setProperty('display', 'none', 'important'); mainSettingsScreen.style.setProperty('display', 'flex', 'important'); }); }
-    const zoneSelectTrigger = document.getElementById('zoneSelectTrigger'); const zoneSelectOptions = document.getElementById('zoneSelectOptions'); let selectedZone = '';
+
+    const zoneSelectTrigger = document.getElementById('zoneSelectTrigger'); 
+    const zoneSelectOptions = document.getElementById('zoneSelectOptions'); 
+    let selectedZone = '';
     if (zoneSelectTrigger && zoneSelectOptions) { zoneSelectTrigger.addEventListener('click', (e) => { e.stopPropagation(); zoneSelectOptions.classList.toggle('active'); }); }
     document.querySelectorAll('.custom-option').forEach(option => {
         option.addEventListener('click', function(e) { e.stopPropagation(); selectedZone = this.getAttribute('data-value'); if (zoneSelectTrigger) zoneSelectTrigger.innerHTML = this.textContent + ' <span class="select-arrow">▼</span>'; if (zoneSelectOptions) zoneSelectOptions.classList.remove('active'); });
     });
-    const applyColorBtn = document.getElementById('applyColorBtn'); const customColorInput = document.getElementById('customColorInput');
+    const applyColorBtn = document.getElementById('applyColorBtn'); 
+    const customColorInput = document.getElementById('customColorInput');
     if (applyColorBtn && customColorInput) { applyColorBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!selectedZone) { alert('Сначала выберите зону!'); return; } const el = document.getElementById(selectedZone); if (el) { el.style.setProperty('background-color', customColorInput.value, 'important'); } }); }
 
-    const bellDropdownPanel = document.getElementById('bellDropdownPanel'); const notificationBell = document.getElementById('notificationBell');
+    const bellDropdownPanel = document.getElementById('bellDropdownPanel'); 
+    const notificationBell = document.getElementById('notificationBell');
     if (notificationBell && bellDropdownPanel) { notificationBell.addEventListener('click', (e) => { e.stopPropagation(); bellDropdownPanel.classList.toggle('active'); if (settingsSidebar) settingsSidebar.classList.remove('active'); }); }
     document.addEventListener('click', (e) => {
         if (settingsSidebar && !settingsSidebar.contains(e.target) && e.target !== openSettingsBtn) { settingsSidebar.classList.remove('active'); }
@@ -122,7 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bellDropdownPanel && !bellDropdownPanel.contains(e.target) && e.target !== notificationBell) { bellDropdownPanel.classList.remove('active'); }
     });
 
-    const startScreenBtn = document.getElementById('startScreenBtn'); const endCallBtn = document.getElementById('endCallBtn'); const videoCallZone = document.getElementById('videoCallZone');
+    const startScreenBtn = document.getElementById('startScreenBtn'); 
+    const endCallBtn = document.getElementById('endCallBtn'); 
+    const videoCallZone = document.getElementById('videoCallZone');
     if (startScreenBtn) { startScreenBtn.onclick = async (e) => { e.stopPropagation(); await startScreenShare(); }; }
     if (endCallBtn) {
         endCallBtn.onclick = async (e) => {
@@ -130,6 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const textChannel = document.querySelector('[data-channel="general-chat"]'); if (textChannel) textChannel.click();
         };
     }
+
     document.querySelectorAll('#serverChannelsList .custom-user-item').forEach(item => {
         item.onclick = async function(e) {
             e.stopPropagation();
@@ -158,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         siteVolumeSlider.oninput = function() { const vol = this.value; siteVolValue.textContent = vol + '%'; const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo) remoteVideo.volume = Math.min(vol / 100, 1); };
     }
     if (audioProfileSelect) { audioProfileSelect.onchange = function() { alert('Шумодав изменен на: ' + this.options[this.selectedIndex].text); }; }
+
     setInterval(() => {
         const pingMsValue = document.getElementById('pingMsValue'); const pingRadarCircle = document.getElementById('pingRadarCircle');
         const pingStatusText = document.getElementById('pingStatusText'); const bars = document.querySelectorAll('.ping-bar');
@@ -192,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (avaMoveXSlider) avaMoveXSlider.oninput = applyLiveTransform;
     if (avaMoveYSlider) avaMoveYSlider.oninput = applyLiveTransform;
     if (modalBigAvatarContainer && avatarFileInput) { modalBigAvatarContainer.onclick = (e) => { e.stopPropagation(); avatarFileInput.click(); }; }
+
     if (avatarFileInput) {
         avatarFileInput.onchange = function() {
             const file = this.files; if (!file) return; const reader = new FileReader();
@@ -220,7 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } userProfileModalOverlay.style.setProperty('display', 'flex', 'important');
         };
     }
-
     if (saveProfileChangesBtn) {
         saveProfileChangesBtn.onclick = async (e) => {
             e.stopPropagation(); const profileNicknameInput = document.getElementById('profileNicknameInput'); const newNickname = profileNicknameInput ? profileNicknameInput.value.trim() : "";
@@ -240,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
     checkUserSession();
 });
+
 function initChatAfterAuth() {
     db.collection("users").doc(myName).onSnapshot((docSnap) => {
         if (docSnap.exists) {
@@ -270,6 +303,7 @@ function initChatAfterAuth() {
     }
     listenVoiceParticipants();
 }
+
 function loadSavedMessages() {
     const realContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realContainer) return;
     realContainer.innerHTML = ''; if (messagesListener) { messagesListener(); messagesListener = null; }
@@ -287,42 +321,19 @@ function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
     const uniqueAvaId = 'msgAva_' + Math.random().toString(36).substr(2, 9);
-    messageElement.innerHTML = `
-        <div class="message-content" style="display: flex; align-items: flex-start; gap: 12px;">
-            <div id="${uniqueAvaId}" class="user-avatar-header" style="width: 32px; height: 32px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 14px; flex-shrink: 0; position: relative; overflow: hidden;">
-                ${author.charAt(0).toUpperCase()}
-            </div>
-            <div>
-                <div class="message-author" style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px;">${author}</div>
-                <div class="message-text" style="font-size: 15px; color: #dbdee1;">${text}</div>
-            </div>
-        </div>
-        <div class="message-hover-actions">
-            <button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button>
-            <button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button>
-            <div class="action-dropdown-wrapper">
-                <button class="action-btn hover-more-btn" title="Ещё"><span>&lt;</span></button>
-                <div class="hover-submenu"><button class="submenu-item-btn">Добавить в друзья</button></div>
-            </div>
-        </div>
-    `;
+    messageElement.innerHTML = `<div class="message-content" style="display: flex; align-items: flex-start; gap: 12px;"><div id="${uniqueAvaId}" class="user-avatar-header" style="width: 32px; height: 32px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 14px; flex-shrink: 0; position: relative; overflow: hidden;">${author.charAt(0).toUpperCase()}</div><div><div class="message-author" style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px;">${author}</div><div class="message-text" style="font-size: 15px; color: #dbdee1;">${text}</div></div></div><div class="message-hover-actions"><button class="action-btn hover-edit-btn" title="Редактировать сообщение"><span>✏️</span></button><button class="action-btn hover-delete-trigger-btn" title="Удалить"><span>🗑️</span></button><div class="action-dropdown-wrapper"><button class="action-btn hover-more-btn" title="Ещё"><span>&lt;</span></button><div class="hover-submenu"><button class="submenu-item-btn">Добавить в друзья</button></div></div></div>`;
     db.collection("users").doc(author).get().then((uSnap) => {
         if (uSnap.exists) {
             const uData = uSnap.data(); const targetAvaBox = document.getElementById(uniqueAvaId);
             if (targetAvaBox) {
                 const authorNameEl = messageElement.querySelector('.message-author'); if (authorNameEl && uData.nickname) authorNameEl.textContent = uData.nickname;
-                if (uData.avatarBase64) {
-                    targetAvaBox.textContent = '';
-                    targetAvaBox.innerHTML = `<img src="${uData.avatarBase64}" style="position:absolute; width:100%; height:100%; object-fit:cover; transform-origin:center center; transform: scale(${uData.scale || 1}) translate(${uData.moveX || 0}px, ${uData.moveY || 0}px);">`;
-                } else if (uData.nickname) { targetAvaBox.textContent = uData.nickname.charAt(0).toUpperCase(); }
+                if (uData.avatarBase64) { targetAvaBox.textContent = ''; targetAvaBox.innerHTML = `<img src="${uData.avatarBase64}" style="position:absolute; width:100%; height:100%; object-fit:cover; transform-origin:center center; transform: scale(${uData.scale || 1}) translate(${uData.moveX || 0}px, ${uData.moveY || 0}px);">`; } 
+                else if (uData.nickname) { targetAvaBox.textContent = uData.nickname.charAt(0).toUpperCase(); }
             }
         }
     }).catch(e => console.error(e));
-
-    const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn');
-    if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
-    const addFriendBtn = messageElement.querySelector('.submenu-item-btn');
-    if (addFriendBtn) { addFriendBtn.addEventListener('click', (e) => { e.stopPropagation(); alert('Заявка отправлена!'); }); }
+    const timerDeleteBtn = messageElement.querySelector('.hover-delete-trigger-btn'); if (timerDeleteBtn) { timerDeleteBtn.addEventListener('click', (e) => { e.stopPropagation(); initiateMessageDelete(messageElement); }); }
+    const addFriendBtn = messageElement.querySelector('.submenu-item-btn'); if (addFriendBtn) { addFriendBtn.addEventListener('click', (e) => { e.stopPropagation(); alert('Заявка отправлена!'); }); }
     const editBtn = messageElement.querySelector('.hover-edit-btn');
     if (editBtn) {
         editBtn.addEventListener('click', (e) => {
@@ -336,134 +347,7 @@ function appendMessage(author, text) {
                     const snap = await db.collection("messages").where("server","==",currentServerContext).where("channel","==",currentChannelContext).where("author","==",author).where("text","==",originalText).get();
                     snap.forEach(async(doc)=>{await db.collection("messages").doc(doc.id).update({text:nt});}); textSpan.textContent = nt; messageElement.classList.remove('editing');
                 } catch(err){console.error(err);}
-            });
-            cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
+            }); cBtn.addEventListener('click',(evt)=>{evt.stopPropagation(); textSpan.textContent=originalText; messageElement.classList.remove('editing');});
         });
     } realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
-
-async function startVoiceCall() {
-    const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] };
-    const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
-    try {
-        await roomRef.collection('participants').doc(myName).set({ username: myName, isStreaming: false }, { merge: true });
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
-                peerConnection = new RTCPeerConnection(inlineConfig);
-                localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
-            } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
-        }
-        if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
-        peerConnection.ontrack = (event) => {
-            const remoteAudio = document.getElementById('remoteAudio'); const remoteVideo = document.getElementById('remoteVideo');
-            if (event.streams && event.streams) { if (remoteAudio) remoteAudio.srcObject = event.streams; if (remoteVideo) remoteVideo.srcObject = event.streams; }
-        };
-        const roomSnapshot = await roomRef.get();
-        if (!roomSnapshot.exists || !roomSnapshot.data().offer) {
-            const callerCandidatesCollection = roomRef.collection('callerCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
-            const offerDescription = await peerConnection.createOffer(); await peerConnection.setLocalDescription(offerDescription);
-            await roomRef.set({ offer: { sdp: offerDescription.sdp, type: offerDescription.type, host: myName } }, { merge: true });
-            roomRef.onSnapshot((snapshot) => { const data = snapshot.data(); if (!peerConnection.currentRemoteDescription && data && data.answer) { peerConnection.setLocalDescription(new RTCSessionDescription(data.answer)); } });
-            roomRef.collection('calleeCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
-        } else {
-            const data = roomSnapshot.data(); const calleeCandidatesCollection = roomRef.collection('calleeCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer)); const answerDescription = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answerDescription);
-            await roomRef.update({ answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
-            roomRef.collection('callerCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
-        }
-    } catch (err) { console.error('Ошибка WebRTC:', err); }
-}
-async function startScreenShare() {
-    try {
-        const inlineConfig = { iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] };
-        if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
-        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); const screenTrack = screenStream.getVideoTracks();
-        const remoteVideo = document.getElementById('remoteVideo');
-        if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.style.display = 'block'; remoteVideo.muted = true; }
-        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); await roomRef.collection('participants').doc(myName).update({ isStreaming: true });
-        const senders = peerConnection.getSenders(); const sender = senders.find(s => s.track && s.track.kind === 'video');
-        if (sender) { sender.replaceTrack(screenTrack); } else if (screenTrack.length > 0) { peerConnection.addTrack(screenTrack, screenStream); }
-        screenTrack.onended = async () => { if (remoteVideo) remoteVideo.style.display = 'none'; await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); };
-    } catch (err) { console.error('Ошибка экрана:', err); }
-}
-
-function listenVoiceParticipants() {
-    if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
-    const roomRef = db.collection('calls').doc(currentServerContext + '_voice-room');
-    voiceUsersListener = roomRef.collection('participants').onSnapshot((snapshot) => {
-        let listContainer = document.getElementById('voiceUsersSubList');
-        if (!listContainer) {
-            const voiceChannelEl = document.querySelector('[data-channel="voice-room"]'); if (!voiceChannelEl) return;
-            listContainer = document.createElement('div'); listContainer.id = 'voiceUsersSubList';
-            listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;"; voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling);
-        }
-        listContainer.innerHTML = '';
-        const gridContainer = document.getElementById('voiceGridContainer');
-        if (gridContainer) {
-            const audioTag = document.getElementById('remoteAudio'); const videoTag = document.getElementById('remoteVideo');
-            gridContainer.innerHTML = ''; if (audioTag) gridContainer.appendChild(audioTag); if (videoTag) gridContainer.appendChild(videoTag);
-        }
-        const count = snapshot.size;
-        if (gridContainer) { if (count <= 1) { gridContainer.style.gridTemplateColumns = "1fr"; } else { gridContainer.style.gridTemplateColumns = "1fr 1fr"; } }
-        snapshot.forEach((docSnap) => {
-            const p = docSnap.data(); const userRow = document.createElement('div');
-            userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
-            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`;
-            listContainer.appendChild(userRow);
-            if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
-                const userTile = document.createElement('div'); userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; min-height: 240px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); width: 100%; box-sizing: border-box;";
-                userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.5); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div style="width: 100px; height: 100px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);">${p.username.charAt(0).toUpperCase()}</div>`;
-                gridContainer.appendChild(userTile);
-            }
-        });
-    });
-}
-
-async function hangUpCall() {
-    if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
-    if (screenStream) { screenStream.getTracks().forEach(track => track.stop()); screenStream = null; }
-    if (peerConnection) { peerConnection.close(); peerConnection = null; }
-    if (audioCtx) { audioCtx.close(); audioCtx = null; micGainNode = null; }
-    const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo) remoteVideo.srcObject = null;
-    if (currentServerContext && currentChannelContext) {
-        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
-        try {
-            await roomRef.collection('participants').doc(myName).delete(); const partsParts = await roomRef.collection('participants').get();
-            if (partsParts.empty) {
-                const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); });
-                const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); }); await roomRef.delete();
-            }
-        } catch (err) { console.error(err); }
-    }
-    listenVoiceParticipants();
-}
-
-function checkUserSession() {
-    const savedUser = localStorage.getItem('chat_active_user');
-    if (savedUser) {
-        try {
-            db.collection("users").doc(savedUser).get().then(async (userSnap) => {
-                if (userSnap.exists && userSnap.data().status === 'approved') {
-                    myName = savedUser;
-                    
-                    // ТВОЁ ТРЕБОВАНИЕ: Принудительно выкидываем юзера из базы войса при загрузке сайта, чтобы список не залипал!
-                    try {
-                        await db.collection('calls').doc('public_voice-room').collection('participants').doc(myName).delete();
-                    } catch(e) { console.warn("Очистка при старте:", e); }
-                    
-                    if (authModalOverlay) authModalOverlay.classList.remove('active');
-                    initChatAfterAuth();
-                    return;
-                } else { localStorage.removeItem('chat_active_user'); if (authModalOverlay) authModalOverlay.classList.add('active'); }
-            });
-        } catch(e) { console.error(e); if (authModalOverlay) authModalOverlay.classList.add('active'); }
-    } else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
-}
-// ТВОЁ ТРЕБОВАНИЕ: Авто-выход из голосового канала при закрытии вкладки или браузера!
-window.addEventListener('beforeunload', () => {
-    if (myName && currentServerContext && currentChannelContext) {
-        // Синхронно швыряем команду удаления в Firebase перед закрытием
-        db.collection('calls').doc(currentServerContext + '_' + currentChannelContext).collection('participants').doc(myName).delete();
-    }
-});
