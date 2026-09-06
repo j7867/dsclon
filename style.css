@@ -595,3 +595,16 @@ input[type="range"]::-webkit-slider-thumb {
 #logoutBtn:hover {
     background-color: #da373c !important;
 }
+/* Анимация интерактивной палитры профиля */
+.palette-circle {
+    transition: transform 0.15s ease, border-color 0.15s ease !important;
+}
+.palette-circle:hover {
+    transform: scale(1.2) !important;
+}
+#modalBigAvatar:hover {
+    transform: scale(1.05) !important;
+}
+#saveProfileChangesBtn:hover {
+    background-color: #1a7f3e !important;
+}
