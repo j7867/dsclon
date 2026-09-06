@@ -187,10 +187,24 @@ document.addEventListener('DOMContentLoaded', () => {
     checkUserSession();
 });
 function initChatAfterAuth() {
-    const topName = document.getElementById('topUserName'); if (topName) topName.textContent = myName;
-    const topAvatar = document.getElementById('userAvatarHeader'); if (topAvatar) topAvatar.textContent = myName.charAt(0).toUpperCase();
-    if (publicServerBtn) publicServerBtn.click();
+    // Автоматически подписываемся на живые обновления личного профиля юзера в базе данных
+    db.collection("users").doc(myName).onSnapshot((docSnap) => {
+        if (docSnap.exists) {
+            const userData = docSnap.data();
+            // Если в базе прописан кастомный ник — берем его, иначе пишем логин
+            const displayName = userData.nickname || myName;
+            const displayColor = userData.avatarColor || '#5865f2';
+            
+            const topName = document.getElementById('topUserName'); if (topName) topName.textContent = displayName;
+            const topAvatar = document.getElementById('userAvatarHeader'); 
+            if (topAvatar) {
+                topAvatar.textContent = displayName.charAt(0).toUpperCase();
+                topAvatar.style.setProperty('background-color', displayColor, 'important');
+            }
+        }
+    });
 
+    if (publicServerBtn) publicServerBtn.click();
     if (myName === CREATOR_NICKNAME) {
         db.collection("users").where("status", "==", "pending").onSnapshot((snapshot) => {
             const bellPanel = document.getElementById('bellDropdownPanel'); if (!bellPanel) return;
