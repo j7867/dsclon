@@ -348,6 +348,53 @@ async function hangUpCall() {
     const placeholder = document.getElementById('voiceAvatarPlaceholder'); if (placeholder) placeholder.style.display = 'flex';
     currentRoomId = null;
 }
+    // === ЛОГИКА МОДАЛЬНОГО ОКНА ПРОФИЛЯ ПО ЦЕНТPУ ЭКPАНА ===
+    const userAvatarHeader = document.getElementById('userAvatarHeader');
+    const userProfileModalOverlay = document.getElementById('userProfileModalOverlay');
+    const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Открытие окна по клику на аватарку в шапке
+    if (userAvatarHeader && userProfileModalOverlay) {
+        userAvatarHeader.onclick = (e) => {
+            e.stopPropagation();
+            // Наполняем модалку актуальными данными текущего юзера
+            const modalBigAvatar = document.getElementById('modalBigAvatar');
+            const modalProfileName = document.getElementById('modalProfileName');
+            if (modalBigAvatar) modalBigAvatar.textContent = myName.charAt(0).toUpperCase();
+            if (modalProfileName) modalProfileName.textContent = myName;
+            
+            userProfileModalOverlay.style.setProperty('display', 'flex', 'important');
+        };
+    }
+
+    // Закрытие по клику на крестик
+    if (closeProfileModalBtn && userProfileModalOverlay) {
+        closeProfileModalBtn.onclick = (e) => {
+            e.stopPropagation();
+            userProfileModalOverlay.style.setProperty('display', 'none', 'important');
+        };
+    }
+
+    // Логика кнопки «Выйти из аккаунта»
+    if (logoutBtn) {
+        logoutBtn.onclick = (e) => {
+            e.stopPropagation();
+            // Стираем сессию из памяти браузера
+            localStorage.removeItem('chat_active_user');
+            // Перезагружаем страницу — сайт сам заблокирует экран и потребует авторизацию!
+            window.location.reload();
+        };
+    }
+
+    // Закрытие модалки по клику на темный фон вокруг неё
+    if (userProfileModalOverlay) {
+        userProfileModalOverlay.onclick = (e) => {
+            if (e.target === userProfileModalOverlay) {
+                userProfileModalOverlay.style.setProperty('display', 'none', 'important');
+            }
+        };
+    }
 
 function checkUserSession() {
     const savedUser = localStorage.getItem('chat_active_user');
