@@ -10,7 +10,7 @@ let voiceUsersListener = null;
 let audioCtx = null;
 let micGainNode = null;
 
-// === 2. КОНФИГУРАЦИЯ БАЗЫ ДАННЫХ ===
+// === 2. КОНФИГУРАЦИЯ БАЗЫ FIREBASE ===
 const firebaseConfig = {
   apiKey: "AIzaSyAY20LAIcPbkR6r4HUjCVctCWYfnDC4svw",
   authDomain: "://firebaseapp.com",
@@ -23,7 +23,7 @@ if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
 const CREATOR_NICKNAME = 'dj1ka'; let myName = ''; let currentServerContext = 'public'; let currentChannelContext = 'general-chat';
 let authModalOverlay, authLoginInput, authPasswordInput, authSubmitBtn, publicServerBtn, dmServerBtn, serverChannelsSection, dmChannelsSection, chatTitle, hashtag, messagesContainer, messageInput, sendBtn;
-// === 3. АВТОРИЗАЦИЯ С ЖЕСТКОЙ ЗАЩИТОЙ СТАТУСА ===
+// === 3. АВТОРИЗАЦИЯ С ЗАЩИТОЙ СТАТУСА ===
 window.triggerManualAuth = async function() {
     const loginInput = document.getElementById('authLoginInput');
     const passwordInput = document.getElementById('authPasswordInput');
@@ -57,7 +57,7 @@ window.triggerManualAuth = async function() {
     } catch (err) { console.error("ОШИБКА АВТОРИЗАЦИИ:", err); }
 };
 
-// === 4. КРУГОВОЙ ТАЙМЕР УДАЛЕНИЯ ===
+// === 4. ТАЙМЕР УДАЛЕНИЯ СООБЩЕНИЙ ===
 let deleteTimeout = null; let deleteInterval = null;
 function initiateMessageDelete(messageElement) {
     const panel = document.getElementById('deleteConfirmPanel');
@@ -88,9 +88,8 @@ function initiateMessageDelete(messageElement) {
     cancelBtn.onclick = () => { clearTimeout(deleteTimeout); clearInterval(deleteInterval); panel.classList.remove('active'); };
 }
 let messagesListener = null;
-// === 5. СЛУШАТЕЛИ ИНТЕРФЕЙСА (СТАРТ САЙТА) ===
+// === 5. СЛУШАТЕЛИ ИНТЕРФЕЙСА ===
 document.addEventListener('DOMContentLoaded', () => {
-    // ЛОАДЕР С БЛЮРОМ НА 3 СЕКУНДЫ
     setTimeout(() => {
         const preloader = document.getElementById('sitePreloader');
         if (preloader) { preloader.style.opacity = '0'; preloader.style.visibility = 'hidden'; setTimeout(() => { preloader.remove(); }, 500); }
@@ -178,8 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pingStatusText) { pingStatusText.style.color = color; pingStatusText.textContent = status; }
         bars.forEach(bar => { bar.style.backgroundColor = color; });
     }, 3000);
-
-    // === ИНИЦИАЛИЗАЦИЯ И СТИМ-НАСТРОЙКА КНОПОК ПРОФИЛЯ ===
+    // === СТИМ-КАСТОМИЗАЦИЯ ПРОФИЛЯ ===
     const userAvatarHeader = document.getElementById('userAvatarHeader'); const userProfileModalOverlay = document.getElementById('userProfileModalOverlay');
     const closeProfileModalBtn = document.getElementById('closeProfileModalBtn'); const logoutBtn = document.getElementById('logoutBtn');
     const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn'); const modalBigAvatarContainer = document.getElementById('modalBigAvatarContainer');
@@ -198,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (avaMoveXSlider) avaMoveXSlider.oninput = applyLiveTransform;
     if (avaMoveYSlider) avaMoveYSlider.oninput = applyLiveTransform;
     if (modalBigAvatarContainer && avatarFileInput) { modalBigAvatarContainer.onclick = (e) => { e.stopPropagation(); avatarFileInput.click(); }; }
+
     if (avatarFileInput) {
         avatarFileInput.onchange = function() {
             const file = this.files; if (!file) return; const reader = new FileReader();
@@ -246,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (publicServerBtn) { publicServerBtn.addEventListener('click', () => { document.querySelectorAll('.guild-icon').forEach(g => g.classList.remove('active')); publicServerBtn.classList.add('active'); currentServerContext = 'public'; currentChannelContext = 'general-chat'; if (chatTitle) chatTitle.textContent = 'general-chat'; if (hashtag) hashtag.textContent = '#'; if (dmChannelsSection) dmChannelsSection.style.display = 'none'; if (serverChannelsSection) serverChannelsSection.style.display = 'block'; loadSavedMessages(); }); }
     checkUserSession();
 });
-
 function initChatAfterAuth() {
     db.collection("users").doc(myName).onSnapshot((docSnap) => {
         if (docSnap.exists) {
@@ -276,6 +274,7 @@ function initChatAfterAuth() {
         });
     }
 }
+
 function loadSavedMessages() {
     const realContainer = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realContainer) return;
     realContainer.innerHTML = ''; if (messagesListener) { messagesListener(); messagesListener = null; }
@@ -288,7 +287,6 @@ async function handleSendMessage() {
     if (!messageInput) return; const text = messageInput.value.trim(); if (text === '') return;
     try { await db.collection("messages").add({ server: currentServerContext, channel: currentChannelContext, author: myName, text: text, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); messageInput.value = ''; } catch (err) { console.error(err); }
 }
-
 function appendMessage(author, text) {
     const realMessagesArea = document.getElementById('messagesContainer') || document.getElementById('chatMessages'); if (!realMessagesArea) return;
     const messageElement = document.createElement('div'); messageElement.className = 'message-item message';
@@ -347,55 +345,40 @@ function appendMessage(author, text) {
         });
     } realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
-
-// === ЖЕЛЕЗОБЕТОННЫЙ ВОЙС ЧАТ С ЗАКРЫТИЕМ БАГА НЕМОТЫ ===
 async function startVoiceCall() {
     const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
     try {
-        await roomRef.collection('participants').doc(myName).set({ username: myName, isStreaming: false });
-        listenVoiceParticipants();
-        
+        await roomRef.collection('participants').doc(myName).set({ username: myName, isStreaming: false }); listenVoiceParticipants();
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
-                peerConnection = new RTCPeerConnection({});
+                peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] });
                 localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
             } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
         }
-        if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
-        
-        // ТВОЁ ТРЕБОВАНИЕ: Намертво связываем прилетающий голос друга с аудио-динамиками!
+        if (!peerConnection) { peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] }); }
         peerConnection.ontrack = (event) => {
-            const remoteAudio = document.getElementById('remoteAudio');
-            const remoteVideo = document.getElementById('remoteVideo');
-            if (event.streams && event.streams[0]) {
-                if (remoteAudio) remoteAudio.srcObject = event.streams[0];
-                if (remoteVideo) remoteVideo.srcObject = event.streams[0];
-            }
+            const remoteAudio = document.getElementById('remoteAudio'); const remoteVideo = document.getElementById('remoteVideo');
+            if (event.streams && event.streams) { if (remoteAudio) remoteAudio.srcObject = event.streams; if (remoteVideo) remoteVideo.srcObject = event.streams; }
         };
-
         const roomSnapshot = await roomRef.get();
         if (!roomSnapshot.exists || !roomSnapshot.data().offer) {
-            const callerCandidatesCollection = roomRef.collection('callerCandidates');
-            peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
+            const callerCandidatesCollection = roomRef.collection('callerCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
             const offerDescription = await peerConnection.createOffer(); await peerConnection.setLocalDescription(offerDescription);
             await roomRef.set({ offer: { sdp: offerDescription.sdp, type: offerDescription.type, host: myName } }, { merge: true });
             roomRef.onSnapshot((snapshot) => { const data = snapshot.data(); if (!peerConnection.currentRemoteDescription && data && data.answer) { peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer)); } });
             roomRef.collection('calleeCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
         } else {
-            const data = roomSnapshot.data(); const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
-            peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-            const answerDescription = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answerDescription);
+            const data = roomSnapshot.data(); const calleeCandidatesCollection = roomRef.collection('calleeCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer)); const answerDescription = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answerDescription);
             await roomRef.update({ answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
             roomRef.collection('callerCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
         }
     } catch (err) { console.error('Ошибка WebRTC:', err); }
 }
-
 async function startScreenShare() {
     try {
-        if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
+        if (!peerConnection) { peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:://google.com' }, { urls: 'stun:://google.com' }] }); }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); const screenTrack = screenStream.getVideoTracks();
         const placeholder = document.getElementById('voiceAvatarPlaceholder'); const remoteVideo = document.getElementById('remoteVideo');
         if (placeholder) placeholder.style.display = 'none'; if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.muted = true; }
