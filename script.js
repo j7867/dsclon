@@ -413,7 +413,7 @@ async function startVoiceCall() {
     } catch (err) { console.error('Ошибка WebRTC:', err); }
 }
 
-aasync function startScreenShare() {
+async function startScreenShare() {
     try {
         if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); 
@@ -430,7 +430,6 @@ aasync function startScreenShare() {
         const senders = peerConnection.getSenders(); 
         const sender = senders.find(s => s.track && s.track.kind === 'video');
         
-        // ТВОЁ ТРЕБОВАНИЕ: Жестко передаем первый трек из массива, чтобы убрать TypeError!
         if (sender) { 
             sender.replaceTrack(screenTrack[0]); 
         } else if (screenTrack && screenTrack.length > 0) { 
@@ -444,7 +443,6 @@ aasync function startScreenShare() {
         };
     } catch (err) { console.error('Ошибка экрана:', err); }
 }
-
 
 function listenVoiceParticipants() {
     if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
