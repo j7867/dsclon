@@ -348,33 +348,51 @@ function appendMessage(author, text) {
     } realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
 
+// === ЖЕЛЕЗОБЕТОННЫЙ ВОЙС ЧАТ С ЗАКРЫТИЕМ БАГА НЕМОТЫ ===
 async function startVoiceCall() {
     const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
     try {
-        await roomRef.collection('participants').doc(myName).set({ username: myName, isStreaming: false }); listenVoiceParticipants();
+        await roomRef.collection('participants').doc(myName).set({ username: myName, isStreaming: false });
+        listenVoiceParticipants();
+        
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
-                peerConnection = new RTCPeerConnection({}); localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
+                peerConnection = new RTCPeerConnection({});
+                localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
             } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
         }
         if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
-        peerConnection.ontrack = (event) => { const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo && event.streams && event.streams) { remoteVideo.srcObject = event.streams; } };
+        
+        // ТВОЁ ТРЕБОВАНИЕ: Намертво связываем прилетающий голос друга с аудио-динамиками!
+        peerConnection.ontrack = (event) => {
+            const remoteAudio = document.getElementById('remoteAudio');
+            const remoteVideo = document.getElementById('remoteVideo');
+            if (event.streams && event.streams[0]) {
+                if (remoteAudio) remoteAudio.srcObject = event.streams[0];
+                if (remoteVideo) remoteVideo.srcObject = event.streams[0];
+            }
+        };
+
         const roomSnapshot = await roomRef.get();
         if (!roomSnapshot.exists || !roomSnapshot.data().offer) {
-            const callerCandidatesCollection = roomRef.collection('callerCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
+            const callerCandidatesCollection = roomRef.collection('callerCandidates');
+            peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
             const offerDescription = await peerConnection.createOffer(); await peerConnection.setLocalDescription(offerDescription);
             await roomRef.set({ offer: { sdp: offerDescription.sdp, type: offerDescription.type, host: myName } }, { merge: true });
             roomRef.onSnapshot((snapshot) => { const data = snapshot.data(); if (!peerConnection.currentRemoteDescription && data && data.answer) { peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer)); } });
             roomRef.collection('calleeCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
         } else {
-            const data = roomSnapshot.data(); const calleeCandidatesCollection = roomRef.collection('calleeCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer)); const answerDescription = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answerDescription);
+            const data = roomSnapshot.data(); const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
+            peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+            const answerDescription = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answerDescription);
             await roomRef.update({ answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
             roomRef.collection('callerCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
         }
     } catch (err) { console.error('Ошибка WebRTC:', err); }
 }
+
 async function startScreenShare() {
     try {
         if (!peerConnection) { peerConnection = new RTCPeerConnection({}); }
