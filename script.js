@@ -366,12 +366,132 @@ async function hangUpCall() {
     const listContainer = document.getElementById('voiceUsersSubList'); if (listContainer) listContainer.remove();
     const placeholder = document.getElementById('voiceAvatarPlaceholder'); if (placeholder) placeholder.style.display = 'flex';
     currentRoomId = null;
-}
-    // === ЛОГИКА МОДАЛЬНОГО ОКНА ПРОФИЛЯ ПО ЦЕНТPУ ЭКPАНА ===
+}    // === СТИМ-КАСТОМИЗАЦИЯ ПРОФИЛЯ: ФОТО, МАСШТАБ И СДВИГИ ===
     const userAvatarHeader = document.getElementById('userAvatarHeader');
     const userProfileModalOverlay = document.getElementById('userProfileModalOverlay');
     const closeProfileModalBtn = document.getElementById('closeProfileModalBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
+    
+    const modalBigAvatarContainer = document.getElementById('modalBigAvatarContainer');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    const modalBigAvatarImg = document.getElementById('modalBigAvatarImg');
+    const modalBigAvatarText = document.getElementById('modalBigAvatarText');
+    const avatarControlsBlock = document.getElementById('avatarControlsBlock');
+
+    const avaZoomSlider = document.getElementById('avaZoomSlider');
+    const avaMoveXSlider = document.getElementById('avaMoveXSlider');
+    const avaMoveYSlider = document.getElementById('avaMoveYSlider');
+
+    let currentBase64 = ""; // Сюда пишем строку фотки
+
+    // Функция мгновенного применения матрицы трансформаций на превью в окне
+    function applyLiveTransform() {
+        if (!modalBigAvatarImg) return;
+        const z = avaZoomSlider.value / 100;
+        const x = avaMoveXSlider.value;
+        const y = avaMoveYSlider.value;
+        modalBigAvatarImg.style.transform = `scale(${z}) translate(${x}px, ${y}px)`;
+        
+        document.getElementById('zoomValText').textContent = z.toFixed(1) + 'x';
+        document.getElementById('moveXValText').textContent = x + 'px';
+        document.getElementById('moveYValText').textContent = y + 'px';
+    }
+
+    if (avaZoomSlider) avaZoomSlider.oninput = applyLiveTransform;
+    if (avaMoveXSlider) avaMoveXSlider.oninput = applyLiveTransform;
+    if (avaMoveYSlider) avaMoveYSlider.oninput = applyLiveTransform;
+
+    // Клик по кругу аватарки открывает выбор файла с компа
+    if (modalBigAvatarContainer && avatarFileInput) {
+        modalBigAvatarContainer.onclick = (e) => { e.stopPropagation(); avatarFileInput.click(); };
+    }
+
+    // Обработка загрузки файла и конвертация в Base64
+    if (avatarFileInput) {
+        avatarFileInput.onchange = function() {
+            const file = this.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                currentBase64 = event.target.result;
+                if (modalBigAvatarText) modalBigAvatarText.style.display = 'none';
+                if (modalBigAvatarImg) {
+                    modalBigAvatarImg.src = currentBase64;
+                    modalBigAvatarImg.style.display = 'block';
+                }
+                if (avatarControlsBlock) avatarControlsBlock.style.display = 'flex';
+                applyLiveTransform();
+            };
+            reader.readAsDataURL(file);
+        };
+    }
+
+    if (userAvatarHeader && userProfileModalOverlay) {
+        userAvatarHeader.onclick = async (e) => {
+            e.stopPropagation();
+            const profileLoginDisplay = document.getElementById('profileLoginDisplay');
+            const profileNicknameInput = document.getElementById('profileNicknameInput');
+            if (profileLoginDisplay) profileLoginDisplay.value = myName;
+            
+            const userSnap = await db.collection("users").doc(myName).get();
+            if (userSnap.exists) {
+                const uData = userSnap.data();
+                if (profileNicknameInput) profileNicknameInput.value = uData.nickname || "";
+                currentBase64 = uData.avatarBase64 || "";
+                
+                if (currentBase64) {
+                    if (modalBigAvatarText) modalBigAvatarText.style.display = 'none';
+                    if (modalBigAvatarImg) {
+                        modalBigAvatarImg.src = currentBase64;
+                        modalBigAvatarImg.style.display = 'block';
+                    }
+                    if (avatarControlsBlock) avatarControlsBlock.style.display = 'flex';
+                    
+                    if (avaZoomSlider) avaZoomSlider.value = (uData.scale || 1) * 100;
+                    if (avaMoveXSlider) avaMoveXSlider.value = uData.moveX || 0;
+                    if (avaMoveYSlider) avaMoveYSlider.value = uData.moveY || 0;
+                    applyLiveTransform();
+                } else {
+                    if (modalBigAvatarText) {
+                        modalBigAvatarText.style.display = 'block';
+                        modalBigAvatarText.textContent = (uData.nickname || myName).charAt(0).toUpperCase();
+                    }
+                    if (modalBigAvatarImg) modalBigAvatarImg.style.display = 'none';
+                    if (avatarControlsBlock) avatarControlsBlock.style.display = 'none';
+                }
+            }
+            userProfileModalOverlay.style.setProperty('display', 'flex', 'important');
+        };
+    }
+
+    // Сохранение изменений
+    if (saveProfileChangesBtn) {
+        saveProfileChangesBtn.onclick = async (e) => {
+            e.stopPropagation();
+            const profileNicknameInput = document.getElementById('profileNicknameInput');
+            const newNickname = profileNicknameInput ? profileNicknameInput.value.trim() : "";
+            
+            const z = avaZoomSlider ? avaZoomSlider.value / 100 : 1;
+            const x = avaMoveXSlider ? parseInt(avaMoveXSlider.value) : 0;
+            const y = avaMoveYSlider ? parseInt(avaMoveYSlider.value) : 0;
+            
+            try {
+                await db.collection("users").doc(myName).update({
+                    nickname: newNickname,
+                    avatarBase64: currentBase64,
+                    scale: z,
+                    moveX: x,
+                    moveY: y
+                });
+                alert('Профиль успешно сохранен!');
+                if (userProfileModalOverlay) userProfileModalOverlay.style.setProperty('display', 'none', 'important');
+            } catch(err) { console.error(err); alert('Ошибка сохранения!'); }
+        };
+    }
+
+    if (closeProfileModalBtn && userProfileModalOverlay) { closeProfileModalBtn.onclick = (e) => { e.stopPropagation(); userProfileModalOverlay.style.setProperty('display', 'none', 'important'); }; }
+    if (logoutBtn) { logoutBtn.onclick = (e) => { e.stopPropagation(); localStorage.removeItem('chat_active_user'); window.location.reload(); }; }
+    if (userProfileModalOverlay) { userProfileModalOverlay.onclick = (e) => { if (e.target === userProfileModalOverlay) userProfileModalOverlay.style.setProperty('display', 'none', 'important'); }; }
 
     // Открытие окна по клику на аватарку в шапке
     if (userAvatarHeader && userProfileModalOverlay) {
