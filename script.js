@@ -409,7 +409,6 @@ async function startScreenShare() {
         screenTrack[0].onended = async () => { if (remoteVideo) remoteVideo.style.display = 'none'; await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); };
     } catch (err) { console.error('Ошибка экрана:', err); }
 }
-
 function listenVoiceParticipants() {
     if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
     const roomRef = db.collection('calls').doc(currentServerContext + '_voice-room');
@@ -426,10 +425,9 @@ function listenVoiceParticipants() {
             const audioTag = document.getElementById('remoteAudio'); const videoTag = document.getElementById('remoteVideo');
             gridContainer.innerHTML = ''; if (audioTag) gridContainer.appendChild(audioTag); if (videoTag) gridContainer.appendChild(videoTag);
         }
-
-               const count = snapshot.size;
+        const count = snapshot.size;
         if (gridContainer) {
-            gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; max-height: 75vh; overflow-y: auto;";
+            gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; align-content: center; max-height: 75vh; box-sizing: border-box;";
         }
         snapshot.forEach((docSnap) => {
             const p = docSnap.data(); const userRow = document.createElement('div');
@@ -438,11 +436,11 @@ function listenVoiceParticipants() {
             listContainer.appendChild(userRow);
             if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
                 const userTile = document.createElement('div'); 
-                userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; max-width: 500px; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22;";
+                userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; flex: 1 1 40%; max-width: 480px; min-width: 280px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22;";
                 if (p.isStreaming) {
-                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.5); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" id="video_${p.username}"></video>`;
+                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" id="video_${p.username}"></video>`;
                 } else {
-                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.5); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);">${p.username.charAt(0).toUpperCase()}</div>`;
+                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div style="width: 64px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);">${p.username.charAt(0).toUpperCase()}</div>`;
                 }
                 gridContainer.appendChild(userTile);
                 if (p.isStreaming) {
