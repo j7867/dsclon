@@ -415,36 +415,43 @@ function listenVoiceParticipants() {
     const roomRef = db.collection('calls').doc(currentServerContext + '_voice-room');
     voiceUsersListener = roomRef.collection('participants').onSnapshot((snapshot) => {
         let listContainer = document.getElementById('voiceUsersSubList');
-        if (!listContainer) { 
-            const voiceChannelEl = document.querySelector('[data-channel="voice-room"]'); 
-            if (!voiceChannelEl) return; 
-            listContainer = document.createElement('div'); 
-            listContainer.id = 'voiceUsersSubList'; 
-            listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;"; 
-            voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling); 
+        if (!listContainer) {
+            const voiceChannelEl = document.querySelector('[data-channel="voice-room"]'); if (!voiceChannelEl) return;
+            listContainer = document.createElement('div'); listContainer.id = 'voiceUsersSubList';
+            listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;"; voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling);
         }
-        listContainer.innerHTML = ''; 
-        const gridContainer = document.getElementById('voiceGridContainer'); 
-        if (gridContainer) { 
-            const audioTag = document.getElementById('remoteAudio'); 
-            const videoTag = document.getElementById('remoteVideo'); 
-            gridContainer.innerHTML = ''; 
-            if (audioTag) gridContainer.appendChild(audioTag); 
-            if (videoTag) gridContainer.appendChild(videoTag); 
+        listContainer.innerHTML = '';
+        const gridContainer = document.getElementById('voiceGridContainer');
+        if (gridContainer) {
+            const audioTag = document.getElementById('remoteAudio'); const videoTag = document.getElementById('remoteVideo');
+            gridContainer.innerHTML = ''; if (audioTag) gridContainer.appendChild(audioTag); if (videoTag) gridContainer.appendChild(videoTag);
         }
-        const count = snapshot.size; 
-        if (gridContainer) { if (count <= 1) { gridContainer.style.gridTemplateColumns = "1fr"; } else { gridContainer.style.gridTemplateColumns = "1fr 1fr"; } }
+
+               const count = snapshot.size;
+        if (gridContainer) {
+            gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; max-height: 75vh; overflow-y: auto;";
+        }
         snapshot.forEach((docSnap) => {
-            const p = docSnap.data(); 
-            const userRow = document.createElement('div'); 
+            const p = docSnap.data(); const userRow = document.createElement('div');
             userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
-            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`; 
+            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`;
             listContainer.appendChild(userRow);
             if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
                 const userTile = document.createElement('div'); 
-                userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; min-height: 240px; box-shadow: 0 4px 15 rgba(0,0,0,0.3); width: 100%; box-sizing: border-box;";
-                userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.5); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div style="width: 100px; height: 100px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);">${p.username.charAt(0).toUpperCase()}</div>`; 
+                userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; max-width: 500px; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22;";
+                if (p.isStreaming) {
+                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.5); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" id="video_${p.username}"></video>`;
+                } else {
+                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.5); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);">${p.username.charAt(0).toUpperCase()}</div>`;
+                }
                 gridContainer.appendChild(userTile);
+                if (p.isStreaming) {
+                    const tileVideo = document.getElementById(`video_${p.username}`);
+                    if (tileVideo) {
+                        if (p.username === myName && screenStream) { tileVideo.srcObject = screenStream; tileVideo.muted = true; } 
+                        else if (peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; }
+                    }
+                }
             }
         });
     });
