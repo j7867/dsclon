@@ -351,108 +351,59 @@ function appendMessage(author, text) {
         });
     } realMessagesArea.appendChild(messageElement); realMessagesArea.scrollTop = realMessagesArea.scrollHeight;
 }
+
 async function startVoiceCall() {
-    const inlineConfig = { iceServers: [] }; 
-    const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
+    const inlineConfig = { iceServers: [] }; const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
     try {
         await roomRef.collection('participants').doc(myName).set({ username: myName, isStreaming: false }, { merge: true });
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
-                peerConnection = new RTCPeerConnection(inlineConfig); 
-                localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
-            } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
+            try { localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false }); peerConnection = new RTCPeerConnection(inlineConfig); localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); }); } catch (mediaErr) { console.warn('Вход без микрофона:', mediaErr); }
         }
         if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
-        peerConnection.ontrack = (event) => { 
-            const remoteAudio = document.getElementById('remoteAudio'); 
-            const remoteVideo = document.getElementById('remoteVideo'); 
-            if (event.streams && event.streams[0]) { 
-                if (remoteAudio) remoteAudio.srcObject = event.streams[0]; 
-                if (remoteVideo) remoteVideo.srcObject = event.streams[0]; 
-            } 
-        };
+        peerConnection.ontrack = (event) => { const remoteAudio = document.getElementById('remoteAudio'); const remoteVideo = document.getElementById('remoteVideo'); if (event.streams && event.streams) { if (remoteAudio) remoteAudio.srcObject = event.streams; if (remoteVideo) remoteVideo.srcObject = event.streams; } };
         const roomSnapshot = await roomRef.get();
         if (!roomSnapshot.exists || !roomSnapshot.data().offer) {
-            const callerCandidatesCollection = roomRef.collection('callerCandidates'); 
-            peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
-            const offerDescription = await peerConnection.createOffer(); 
-            await peerConnection.setLocalDescription(offerDescription); 
-            await roomRef.set({ offer: { sdp: offerDescription.sdp, type: offerDescription.type, host: myName } }, { merge: true });
+            const callerCandidatesCollection = roomRef.collection('callerCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON()); };
+            const offerDescription = await peerConnection.createOffer(); await peerConnection.setLocalDescription(offerDescription); await roomRef.set({ offer: { sdp: offerDescription.sdp, type: offerDescription.type, host: myName } }, { merge: true });
             roomRef.onSnapshot((snapshot) => { const data = snapshot.data(); if (!peerConnection.currentRemoteDescription && data && data.answer) { peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer)); } });
             roomRef.collection('calleeCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
         } else {
-            const data = roomSnapshot.data(); 
-            const calleeCandidatesCollection = roomRef.collection('calleeCandidates'); 
-            peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer)); 
-            const answerDescription = await peerConnection.createAnswer(); 
-            await peerConnection.setLocalDescription(answerDescription); 
-            await roomRef.update({ answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
+            const data = roomSnapshot.data(); const calleeCandidatesCollection = roomRef.collection('calleeCandidates'); peerConnection.onicecandidate = (event) => { if (event.candidate) calleeCandidatesCollection.add(event.candidate.toJSON()); };
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer)); const answerDescription = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answerDescription); await roomRef.update({ answer: { type: answerDescription.type, sdp: answerDescription.sdp } });
             roomRef.collection('callerCandidates').onSnapshot((snapshot) => { snapshot.docChanges().forEach((change) => { if (change.type === 'added') peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())); }); });
         }
     } catch (err) { console.error('Ошибка WebRTC:', err); }
 }
+
 async function startScreenShare() {
     try {
-        const inlineConfig = { iceServers: [] }; 
-        if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
-        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); 
-        const screenTrack = screenStream.getVideoTracks(); 
-        const remoteVideo = document.getElementById('remoteVideo');
+        const inlineConfig = { iceServers: [] }; if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); const screenTrack = screenStream.getVideoTracks(); const remoteVideo = document.getElementById('remoteVideo');
         if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.style.display = 'block'; remoteVideo.muted = true; }
-        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); 
-        await roomRef.collection('participants').doc(myName).update({ isStreaming: true });
-        const senders = peerConnection.getSenders(); 
-        const sender = senders.find(s => s.track && s.track.kind === 'video');
-        if (sender) { sender.replaceTrack(screenTrack[0]); } else if (screenTrack.length > 0) { peerConnection.addTrack(screenTrack[0], screenStream); }
-        screenTrack[0].onended = async () => { if (remoteVideo) remoteVideo.style.display = 'none'; await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); };
+        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); await roomRef.collection('participants').doc(myName).update({ isStreaming: true });
+        const senders = peerConnection.getSenders(); const sender = senders.find(s => s.track && s.track.kind === 'video');
+        if (sender) { sender.replaceTrack(screenTrack); } else if (screenTrack.length > 0) { peerConnection.addTrack(screenTrack, screenStream); }
+        screenTrack.onended = async () => { if (remoteVideo) remoteVideo.style.display = 'none'; await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); };
     } catch (err) { console.error('Ошибка экрана:', err); }
 }
+
 function listenVoiceParticipants() {
     if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
     const roomRef = db.collection('calls').doc(currentServerContext + '_voice-room');
     voiceUsersListener = roomRef.collection('participants').onSnapshot((snapshot) => {
         let listContainer = document.getElementById('voiceUsersSubList');
-        if (!listContainer) {
-            const voiceChannelEl = document.querySelector('[data-channel="voice-room"]'); if (!voiceChannelEl) return;
-            listContainer = document.createElement('div'); listContainer.id = 'voiceUsersSubList';
-            listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;"; voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling);
-        }
-        listContainer.innerHTML = '';
-        const gridContainer = document.getElementById('voiceGridContainer');
-        if (gridContainer) {
-            gridContainer.innerHTML = '';
-            gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; align-content: center; padding: 20px; box-sizing: border-box; max-height: 75vh; overflow-y: auto;";
-        }
+        if (!listContainer) { const voiceChannelEl = document.querySelector('[data-channel="voice-room"]'); if (!voiceChannelEl) return; listContainer = document.createElement('div'); listContainer.id = 'voiceUsersSubList'; listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;"; voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling); }
+        listContainer.innerHTML = ''; const gridContainer = document.getElementById('voiceGridContainer'); if (gridContainer) { gridContainer.innerHTML = ''; gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; align-content: center; padding: 20px; box-sizing: border-box; max-height: 75vh; overflow-y: auto;"; }
         snapshot.forEach((docSnap) => {
-            const p = docSnap.data(); const userRow = document.createElement('div');
-            userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
-            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`;
-            listContainer.appendChild(userRow);
-serRow);
-          window.addEventListener('beforeunload', () => { if (myName && currentServerContext && currentChannelContext) { db.collection('calls').doc(currentServerContext + '_' + currentChannelContext).collection('participants').doc(myName).delete(); } });
-            
-                       if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
-                const userTile = document.createElement('div'); 
-                userTile.id = `tile_${p.username}`;
-                userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; width: calc(50% - 16px); min-width: 260px; max-width: 440px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; transition: border-color 0.15s ease, box-shadow 0.15s ease;";
-                if (p.isStreaming) {
-                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" id="video_${p.username}"></video>`;
-                } else {
-                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3); transition: border-color 0.15s ease, box-shadow 0.15s ease; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`;
-                }
-                gridContainer.appendChild(userTile);
-                if (p.isStreaming) {
-                    const tileVideo = document.getElementById(`video_${p.username}`);
-                    if (tileVideo) {
-                        if (p.username === myName && screenStream) { tileVideo.srcObject = screenStream; tileVideo.muted = true; } 
-                        else if (peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; }
-                    }
-                }
+            const p = docSnap.data(); const userRow = document.createElement('div'); userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
+            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`; listContainer.appendChild(userRow);
+            if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
+                const userTile = document.createElement('div'); userTile.id = `tile_${p.username}`; userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; width: calc(50% - 16px); min-width: 260px; max-width: 440px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; transition: border-color 0.15s ease, box-shadow 0.15s ease;";
+                if (p.isStreaming) { userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" id="video_${p.username}"></video>`; } 
+                else { userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3); transition: border-color 0.15s ease, box-shadow 0.15s ease; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`; }
+                gridContainer.appendChild(userTile); if (p.isStreaming) { const tileVideo = document.getElementById(`video_${p.username}`); if (tileVideo) { if (p.username === myName && screenStream) { tileVideo.srcObject = screenStream; tileVideo.muted = true; } else if (peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; } } }
             }
-        });
-        monitorVoiceVolume();
+        }); monitorVoiceVolume();
     });
 }
 
@@ -460,22 +411,8 @@ function monitorVoiceVolume() {
     if (!localStream) return;
     try {
         if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        const source = audioCtx.createMediaStreamSource(localStream);
-        const analyser = audioCtx.createAnalyser(); analyser.fftSize = 256;
-        source.connect(analyser); const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        function checkVolume() {
-            if (!localStream) return; analyser.getByteFrequencyData(dataArray);
-            let sum = 0; for (let i = 0; i < dataArray.length; i++) { sum += dataArray[i]; }
-            let average = sum / dataArray.length;
-            const tile = document.getElementById(`tile_${myName}`); const avBox = document.getElementById(`avatarBox_${myName}`);
-            if (average > 12) {
-                if (tile) { tile.style.borderColor = "#23a55a"; tile.style.boxShadow = "0 0 12px #23a55a"; }
-                if (avBox) { avBox.style.borderColor = "#23a55a"; avBox.style.boxShadow = "0 0 8px #23a55a"; }
-            } else {
-                if (tile) { tile.style.borderColor = "#1e1f22"; tile.style.boxShadow = "none"; }
-                if (avBox) { avBox.style.borderColor = "transparent"; avBox.style.boxShadow = "none"; }
-            } requestAnimationFrame(checkVolume);
-        } checkVolume();
+        const source = audioCtx.createMediaStreamSource(localStream); const analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; source.connect(analyser); const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        function checkVolume() { if (!localStream) return; analyser.getByteFrequencyData(dataArray); let sum = 0; for (let i = 0; i < dataArray.length; i++) { sum += dataArray[i]; } let average = sum / dataArray.length; const tile = document.getElementById(`tile_${myName}`); const avBox = document.getElementById(`avatarBox_${myName}`); if (average > 12) { if (tile) { tile.style.borderColor = "#23a55a"; tile.style.boxShadow = "0 0 12px #23a55a"; } if (avBox) { avBox.style.borderColor = "#23a55a"; avBox.style.boxShadow = "0 0 8px #23a55a"; } } else { if (tile) { tile.style.borderColor = "#1e1f22"; tile.style.boxShadow = "none"; } if (avBox) { avBox.style.borderColor = "transparent"; avBox.style.boxShadow = "none"; } } requestAnimationFrame(checkVolume); } checkVolume();
     } catch (e) { console.warn("Шумомер:", e); }
 }
 
@@ -484,57 +421,12 @@ async function hangUpCall() {
     const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo) remoteVideo.srcObject = null;
     if (currentServerContext && currentChannelContext) {
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
-        try {
-            await roomRef.collection('participants').doc(myName).delete(); const partsParts = await roomRef.collection('participants').get();
-            if (partsParts.empty) { const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); }); const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); }); await roomRef.delete(); }
-        } catch (err) { console.error(err); }
+        try { await roomRef.collection('participants').doc(myName).delete(); const partsParts = await roomRef.collection('participants').get(); if (partsParts.empty) { const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); }); const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); }); await roomRef.delete(); } } catch (err) { console.error(err); }
     } listenVoiceParticipants();
 }
 
 function checkUserSession() {
-    const savedUser = localStorage.getItem('chat_active_user');
-    if (savedUser) {
-        try {
-            db.collection("users").doc(savedUser).get().then((userSnap) => {
-                if (userSnap.exists && userSnap.data().status === 'approved') { myName = savedUser; try { db.collection('calls').doc('public_voice-room').collection('participants').doc(myName).delete(); } catch(e) {} if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); return; } 
-                else { localStorage.removeItem('chat_active_user'); if (authModalOverlay) authModalOverlay.classList.add('active'); }
-            });
-        } catch(e) { console.error(e); if (authModalOverlay) authModalOverlay.classList.add('active'); }
-    } else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
-}
-
-async function hangUpCall() {
-    if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; } 
-    if (screenStream) { screenStream.getTracks().forEach(track => track.stop()); screenStream = null; } 
-    if (peerConnection) { peerConnection.close(); peerConnection = null; } 
-    if (audioCtx) { audioCtx.close(); audioCtx = null; micGainNode = null; }
-    const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo) remoteVideo.srcObject = null;
-    if (currentServerContext && currentChannelContext) {
-        const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
-        try {
-            await roomRef.collection('participants').doc(myName).delete(); 
-            const partsParts = await roomRef.collection('participants').get();
-            if (partsParts.empty) { const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); }); const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); }); await roomRef.delete(); }
-        } catch (err) { console.error(err); }
-    } 
-    listenVoiceParticipants();
-}
-
-function checkUserSession() {
-    const savedUser = localStorage.getItem('chat_active_user');
-    if (savedUser) {
-        try {
-            db.collection("users").doc(savedUser).get().then((userSnap) => {
-                if (userSnap.exists && userSnap.data().status === 'approved') { 
-                    myName = savedUser; 
-                    try { db.collection('calls').doc('public_voice-room').collection('participants').doc(myName).delete(); } catch(e) {} 
-                    if (authModalOverlay) authModalOverlay.classList.remove('active'); 
-                    initChatAfterAuth(); 
-                    return; 
-                } else { localStorage.removeItem('chat_active_user'); if (authModalOverlay) authModalOverlay.classList.add('active'); }
-            });
-        } catch(e) { console.error(e); if (authModalOverlay) authModalOverlay.classList.add('active'); }
-    } else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
+    const savedUser = localStorage.getItem('chat_active_user'); if (savedUser) { try { db.collection("users").doc(savedUser).get().then((userSnap) => { if (userSnap.exists && userSnap.data().status === 'approved') { myName = savedUser; try { db.collection('calls').doc('public_voice-room').collection('participants').doc(myName).delete(); } catch(e) {} if (authModalOverlay) authModalOverlay.classList.remove('active'); initChatAfterAuth(); return; } else { localStorage.removeItem('chat_active_user'); if (authModalOverlay) authModalOverlay.classList.add('active'); } }); } catch(e) { console.error(e); if (authModalOverlay) authModalOverlay.classList.add('active'); } } else { if (authModalOverlay) authModalOverlay.classList.add('active'); }
 }
 
 window.addEventListener('beforeunload', () => { if (myName && currentServerContext && currentChannelContext) { db.collection('calls').doc(currentServerContext + '_' + currentChannelContext).collection('participants').doc(myName).delete(); } });
