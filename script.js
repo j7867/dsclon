@@ -431,6 +431,7 @@ function listenVoiceParticipants() {
             userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`;
             listContainer.appendChild(userRow);
 serRow);
+          window.addEventListener('beforeunload', () => { if (myName && currentServerContext && currentChannelContext) { db.collection('calls').doc(currentServerContext + '_' + currentChannelContext).collection('participants').doc(myName).delete(); } });
             
                        if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
                 const userTile = document.createElement('div'); 
