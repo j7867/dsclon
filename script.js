@@ -422,7 +422,8 @@ function listenVoiceParticipants() {
         listContainer.innerHTML = '';
         const gridContainer = document.getElementById('voiceGridContainer');
         if (gridContainer) { gridContainer.innerHTML = ''; }
-                  snapshot.forEach((docSnap) => {
+);
+                 snapshot.forEach((docSnap) => {
             const p = docSnap.data(); const userRow = document.createElement('div');
             userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
             userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`;
@@ -431,12 +432,13 @@ function listenVoiceParticipants() {
             if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
                 const userTile = document.createElement('div'); 
                 userTile.id = `tile_${p.username}`;
-                userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; width: 480px; height: 270px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; transition: border-color 0.15s ease, box-shadow 0.15s ease;";
+                userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; width: calc(50% - 16px); min-width: 260px; max-width: 440px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; transition: border-color 0.15s ease, box-shadow 0.15s ease;";
                 if (p.isStreaming) {
                     userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" id="video_${p.username}"></video>`;
                 } else {
                     userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3); transition: border-color 0.15s ease, box-shadow 0.15s ease; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`;
                 }
+                gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; align-content: center; padding: 20px; box-sizing: border-box; max-height: 75vh; overflow-y: auto;";
                 gridContainer.appendChild(userTile);
                 if (p.isStreaming) {
                     const tileVideo = document.getElementById(`video_${p.username}`);
@@ -447,10 +449,10 @@ function listenVoiceParticipants() {
                 }
             }
         });
-        // ТВОЁ ТРЕБОВАНИЕ: ЗАПУСКАЕМ ЖИВОЙ АНАЛИЗАТОР ГЛOМКОСТИ ГОЛОСА
         monitorVoiceVolume();
     });
 }
+
 function monitorVoiceVolume() {
     if (!localStream) return;
     try {
@@ -462,9 +464,8 @@ function monitorVoiceVolume() {
             if (!localStream) return; analyser.getByteFrequencyData(dataArray);
             let sum = 0; for (let i = 0; i < dataArray.length; i++) { sum += dataArray[i]; }
             let average = sum / dataArray.length;
-            const tile = document.getElementById(`tile_${myName}`);
-            const avBox = document.getElementById(`avatarBox_${myName}`);
-            if (average > 12) { // ПОРОГ ГРОМКОСТИ: ЕCЛИ ЮЗЕР ГОВОРИТ — ВКЛЮЧАЕМ НЕОН!
+            const tile = document.getElementById(`tile_${myName}`); const avBox = document.getElementById(`avatarBox_${myName}`);
+            if (average > 12) {
                 if (tile) { tile.style.borderColor = "#23a55a"; tile.style.boxShadow = "0 0 12px #23a55a"; }
                 if (avBox) { avBox.style.borderColor = "#23a55a"; avBox.style.boxShadow = "0 0 8px #23a55a"; }
             } else {
@@ -474,6 +475,7 @@ function monitorVoiceVolume() {
         } checkVolume();
     } catch (e) { console.warn("Шумомер:", e); }
 }
+
 
 async function hangUpCall() {
     if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; } 
