@@ -451,11 +451,17 @@ function listenVoiceParticipants() {
             
             if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
                 const userTile = document.createElement('div'); userTile.id = `tile_${p.username}`;
-                if (streamerDoc) {
+                                if (streamerDoc) {
                     const isFS = gridContainer.getAttribute('data-mode') === 'fullscreen';
                     if (p.isStreaming) {
                         userTile.style = "width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent;";
-                        userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;" id="video_${p.username}"></video>`;
+                        
+                        // ТВОЁ ТРЕБОВАНИЕ: Если это твой собственный стрим, показываем красивую заглушку аватарки, чтобы не было коридора!
+                        if (p.username === myName) {
+                            userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username} (Вы транслируете экран)</div><div style="width: 100px; height: 100px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);"><svg viewBox="0 0 24 24" width="48" height="42" fill="currentColor" style="margin-right:4px;"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"></path></svg></div>`;
+                        } else {
+                            userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;" id="video_${p.username}"></video>`;
+                        }
                         userTile.onclick = () => { gridContainer.setAttribute('data-mode', isFS ? 'normal' : 'fullscreen'); listenVoiceParticipants(); };
                         if (topStreamZone) topStreamZone.appendChild(userTile);
                     } else {
@@ -469,11 +475,10 @@ function listenVoiceParticipants() {
                     userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`;
                     gridContainer.appendChild(userTile);
                 }
-                if (p.isStreaming) { const tileVideo = document.getElementById(`video_${p.username}`); if (tileVideo) { if (p.username === myName && screenStream) { tileVideo.srcObject = screenStream; tileVideo.muted = true; } else if (peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; } } }
+                if (p.isStreaming && p.username !== myName) { const tileVideo = document.getElementById(`video_${p.username}`); if (tileVideo && peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; } }
             }
         }); monitorVoiceVolume();
-    });
-}
+
 function monitorVoiceVolume() {
     if (!localStream) return;
     try {
