@@ -468,7 +468,6 @@ function monitorVoiceVolume() {
         } checkVolume();
     } catch (e) { console.warn("Шумомер:", e); }
 }
-
 async function hangUpCall() {
     if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; } 
     if (screenStream) { screenStream.getTracks().forEach(track => track.stop()); screenStream = null; } 
