@@ -449,17 +449,39 @@ function monitorVoiceVolume() {
     if (!localStream) return;
     try {
         if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        const source = audioCtx.createMediaStreamSource(localStream); const analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; source.connect(analyser); const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        function checkVolume() { if (!localStream) return; analyser.getByteFrequencyData(dataArray); let sum = 0; for (let i = 0; i < dataArray.length; i++) { sum += dataArray[i]; } let average = sum / dataArray.length; const tile = document.getElementById(`tile_${myName}`); const avBox = document.getElementById(`avatarBox_${myName}`); if (average > 12) { if (tile) { tile.style.borderColor = "#23a55a"; tile.style.boxShadow = "0 0 12px #23a55a"; } if (avBox) { avBox.style.borderColor = "#23a55a"; avBox.style.boxShadow = "0 0 8px #23a55a"; } } else { if (tile) { tile.style.borderColor = "#1e1f22"; tile.style.boxShadow = "none"; } if (avBox) { avBox.style.borderColor = "transparent"; avBox.style.boxShadow = "none"; } } requestAnimationFrame(checkVolume); } checkVolume();
+        const source = audioCtx.createMediaStreamSource(localStream); 
+        const analyser = audioCtx.createAnalyser(); analyser.fftSize = 256; 
+        source.connect(analyser); const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        function checkVolume() { 
+            if (!localStream) return; analyser.getByteFrequencyData(dataArray); 
+            let sum = 0; for (let i = 0; i < dataArray.length; i++) { sum += dataArray[i]; } 
+            let average = sum / dataArray.length; 
+            const tile = document.getElementById(`tile_${myName}`); 
+            const avBox = document.getElementById(`avatarBox_${myName}`); 
+            if (average > 12) { 
+                if (tile) { tile.style.borderColor = "#23a55a"; tile.style.boxShadow = "0 0 12px #23a55a"; } 
+                if (avBox) { avBox.style.borderColor = "#23a55a"; avBox.style.boxShadow = "0 0 8px #23a55a"; } 
+            } else { 
+                if (tile) { tile.style.borderColor = "#1e1f22"; tile.style.boxShadow = "none"; } 
+                if (avBox) { avBox.style.borderColor = "transparent"; avBox.style.boxShadow = "none"; } 
+            } requestAnimationFrame(checkVolume); 
+        } checkVolume();
     } catch (e) { console.warn("Шумомер:", e); }
 }
 
 async function hangUpCall() {
-    if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; } if (screenStream) { screenStream.getTracks().forEach(track => track.stop()); screenStream = null; } if (peerConnection) { peerConnection.close(); peerConnection = null; } if (audioCtx) { audioCtx.close(); audioCtx = null; micGainNode = null; }
+    if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; } 
+    if (screenStream) { screenStream.getTracks().forEach(track => track.stop()); screenStream = null; } 
+    if (peerConnection) { peerConnection.close(); peerConnection = null; } 
+    if (audioCtx) { audioCtx.close(); audioCtx = null; micGainNode = null; }
     const remoteVideo = document.getElementById('remoteVideo'); if (remoteVideo) remoteVideo.srcObject = null;
     if (currentServerContext && currentChannelContext) {
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext);
-        try { await roomRef.collection('participants').doc(myName).delete(); const partsParts = await roomRef.collection('participants').get(); if (partsParts.empty) { const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); }); const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); }); await roomRef.delete(); } } catch (err) { console.error(err); }
+        try { 
+            await roomRef.collection('participants').doc(myName).delete(); 
+            const partsParts = await roomRef.collection('participants').get(); 
+            if (partsParts.empty) { const callers = await roomRef.collection('callerCandidates').get(); callers.forEach(async (doc) => { await doc.ref.delete(); }); const callees = await roomRef.collection('calleeCandidates').get(); callees.forEach(async (doc) => { await doc.ref.delete(); }); await roomRef.delete(); } 
+        } catch (err) { console.error(err); }
     } listenVoiceParticipants();
 }
 
