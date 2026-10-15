@@ -395,6 +395,14 @@ async function startScreenShare() {
         } else if (screenTrack && screenTrack.length > 0) { 
             peerConnection.addTrack(screenTrack[0], screenStream); 
         }
+        if (screenTrack && screenTrack.length > 0) {
+            screenTrack[0].onended = async () => { 
+                if (remoteVideo) remoteVideo.style.display = 'none'; 
+                await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); 
+            };
+        }
+    } catch (err) { console.error('Ошибка экрана:', err); }
+}
 
 function listenVoiceParticipants() {
     if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
