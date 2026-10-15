@@ -409,21 +409,71 @@ function listenVoiceParticipants() {
     const roomRef = db.collection('calls').doc(currentServerContext + '_voice-room');
     voiceUsersListener = roomRef.collection('participants').onSnapshot((snapshot) => {
         let listContainer = document.getElementById('voiceUsersSubList');
-        if (!listContainer) { const voiceChannelEl = document.querySelector('[data-channel="voice-room"]'); if (!voiceChannelEl) return; listContainer = document.createElement('div'); listContainer.id = 'voiceUsersSubList'; listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;"; voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling); }
-        listContainer.innerHTML = ''; const gridContainer = document.getElementById('voiceGridContainer'); if (gridContainer) { gridContainer.innerHTML = ''; gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; align-content: center; padding: 20px; box-sizing: border-box; max-height: 75vh; overflow-y: auto;"; }
+        if (!listContainer) {
+            const voiceChannelEl = document.querySelector('[data-channel="voice-room"]'); if (!voiceChannelEl) return;
+            listContainer = document.createElement('div'); listContainer.id = 'voiceUsersSubList';
+            listContainer.style = "display: flex; flex-direction: column; gap: 4px; padding-left: 32px; margin-top: 4px; margin-bottom: 8px;"; voiceChannelEl.parentNode.insertBefore(listContainer, voiceChannelEl.nextSibling);
+        }
+        listContainer.innerHTML = '';
+        const gridContainer = document.getElementById('voiceGridContainer');
+        if (gridContainer) { gridContainer.innerHTML = ''; }
+        
+        let streamerDoc = null;
+        snapshot.forEach((docSnap) => { const p = docSnap.data(); if (p.isStreaming) { streamerDoc = p; } });
+        
+        if (gridContainer) {
+            if (gridContainer.getAttribute('data-mode') === 'fullscreen' && streamerDoc) {
+                gridContainer.style = "flex: 1; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-sizing: border-box;";
+            } else if (streamerDoc) {
+                gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: column; gap: 16px; justify-content: flex-start; align-items: center; box-sizing: border-box; overflow-y: auto;";
+            } else {
+                gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; align-content: center; box-sizing: border-box; max-height: 75vh; overflow-y: auto;";
+            }
+        }
+        let topStreamZone = null; let bottomRowZone = null;
+        if (gridContainer && streamerDoc) {
+            if (gridContainer.getAttribute('data-mode') === 'fullscreen') {
+                topStreamZone = document.createElement('div'); topStreamZone.style = "position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1;";
+                bottomRowZone = document.createElement('div'); bottomRowZone.style = "display: flex; flex-direction: row; gap: 12px; justify-content: center; align-items: center; padding: 10px; width: 100%; background: rgba(0,0,0,0.4); z-index: 5; margin-top: auto; box-sizing: border-box;";
+                gridContainer.appendChild(topStreamZone); gridContainer.appendChild(bottomRowZone);
+            } else {
+                topStreamZone = document.createElement('div'); topStreamZone.style = "width: 100%; max-width: 720px; aspect-ratio: 16/9; background: #2b2d31; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid #1e1f22;";
+                bottomRowZone = document.createElement('div'); bottomRowZone.style = "display: flex; flex-direction: row; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; box-sizing: border-box;";
+                gridContainer.appendChild(topStreamZone); gridContainer.appendChild(bottomRowZone);
+            }
+        }
+
         snapshot.forEach((docSnap) => {
-            const p = docSnap.data(); const userRow = document.createElement('div'); userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
-            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`; listContainer.appendChild(userRow);
+            const p = docSnap.data(); const userRow = document.createElement('div');
+            userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
+            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`;
+            listContainer.appendChild(userRow);
+            
             if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
-                const userTile = document.createElement('div'); userTile.id = `tile_${p.username}`; userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; width: calc(50% - 16px); min-width: 260px; max-width: 440px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; transition: border-color 0.15s ease, box-shadow 0.15s ease;";
-                if (p.isStreaming) { userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" id="video_${p.username}"></video>`; } 
-                else { userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3); transition: border-color 0.15s ease, box-shadow 0.15s ease; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`; }
-                gridContainer.appendChild(userTile); if (p.isStreaming) { const tileVideo = document.getElementById(`video_${p.username}`); if (tileVideo) { if (p.username === myName && screenStream) { tileVideo.srcObject = screenStream; tileVideo.muted = true; } else if (peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; } } }
+                const userTile = document.createElement('div'); userTile.id = `tile_${p.username}`;
+                if (streamerDoc) {
+                    const isFS = gridContainer.getAttribute('data-mode') === 'fullscreen';
+                    if (p.isStreaming) {
+                        userTile.style = "width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent;";
+                        userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;" id="video_${p.username}"></video>`;
+                        userTile.onclick = () => { gridContainer.setAttribute('data-mode', isFS ? 'normal' : 'fullscreen'); listenVoiceParticipants(); };
+                        if (topStreamZone) topStreamZone.appendChild(userTile);
+                    } else {
+                        userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; width: " + (isFS ? "140px" : "180px") + "; box-shadow: 0 4px 10px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; flex-shrink: 0; transition: all 0.15s ease;";
+                        userTile.innerHTML = `<div style="position: absolute; bottom: 8px; left: 8px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 40px; height: 40px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`;
+                        if (bottomRowZone) bottomRowZone.appendChild(userTile);
+                    }
+                } else {
+                    gridContainer.removeAttribute('data-mode');
+                    userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; width: calc(50% - 16px); min-width: 260px; max-width: 440px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; transition: all 0.15s ease;";
+                    userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`;
+                    gridContainer.appendChild(userTile);
+                }
+                if (p.isStreaming) { const tileVideo = document.getElementById(`video_${p.username}`); if (tileVideo) { if (p.username === myName && screenStream) { tileVideo.srcObject = screenStream; tileVideo.muted = true; } else if (peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; } } }
             }
         }); monitorVoiceVolume();
     });
 }
-
 function monitorVoiceVolume() {
     if (!localStream) return;
     try {
