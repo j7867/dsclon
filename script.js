@@ -418,47 +418,12 @@ function listenVoiceParticipants() {
         const gridContainer = document.getElementById('voiceGridContainer');
         if (gridContainer) { gridContainer.innerHTML = ''; }
         
-        let streamerDoc = null;
-        snapshot.forEach((docSnap) => { const p = docSnap.data(); if (p.isStreaming) { streamerDoc = p; } });
-        
-        if (gridContainer) {
-            if (gridContainer.getAttribute('data-mode') === 'fullscreen' && streamerDoc) {
-                gridContainer.style = "flex: 1; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-sizing: border-box;";
-            } else if (streamerDoc) {
-                gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: column; gap: 16px; justify-content: flex-start; align-items: center; box-sizing: border-box; overflow-y: auto;";
-            } else {
-                gridContainer.style = "flex: 1; width: 100%; display: flex; flex-direction: row; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; align-content: center; box-sizing: border-box; max-height: 75vh; overflow-y: auto;";
-            }
-        }
-        let topStreamZone = null; let bottomRowZone = null;
-        if (gridContainer && streamerDoc) {
-            if (gridContainer.getAttribute('data-mode') === 'fullscreen') {
-                topStreamZone = document.createElement('div'); topStreamZone.style = "position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1;";
-                bottomRowZone = document.createElement('div'); bottomRowZone.style = "display: flex; flex-direction: row; gap: 12px; justify-content: center; align-items: center; padding: 10px; width: 100%; background: rgba(0,0,0,0.4); z-index: 5; margin-top: auto; box-sizing: border-box;";
-                gridContainer.appendChild(topStreamZone); gridContainer.appendChild(bottomRowZone);
-            } else {
-                topStreamZone = document.createElement('div'); topStreamZone.style = "width: 100%; max-width: 720px; aspect-ratio: 16/9; background: #2b2d31; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid #1e1f22;";
-                bottomRowZone = document.createElement('div'); bottomRowZone.style = "display: flex; flex-direction: row; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; box-sizing: border-box;";
-                gridContainer.appendChild(topStreamZone); gridContainer.appendChild(bottomRowZone);
-            }
-        }
-
-        snapshot.forEach((docSnap) => {
-            const p = docSnap.data(); const userRow = document.createElement('div');
-            userRow.style = "display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; border-radius: 4px; background-color: rgba(255,255,255,0.02); margin-right: 8px;";
-            userRow.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff;">${p.username.charAt(0).toUpperCase()}</div><span style="font-size: 13px; color: #dbdee1; font-weight: 500;">${p.username}</span></div>${p.isStreaming ? '<span style="background-color: #f23f43; color: #fff; font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.5px; text-transform: uppercase;">В ЭФИРЕ</span>' : ''}`;
-            listContainer.appendChild(userRow);
-            
-            if (gridContainer && document.getElementById('videoCallZone').style.display === 'flex') {
-                const userTile = document.createElement('div'); userTile.id = `tile_${p.username}`;
-                                if (streamerDoc) {
+                        if (streamerDoc) {
                     const isFS = gridContainer.getAttribute('data-mode') === 'fullscreen';
                     if (p.isStreaming) {
                         userTile.style = "width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent;";
-                        
-                        // ТВОЁ ТРЕБОВАНИЕ: Если это твой собственный стрим, показываем красивую заглушку аватарки, чтобы не было коридора!
                         if (p.username === myName) {
-                            userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username} (Вы транслируете экран)</div><div style="width: 100px; height: 100px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);"><svg viewBox="0 0 24 24" width="48" height="42" fill="currentColor" style="margin-right:4px;"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"></path></svg></div>`;
+                            userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username} (Вы транслируете экран)</div><div style="width: 100px; height: 100px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(88,101,242,0.3);"><svg viewBox="0 0 24 24" width="48" height="42" fill="currentColor"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"></path></svg></div>`;
                         } else {
                             userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; z-index: 10;">${p.username}</div><video autoplay playsinline style="width: 100%; height: 100%; object-fit: contain;" id="video_${p.username}"></video>`;
                         }
@@ -478,7 +443,8 @@ function listenVoiceParticipants() {
                 if (p.isStreaming && p.username !== myName) { const tileVideo = document.getElementById(`video_${p.username}`); if (tileVideo && peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; } }
             }
         }); monitorVoiceVolume();
-
+    });
+}
 function monitorVoiceVolume() {
     if (!localStream) return;
     try {
