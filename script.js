@@ -50,7 +50,7 @@ window.triggerManualAuth = async function() {
             const initialStatus = (login === CREATOR_NICKNAME) ? 'approved' : 'pending';
             await userRef.set({ username: login, password: password, status: initialStatus });
             if (initialStatus === 'pending') {
-                alert('Регистрация успешна! Ожидайте одобрения от dj1ka.');
+                alert('Регистрация успешна! Ожидайте одобрения от Админа.');
                 return;
             }
         }
