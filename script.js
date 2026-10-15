@@ -383,14 +383,18 @@ async function startVoiceCall() {
 async function startScreenShare() {
     try {
         const inlineConfig = { iceServers: [] }; if (!peerConnection) { peerConnection = new RTCPeerConnection(inlineConfig); }
-        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); const screenTrack = screenStream.getVideoTracks(); const remoteVideo = document.getElementById('remoteVideo');
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true }); 
+        const screenTrack = screenStream.getVideoTracks(); const remoteVideo = document.getElementById('remoteVideo');
         if (remoteVideo) { remoteVideo.srcObject = screenStream; remoteVideo.style.display = 'block'; remoteVideo.muted = true; }
         const roomRef = db.collection('calls').doc(currentServerContext + '_' + currentChannelContext); await roomRef.collection('participants').doc(myName).update({ isStreaming: true });
         const senders = peerConnection.getSenders(); const sender = senders.find(s => s.track && s.track.kind === 'video');
-        if (sender) { sender.replaceTrack(screenTrack); } else if (screenTrack.length > 0) { peerConnection.addTrack(screenTrack, screenStream); }
-        screenTrack.onended = async () => { if (remoteVideo) remoteVideo.style.display = 'none'; await roomRef.collection('participants').doc(myName).update({ isStreaming: false }); };
-    } catch (err) { console.error('Ошибка экрана:', err); }
-}
+        
+        // ТВОЁ ТРЕБОВАНИЕ: Добавляем строгий индекс, чтобы намертво убить ошибку 'not of type MediaStreamTrack'!
+        if (sender) { 
+            if (screenTrack && screenTrack.length > 0) sender.replaceTrack(screenTrack[0]); 
+        } else if (screenTrack && screenTrack.length > 0) { 
+            peerConnection.addTrack(screenTrack[0], screenStream); 
+        }
 
 function listenVoiceParticipants() {
     if (voiceUsersListener) { voiceUsersListener(); voiceUsersListener = null; }
