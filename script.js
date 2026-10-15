@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
-const CREATOR_NICKNAME = 'dj1ka'; 
+const CREATOR_NICKNAME = 'ze0nly'; 
 let myName = ''; 
 let currentServerContext = 'public'; 
 let currentChannelContext = 'general-chat';
