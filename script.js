@@ -447,15 +447,19 @@ function listenVoiceParticipants() {
                 if (p.isStreaming && p.username !== myName) { 
                     const tileVideo = document.getElementById(`video_${p.username}`); 
                     if (tileVideo && peerConnection) { 
-                        const remoteVid = document.getElementById('remoteVideo'); 
-                        if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; 
-                    } 
-                  }
-                }
-              }); 
-            }); 
+                        const remoteVid = document.getElementById('remoteVideo');  
+            if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject;
+        }
+    }
+} 
+
+        }); 
+
+    }); 
+
     monitorVoiceVolume(); 
 } 
+
 
 function monitorVoiceVolume() {
     if (!localStream) return;
