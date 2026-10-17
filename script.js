@@ -450,14 +450,12 @@ function listenVoiceParticipants() {
                         const remoteVid = document.getElementById('remoteVideo'); 
                         if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; 
                     } 
+                  }
                 }
-            }); // <-- ВОТ ЗДЕСЬ БЫЛА ОШИБКА! Теперь forEach((doc) => { ... }) закрыт правильно!
-
-        }); // Закрывает onSnapshot((snapshot) => { ... })
-        
-        monitorVoiceVolume(); // Запуск шумомера
-    }); // Закрывает doc(currentServerContext + '_' + voiceRoom)
-}
+              }); 
+            }); 
+    monitorVoiceVolume(); 
+} 
 
 function monitorVoiceVolume() {
     if (!localStream) return;
