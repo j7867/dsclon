@@ -439,12 +439,26 @@ function listenVoiceParticipants() {
                     userTile.style = "background-color: #2b2d31; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; aspect-ratio: 16/9; width: calc(50% - 16px); min-width: 260px; max-width: 440px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); box-sizing: border-box; overflow: hidden; border: 2px solid #1e1f22; transition: all 0.15s ease;";
                     userTile.innerHTML = `<div style="position: absolute; bottom: 12px; left: 12px; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500;">${p.username}</div><div id="avatarBox_${p.username}" style="width: 60px; height: 60px; border-radius: 50%; background-color: #5865f2; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #fff; border: 2px solid transparent;">${p.username.charAt(0).toUpperCase()}</div>`;
                     gridContainer.appendChild(userTile);
+                                   // Это концовка блока else для gridContainer.appendChild
+                    gridContainer.appendChild(userTile);
                 }
-                if (p.isStreaming && p.username !== myName) { const tileVideo = document.getElementById(`video_${p.username}`); if (tileVideo && peerConnection) { const remoteVid = document.getElementById('remoteVideo'); if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; } }
-            }
-        }); monitorVoiceVolume();
-    });
+                
+                // Проверка стриминга экрана
+                if (p.isStreaming && p.username !== myName) { 
+                    const tileVideo = document.getElementById(`video_${p.username}`); 
+                    if (tileVideo && peerConnection) { 
+                        const remoteVid = document.getElementById('remoteVideo'); 
+                        if (remoteVid && remoteVid.srcObject) tileVideo.srcObject = remoteVid.srcObject; 
+                    } 
+                }
+            }); // <-- ВОТ ЗДЕСЬ БЫЛА ОШИБКА! Теперь forEach((doc) => { ... }) закрыт правильно!
+
+        }); // Закрывает onSnapshot((snapshot) => { ... })
+        
+        monitorVoiceVolume(); // Запуск шумомера
+    }); // Закрывает doc(currentServerContext + '_' + voiceRoom)
 }
+
 function monitorVoiceVolume() {
     if (!localStream) return;
     try {
